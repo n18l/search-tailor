@@ -1,0 +1,33 @@
+html {
+  font-size: 10px;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-size: 1.6rem;
+}
+
+button {
+  border: 0;
+  background-color: initial;
+  padding: 0;
+  cursor: pointer;
+}
+
+button:active {
+  outline: 0;
+}
+
+input {
+  background-color: initial;
+  border: 0;
+  color: inherit;
+}

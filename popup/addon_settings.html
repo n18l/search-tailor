@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="normalize.css" />
+    <link rel="stylesheet" href="addon_settings.css" />
+</head>
+
+<template id="entry">
+    <li class="entry">
+        <div class="entry__input-wrapper">
+            <input class="entry__domain-input" type="text" placeholder="domain">
+            <div class="entry__input-effects"></div>
+        </div>
+        <div class="entry__action-container">
+            <button class="entry__action" data-action="disable-entry">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill="rgba(249, 249, 250, .8)" d="M8 6a1 1 0 0 0 1-1V1a1 1 0 0 0-2 0v4a1 1 0 0 0 1 1zm3.5-4.032a1 1 0 0 0-1 1.732A4.946 4.946 0 0 1 13 8 5 5 0 0 1 3 8a4.946 4.946 0 0 1 2.5-4.3 1 1 0 0 0-1-1.732 7 7 0 1 0 7.006 0z"></path></svg>
+            </button>
+            <button class="entry__action" data-action="remove-entry">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill="rgba(249, 249, 250, .8)" d="M6.586 8l-2.293 2.293a1 1 0 0 0 1.414 1.414L8 9.414l2.293 2.293a1 1 0 0 0 1.414-1.414L9.414 8l2.293-2.293a1 1 0 1 0-1.414-1.414L8 6.586 5.707 4.293a1 1 0 0 0-1.414 1.414L6.586 8zM8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0z"></path></svg>
+            </button>
+        </div>
+    </li>
+</template>
+
+<body>
+    <main id="popup-content">
+        <div class="content">
+            <ul class="entry-list"></ul>
+        </div>
+
+        <div class="button-bar">
+            <button class="add-entry" data-action="add-entry">Add New Domain</button>
+        </div>
+    </main>
+
+    <div id="error-content" class="hidden">
+        <p>Error!</p>
+        <p>Try a different page.</p>
+    </div>
+
+    <script src="addon_settings.js"></script>
+</body>
+
+</html>
