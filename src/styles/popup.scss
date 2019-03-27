@@ -1,3 +1,5 @@
+@import 'reset';
+
 html, body {
     background-color: #4A4A4F;
     border-radius: 2px;
@@ -22,9 +24,9 @@ main {
     --color-button-highlight-2: hsl(240, 2%, 49%);
 }
 
-.content {
+// .content {
     
-}
+// }
 
 .entry-list {
     padding: 0;

@@ -14,13 +14,13 @@
     },
     
     "icons": {
-        "48": "icons/black.svg",
-        "96": "icons/black.svg"
+        "48": "assets/icons/black.svg",
+        "96": "assets/icons/black.svg"
     },
 
     "browser_action": {
-      "default_icon": "icons/search-light.svg",
-      "default_popup": "popup/addon_settings.html"
+      "default_icon": "assets/icons/search-light.svg",
+      "default_popup": "markup/popup.html"
     },
 
     "permissions": ["theme", "storage", "tabs"],
@@ -34,10 +34,10 @@
                 "*://search.yahoo.com/search*"
             ],
             "js": [
-                "content_scripts/addon.js"
+                "scripts/addon.js"
             ],
             "css": [
-                "content_scripts/addon.css"
+                "styles/addon.css"
             ]
         }
     ]
