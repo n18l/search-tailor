@@ -1,40 +1,33 @@
 const searchEngines = {
     google: {
-        resultContainer: '.srg',
-        result: '.rc',
-        resultLink: '.r > a',
+        resultContainer: ".srg",
+        result: ".rc",
+        resultLink: ".r > a",
     },
 
     duckduckgo: {
-        resultContainer: '.results',
-        result: '.result',
-        resultLink: '.result__a',
+        resultContainer: ".results",
+        result: ".result",
+        resultLink: ".result__a",
     },
 
     bing: {
-        resultContainer: '#b_results',
-        result: '.b_algo',
-        resultLink: '.b_algo h2 a',
+        resultContainer: "#b_results",
+        result: ".b_algo",
+        resultLink: ".b_algo h2 a",
     },
 
     yahoo: {
-        resultContainer: '#web > ol',
-        result: '.algo',
-        resultLink: '.algo .ac-algo',
-    }
+        resultContainer: "#web > ol",
+        result: ".algo",
+        resultLink: ".algo .ac-algo",
+    },
 };
 
-browser.runtime.onMessage.addListener(request => {
-    if (request.command === 'reinitialize') {
-        browser.storage.sync.get('filteredDomains')
-            .then(initialize, onError);
-    }
-});
-
-const filteredDomains = [];
-
 function filter(searchEngine, filteredDomains) {
-    document.querySelectorAll('.spotlight').forEach(el => el.classList.remove('spotlight'));
+    document
+        .querySelectorAll(".spotlight")
+        .forEach(el => el.classList.remove("spotlight"));
 
     document.querySelectorAll(searchEngine.result).forEach(result => {
         const resultLink = result.querySelector(searchEngine.resultLink);
@@ -42,44 +35,53 @@ function filter(searchEngine, filteredDomains) {
         if (!resultLink) return;
 
         filteredDomains.forEach(filteredDomain => {
-
-            if (RegExp(`.*://.*.?${filteredDomain.domain}.*`).test(resultLink)) {
+            if (
+                RegExp(`.*://.*.?${filteredDomain.domain}.*`).test(resultLink)
+            ) {
                 result.classList.add(filteredDomain.action);
             }
         });
-
     });
 }
 
 function initialize(items) {
-    
-    if (RegExp('.*://.*.?duckduckgo.com/.*').test(window.location)) {
-        filter(searchEngines.duckduckgo, items.filteredDomains)
+    if (RegExp(".*://.*.?duckduckgo.com/.*").test(window.location)) {
+        filter(searchEngines.duckduckgo, items.filteredDomains);
         // Start observing the target node for configured mutations
-        new MutationObserver(() => filter(searchEngines.duckduckgo, items.filteredDomains))
-            .observe(document.querySelector(searchEngines.duckduckgo.resultContainer), {
-                childList: true
-            });
+        new MutationObserver(() =>
+            filter(searchEngines.duckduckgo, items.filteredDomains)
+        ).observe(
+            document.querySelector(searchEngines.duckduckgo.resultContainer),
+            {
+                childList: true,
+            }
+        );
     }
 
-    if (RegExp('.*://.*.?bing.com/search.*').test(window.location)) {
+    if (RegExp(".*://.*.?bing.com/search.*").test(window.location)) {
         filter(searchEngines.bing, items.filteredDomains);
     }
 
-    if (RegExp('.*://.*.?google.com/search.*').test(window.location)) {
+    if (RegExp(".*://.*.?google.com/search.*").test(window.location)) {
         filter(searchEngines.google, items.filteredDomains);
     }
 
-    if (RegExp('.*://search.yahoo.com/search.*').test(window.location)) {
+    if (RegExp(".*://search.yahoo.com/search.*").test(window.location)) {
         filter(searchEngines.yahoo, items.filteredDomains);
     }
 }
 
 function onError(error) {
-    console.log(error)
+    console.log(error);
 }
 
-(function () {
+browser.runtime.onMessage.addListener(request => {
+    if (request.command === "reinitialize") {
+        browser.storage.sync.get("filteredDomains").then(initialize, onError);
+    }
+});
+
+(function runtime() {
     /**
      * Check and set a global guard variable.
      * If this content script is injected into the same page again,
@@ -91,25 +93,23 @@ function onError(error) {
     }
     window.hasRun = true;
 
-    browser.storage.sync.get('filteredDomains')
-        .then(initialize, onError);
+    browser.storage.sync.get("filteredDomains").then(initialize, onError);
 })();
 
+// function getStyle(themeInfo) {
+//     if (themeInfo.colors) {
+//         console.log("accent color : " + themeInfo.colors.accentcolor);
+//         console.log("toolbar : " + themeInfo.colors.toolbar);
+//     } else {
+//         console.log('no themeinfo');
+//     }
 
-function getStyle(themeInfo) {
-    if (themeInfo.colors) {
-        console.log("accent color : " + themeInfo.colors.accentcolor);
-        console.log("toolbar : " + themeInfo.colors.toolbar);
-    } else {
-        console.log('no themeinfo');
-    }
+//     console.log('getStyle ran');
+//     // document.querySelector('#popup-content').append(JSON.stringify(themeInfo));
+// }
 
-    console.log('getStyle ran');
-    // document.querySelector('#popup-content').append(JSON.stringify(themeInfo));
-}
-
-async function getCurrentThemeInfo() {
-    console.log(browser);
-    var themeInfo = await browser.theme.getCurrent();
-    getStyle(themeInfo);
-}
+// async function getCurrentThemeInfo() {
+//     console.log(browser);
+//     var themeInfo = await browser.theme.getCurrent();
+//     getStyle(themeInfo);
+// }
