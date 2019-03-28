@@ -2,6 +2,8 @@
     "name": "search-tailor",
     "version": "1.0.0",
     "description": "A browser extension for tailoring your search results.",
+    "author": "Nick Brombal",
+    "license": "MIT",
     "main": "index.js",
     "scripts": {
         "build:manifest": "cp src/manifest.json dist/",
