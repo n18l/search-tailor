@@ -128,18 +128,22 @@ main {
     background-color: var(--color-button);
 
     button {
-        cursor: pointer;
+        cursor: not-allowed;
         flex: 1 1 auto;
         border: 0;
-        color: #fff;
-        background-color: transparent;
+        color: hsla(0, 0%, 100%, 0.5);
         border-top: 1px solid var(--color-button-highlight-1);
 
-        &:hover,
-        &:focus,
-        &:active {
-            background-color: var(--color-button-highlight-1);
-            border-color: var(--color-button-highlight-2);
+        &:not([disabled]) {
+            cursor: pointer;
+            color: hsl(0, 0%, 100%);
+
+            &:hover,
+            &:focus,
+            &:active {
+                background-color: var(--color-button-highlight-1);
+                border-color: var(--color-button-highlight-2);
+            }
         }
     }
 }
