@@ -1,7 +1,14 @@
-@import 'reset';
+@import "reset";
 
-html, body {
-    background-color: #4A4A4F;
+:root {
+    --color-button: hsl(240, 3%, 37%);
+    --color-button-highlight-1: hsl(240, 2%, 44%);
+    --color-button-highlight-2: hsl(240, 2%, 49%);
+}
+
+html,
+body {
+    background-color: #4a4a4f;
     border-radius: 2px;
     overflow: hidden;
 }
@@ -11,22 +18,11 @@ body {
 }
 
 main {
-
     display: flex;
     flex-direction: column;
     height: 100%;
-    color: #FFF;
+    color: #fff;
 }
-
-:root {
-    --color-button: hsl(240, 3%, 37%);
-    --color-button-highlight-1: hsl(240, 2%, 44%);
-    --color-button-highlight-2: hsl(240, 2%, 49%);
-}
-
-// .content {
-    
-// }
 
 .entry-list {
     padding: 0;
@@ -34,95 +30,95 @@ main {
 }
 
 .entry {
+    $thisEntry: &;
     height: 65px;
     display: flex;
-}
 
-.entry__input-wrapper {
-    flex: 1 1 100%;
-    display: flex;
-    margin: 15px;
-    position: relative;
-    overflow: hidden;
-}
+    &__input-wrapper {
+        flex: 1 1 100%;
+        display: flex;
+        margin: 15px;
+        position: relative;
+        overflow: hidden;
+    }
 
-.entry__domain-input {
-    background-color: var(--color-button);
-    padding: 0 8px;
-    height: 100%;
-    width: 100%;
-    margin: auto;
-    border-radius: 2px;
-}
+    &__domain-input {
+        background-color: var(--color-button);
+        padding: 0 8px;
+        height: 100%;
+        width: 100%;
+        margin: auto;
+        border-radius: 2px;
+    }
 
-.entry__input-effects {
-    height: 100%;
-    width: 100%;
-    position: absolute;
-    border-radius: 2px;
-    overflow: hidden;
-    pointer-events: none;
-}
+    &__input-effects {
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        border-radius: 2px;
+        overflow: hidden;
+        pointer-events: none;
 
-.entry__input-effects::after {
-    content: '';
-    height: 2px;
-    width: 100%;
-    bottom: 0;
-    left: 0;
-    position: absolute;
-    background-color: hsl(200, 100%, 50%);
-    transform: scaleX(0);
-    transition: transform .35s;
-}
+        &::after {
+            content: "";
+            height: 2px;
+            width: 100%;
+            bottom: 0;
+            left: 0;
+            position: absolute;
+            background-color: hsl(200, 100%, 50%);
+            transform: scaleX(0);
+            transition: transform 0.35s;
 
-.entry__domain-input:focus + .entry__input-effects::after,
-.entry__domain-input:active + .entry__input-effects::after {
-    transform: scaleX(1);
-}
+            #{$thisEntry}__domain-input:focus + &,
+            #{$thisEntry}__domain-input:active + & {
+                transform: scaleX(1);
+            }
+        }
+    }
 
-.entry__action-container {
-    display: flex;
-    margin-left: auto;
-}
+    &__action-container {
+        display: flex;
+        margin-left: auto;
+    }
 
-.entry__action {
-    width: 65px;
-    display: flex;
-    position: relative;
-}
+    &__action {
+        $thisEntryAction: &;
+        width: 60px;
+        display: flex;
+        position: relative;
 
-.entry__action::before {
-    content: '';
-    width: 1px;
-    height: 45px;
-    position: absolute;
-    top: 50%;
-    left: 0;
-    transform: translateY(-50%);
-    background-color: var(--color-button);
-}
+        &:hover,
+        &:focus,
+        &:active {
+            background-color: var(--color-button);
+        }
 
-.entry__action:hover + .entry__action::before,
-.entry__action:focus + .entry__action::before,
-.entry__action:active + .entry__action::before {
-    display: none;
-}
+        &::before {
+            content: "";
+            width: 1px;
+            height: 45px;
+            position: absolute;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            background-color: var(--color-button);
 
-.entry__action:hover,
-.entry__action:focus,
-.entry__action:active {
-    background-color: var(--color-button);
-    width: 65px;
-    display: flex;
-}
+            #{$thisEntryAction}:hover + &,
+            #{$thisEntryAction}:focus + &,
+            #{$thisEntryAction}:active + & {
+                display: none;
+            }
+        }
 
-.entry__action svg {
-    margin: auto;
-}
+        svg {
+            margin: auto;
+        }
+    }
 
-.entry + .entry {
-    border-top: 1px solid var(--color-button);
+    & + & {
+        border-top: 1px solid var(--color-button);
+    }
 }
 
 .button-bar {
@@ -130,24 +126,24 @@ main {
     margin-top: auto;
     display: flex;
     background-color: var(--color-button);
+
+    button {
+        cursor: pointer;
+        flex: 1 1 auto;
+        border: 0;
+        color: #fff;
+        background-color: transparent;
+        border-top: 1px solid var(--color-button-highlight-1);
+
+        &:hover,
+        &:focus,
+        &:active {
+            background-color: var(--color-button-highlight-1);
+            border-color: var(--color-button-highlight-2);
+        }
+    }
 }
 
-.button-bar button {
-    cursor: pointer;
-    flex: 1 1 auto;
-    border: 0;
-    color: #FFF;
-    background-color: transparent;
-    border-top: 1px solid var(--color-button-highlight-1);
-}
-
-.button-bar button:hover,
-.button-bar button:focus,
-.button-bar button:active {
-    background-color: var(--color-button-highlight-1);
-    border-color: var(--color-button-highlight-2);
-}
-  
 .hidden {
     display: none;
 }
