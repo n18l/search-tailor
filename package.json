@@ -20,8 +20,12 @@
         "clean": "rimraf dist && mkdir dist",
         "build": "npm run clean && npm-run-all --sequential build:*",
         "watch": "npm run build && npm-run-all --parallel watch:*",
-        "reinstall": "rimraf node_modules && npm cache verify && npm install",
-        "precommit": "lint-staged"
+        "reinstall": "rimraf node_modules && npm cache verify && npm install"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged"
+        }
     },
     "lint-staged": {
         "*.{js,json,scss}": [
