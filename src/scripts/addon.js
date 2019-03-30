@@ -24,7 +24,7 @@ const searchEngines = {
     },
 };
 
-function filter(searchEngine, filteredDomains) {
+function filter(searchEngine, tailoredDomains) {
     document
         .querySelectorAll(".spotlight")
         .forEach(el => el.classList.remove("spotlight"));
@@ -34,11 +34,11 @@ function filter(searchEngine, filteredDomains) {
 
         if (!resultLink) return;
 
-        filteredDomains.forEach(filteredDomain => {
+        tailoredDomains.forEach(tailoredDomain => {
             if (
-                RegExp(`.*://.*.?${filteredDomain.domain}.*`).test(resultLink)
+                RegExp(`.*://.*.?${tailoredDomain.domain}.*`).test(resultLink)
             ) {
-                result.classList.add(filteredDomain.action);
+                result.classList.add(tailoredDomain.treatment);
             }
         });
     });
@@ -46,10 +46,10 @@ function filter(searchEngine, filteredDomains) {
 
 function initialize(items) {
     if (RegExp(".*://.*.?duckduckgo.com/.*").test(window.location)) {
-        filter(searchEngines.duckduckgo, items.filteredDomains);
+        filter(searchEngines.duckduckgo, items.tailoredDomains);
         // Start observing the target node for configured mutations
         new MutationObserver(() =>
-            filter(searchEngines.duckduckgo, items.filteredDomains)
+            filter(searchEngines.duckduckgo, items.tailoredDomains)
         ).observe(
             document.querySelector(searchEngines.duckduckgo.resultContainer),
             {
@@ -59,15 +59,15 @@ function initialize(items) {
     }
 
     if (RegExp(".*://.*.?bing.com/search.*").test(window.location)) {
-        filter(searchEngines.bing, items.filteredDomains);
+        filter(searchEngines.bing, items.tailoredDomains);
     }
 
     if (RegExp(".*://.*.?google.com/search.*").test(window.location)) {
-        filter(searchEngines.google, items.filteredDomains);
+        filter(searchEngines.google, items.tailoredDomains);
     }
 
     if (RegExp(".*://search.yahoo.com/search.*").test(window.location)) {
-        filter(searchEngines.yahoo, items.filteredDomains);
+        filter(searchEngines.yahoo, items.tailoredDomains);
     }
 }
 
@@ -77,7 +77,7 @@ function onError(error) {
 
 browser.runtime.onMessage.addListener(request => {
     if (request.command === "reinitialize") {
-        browser.storage.sync.get("filteredDomains").then(initialize, onError);
+        browser.storage.sync.get("tailoredDomains").then(initialize, onError);
     }
 });
 
@@ -93,7 +93,7 @@ browser.runtime.onMessage.addListener(request => {
     }
     window.hasRun = true;
 
-    browser.storage.sync.get("filteredDomains").then(initialize, onError);
+    browser.storage.sync.get("tailoredDomains").then(initialize, onError);
 })();
 
 // function getStyle(themeInfo) {
