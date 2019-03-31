@@ -1,5 +1,117 @@
+const entryTemplate = document.querySelector("template#entry");
+
 function onError(error) {
     console.error(error);
+}
+
+/* Class representing an entry in the list of tailored domains */
+class TailoredDomainListEntry {
+    /**
+     * Initialize the list entry.
+     * @param {object} parentTailoredDomainList - The list object to add this entry to.
+     * @param {string} [domain=""] - A domain to initialize this entry's input value to.
+     */
+    constructor(parentTailoredDomainList, domainValue = "") {
+        this.parentList = parentTailoredDomainList;
+        this.element = document
+            .importNode(entryTemplate.content, true)
+            .querySelector(".js-entry");
+        this.domainInput = this.element.querySelector(".js-entry-domain-input");
+
+        this.defineActions();
+        this.bindEvents();
+
+        if (domainValue) {
+            this.domainInput.setAttribute("value", domainValue);
+        }
+
+        this.parentList.element.appendChild(this.element);
+        this.domainInput.focus();
+    }
+
+    /**
+     * Get the value of the entry as an object.
+     */
+    get value() {
+        return {
+            domain: this.domainInput.value,
+            treatment: "spotlight",
+        };
+    }
+
+    /**
+     * Identify and assign the entry's action buttons.
+     */
+    defineActions() {
+        this.actionButtons = {};
+        const actionButtons = this.element.querySelectorAll(
+            "[data-click-action]"
+        );
+
+        actionButtons.forEach(actionButton => {
+            this.actionButtons[actionButton.dataset.clickAction] = actionButton;
+        });
+    }
+
+    /**
+     * Attach event handlers.
+     */
+    bindEvents() {
+        this.actionButtons.deleteEntry.addEventListener("click", () =>
+            this.delete()
+        );
+
+        this.domainInput.addEventListener("change", () =>
+            this.parentList.synchronize()
+        );
+        this.domainInput.addEventListener("input", () =>
+            this.parentList.validateEntries(
+                () => this.parentList.enableNewEntries(),
+                () => this.parentList.disableNewEntries()
+            )
+        );
+        this.domainInput.addEventListener("keypress", e => {
+            if (e.key === " ") e.preventDefault();
+        });
+    }
+
+    /**
+     * Reset the entry to its default state.
+     */
+    reset() {
+        this.domainInput.value = "";
+    }
+
+    /**
+     * Remove the entry from its parent list, or reset it if it is the last entry.
+     */
+    delete() {
+        const numberOfEntries = this.parentList.entries.length;
+
+        if (numberOfEntries === 1) {
+            this.reset();
+        } else {
+            const entryIndex = this.parentList.entries.indexOf(this);
+            this.parentList.entries.splice(entryIndex, 1);
+            this.element.remove();
+        }
+
+        this.parentList.validateEntries(
+            () => this.parentList.enableNewEntries(),
+            () => this.parentList.disableNewEntries()
+        );
+        this.parentList.synchronize();
+    }
+
+    /**
+     * Test the entry's validity.
+     * @returns {boolean} - Whether or not this entry is valid.
+     */
+    validate() {
+        const validityRequirements = [this.domainInput.value !== ""];
+
+        return !validityRequirements.includes(false);
+    }
 }
 
 /** Class representing the interactive list of tailored domains. */
@@ -9,7 +121,12 @@ class TailoredDomainList {
      * @param {object} entryListElement - The HTML element representing the list.
      */
     constructor(entryListElement) {
-        this.cacheData(entryListElement);
+        this.entries = [];
+        this.element = entryListElement;
+        this.addEntryButton = document.querySelector(
+            '[data-click-action="addEntry"]'
+        );
+
         this.bindEvents();
 
         browser.storage.sync
@@ -19,33 +136,10 @@ class TailoredDomainList {
 
     /**
      * Get all of the list's current entries.
-     * @returns {object} - A nodelist of the current entries in the list.
-     */
-    get entries() {
-        return this.entryList.querySelectorAll(".js-entry");
-    }
-
-    /**
-     * Get all of the list's current entries.
      * @returns {array} - An array of the current values of each list item.
      */
     get entryValues() {
-        return Array.from(this.entries).map(entry => ({
-            domain: entry.querySelector(".js-entry-domain-input").value,
-            treatment: "spotlight",
-        }));
-    }
-
-    /**
-     * Cache reusable data.
-     * @param {object} entryListElement - The HTML element representing the list.
-     */
-    cacheData(entryListElement) {
-        this.entryList = entryListElement;
-        this.entryTemplate = document.querySelector("template#entry");
-        this.addEntryButton = document.querySelector(
-            '[data-click-action="add-entry"]'
-        );
+        return this.entries.map(entry => entry.value);
     }
 
     /**
@@ -55,38 +149,9 @@ class TailoredDomainList {
         document.addEventListener("click", e => {
             const clickTarget = e.target.closest("[data-click-action]");
 
-            if (
-                clickTarget &&
-                clickTarget.dataset.clickAction === "add-entry"
-            ) {
-                this.addEntry();
+            if (clickTarget && clickTarget.dataset.clickAction === "addEntry") {
                 this.disableNewEntries();
-            }
-
-            if (
-                clickTarget &&
-                clickTarget.dataset.clickAction === "remove-entry"
-            ) {
-                const entryToRemove = clickTarget.closest(".js-entry");
-                this.removeEntry(entryToRemove);
-            }
-        });
-
-        this.entryList.addEventListener("change", e => {
-            if (e.target.classList.contains("js-entry-domain-input")) {
-                this.synchronize();
-            }
-        });
-
-        this.entryList.addEventListener("input", e => {
-            if (e.target.classList.contains("js-entry-domain-input")) {
-                this.validateEntries();
-            }
-        });
-
-        this.entryList.addEventListener("keypress", e => {
-            if (e.target.classList.contains("js-entry-domain-input")) {
-                if (e.key === " ") e.preventDefault();
+                this.entries.push(new TailoredDomainListEntry(this));
             }
         });
     }
@@ -100,13 +165,14 @@ class TailoredDomainList {
             !storageData.tailoredDomains ||
             storageData.tailoredDomains.length === 0
         ) {
-            this.addEntry();
             this.disableNewEntries();
-            return;
+            this.entries.push(new TailoredDomainListEntry(this));
         }
 
         storageData.tailoredDomains.forEach(tailoredDomain =>
-            this.addEntry(tailoredDomain.domain)
+            this.entries.push(
+                new TailoredDomainListEntry(this, tailoredDomain.domain)
+            )
         );
     }
 
@@ -125,64 +191,21 @@ class TailoredDomainList {
     }
 
     /**
-     * Append a new entry to the list.
-     * @param {string} [domain] - A domain to initialize the new entry's input value to.
+     * Validate each of the list's entries.
+     * @param {function} [validCallback] - A function to call if all entries are valid.
+     * @param {function} [invalidCallback] - A function to call if any entries are invalid.
+     * @returns {array} - An array representing each entry's validity state.
      */
-    addEntry(domain = "") {
-        const newEntry = document.importNode(this.entryTemplate.content, true);
-        const newEntryInput = newEntry.querySelector(".js-entry-domain-input");
+    validateEntries(validCallback = null, invalidCallback = null) {
+        const entryValidityStates = this.entries.map(entry => entry.validate());
 
-        if (domain) {
-            newEntryInput.setAttribute("value", domain);
+        if (invalidCallback && entryValidityStates.includes(false)) {
+            invalidCallback();
+        } else if (validCallback) {
+            validCallback();
         }
 
-        this.entryList.appendChild(newEntry);
-        newEntryInput.focus();
-    }
-
-    /**
-     * Reset a list entry to its default state.
-     * @param {object} entry - The entry node to reset.
-     */
-    static resetEntry(entry) {
-        const entryInput = entry.querySelector(".js-entry-domain-input");
-        entryInput.value = "";
-    }
-
-    /**
-     * Remove an entry from the list, or reset it if it is the last entry.
-     * @param {object} entry - The entry node to remove.
-     */
-    removeEntry(entry) {
-        const numberOfEntries = this.entries.length;
-
-        if (numberOfEntries === 1) {
-            this.resetEntry(entry);
-        } else {
-            entry.remove();
-        }
-
-        this.validateEntries();
-        this.synchronize();
-    }
-
-    /**
-     * Validate entries to determine whether the user should be allowed to add more.
-     * @param {...object} entries - The entry node(s) to validate. Defaults to all nodes.
-     */
-    validateEntries(...entries) {
-        const entriesToValidate = entries.length
-            ? entries
-            : Array.from(this.entries);
-        const inputValues = entriesToValidate.map(
-            entry => entry.querySelector(".js-entry-domain-input").value
-        );
-
-        if (inputValues.includes("")) {
-            this.disableNewEntries();
-        } else {
-            this.enableNewEntries();
-        }
+        return entryValidityStates;
     }
 
     /**
