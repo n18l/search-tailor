@@ -26,8 +26,8 @@ const searchEngines = {
 
 function filter(searchEngine, tailoredDomains) {
     document
-        .querySelectorAll(".spotlight")
-        .forEach(el => el.classList.remove("spotlight"));
+        .querySelectorAll(".spotlight, .suppress, .screen")
+        .forEach(el => el.classList.remove("spotlight", "suppress", "screen"));
 
     document.querySelectorAll(searchEngine.result).forEach(result => {
         const resultLink = result.querySelector(searchEngine.resultLink);

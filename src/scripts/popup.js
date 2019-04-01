@@ -9,20 +9,38 @@ class TailoredDomainListEntry {
     /**
      * Initialize the list entry.
      * @param {object} parentTailoredDomainList - The list object to add this entry to.
-     * @param {string} [domain=""] - A domain to initialize this entry's input value to.
+     * @param {string} [tailoredDomainSettings] - An object containing the settings to use for this entry.
      */
-    constructor(parentTailoredDomainList, domainValue = "") {
+    constructor(
+        parentTailoredDomainList,
+        tailoredDomainSettings = {
+            domain: "",
+            treatment: null,
+        }
+    ) {
         this.parentList = parentTailoredDomainList;
         this.element = document
             .importNode(entryTemplate.content, true)
             .querySelector(".js-entry");
         this.domainInput = this.element.querySelector(".js-entry-domain-input");
+        this.treatmentSelect = this.element.querySelector(
+            ".js-entry-treatment-select"
+        );
+        this.treatmentOptions = Array.from(this.treatmentSelect.options).map(
+            option => option.value
+        );
 
         this.defineActions();
         this.bindEvents();
 
-        if (domainValue) {
-            this.domainInput.setAttribute("value", domainValue);
+        if (tailoredDomainSettings.domain) {
+            this.domainInput.value = tailoredDomainSettings.domain;
+        }
+
+        if (tailoredDomainSettings.treatment) {
+            this.treatmentSelect.value = tailoredDomainSettings.treatment;
+            this.actionButtons.toggleEntryTreatment.dataset.activeTreatment =
+                tailoredDomainSettings.treatment;
         }
 
         this.parentList.element.appendChild(this.element);
@@ -35,7 +53,7 @@ class TailoredDomainListEntry {
     get value() {
         return {
             domain: this.domainInput.value,
-            treatment: "spotlight",
+            treatment: this.treatmentSelect.value,
         };
     }
 
@@ -57,22 +75,40 @@ class TailoredDomainListEntry {
      * Attach event handlers.
      */
     bindEvents() {
-        this.actionButtons.deleteEntry.addEventListener("click", () =>
-            this.delete()
-        );
-
         this.domainInput.addEventListener("change", () =>
             this.parentList.synchronize()
         );
+
         this.domainInput.addEventListener("input", () =>
             this.parentList.validateEntries(
                 () => this.parentList.enableNewEntries(),
                 () => this.parentList.disableNewEntries()
             )
         );
+
         this.domainInput.addEventListener("keypress", e => {
             if (e.key === " ") e.preventDefault();
         });
+
+        this.treatmentSelect.addEventListener("change", () =>
+            this.parentList.synchronize()
+        );
+
+        this.actionButtons.toggleEntryTreatment.addEventListener("click", () =>
+            this.cycleTreatmentSelect()
+        );
+
+        this.actionButtons.toggleEntryTreatment.addEventListener(
+            "contextmenu",
+            e => {
+                e.preventDefault();
+                this.cycleTreatmentSelect(-1);
+            }
+        );
+
+        this.actionButtons.deleteEntry.addEventListener("click", () =>
+            this.delete()
+        );
     }
 
     /**
@@ -111,6 +147,29 @@ class TailoredDomainListEntry {
         const validityRequirements = [this.domainInput.value !== ""];
 
         return !validityRequirements.includes(false);
+    }
+
+    /**
+     * Programatically advance the treatment select field to the next option.
+     */
+    cycleTreatmentSelect(cycleAmount = 1) {
+        if (cycleAmount === 0) return;
+
+        const cycleDirection = cycleAmount > 0 ? "forwards" : "backwards";
+        const adjustedAmount =
+            cycleDirection === "backwards"
+                ? this.treatmentOptions.length + cycleAmount
+                : cycleAmount;
+        const targetTreatmentIndex =
+            this.treatmentOptions.indexOf(this.treatmentSelect.value) +
+            adjustedAmount;
+        const targetTreatmentOption = this.treatmentOptions[
+            targetTreatmentIndex % this.treatmentOptions.length
+        ];
+
+        this.treatmentSelect.value = targetTreatmentOption;
+        this.treatmentSelect.dispatchEvent(new Event("change"));
+        this.actionButtons.toggleEntryTreatment.dataset.activeTreatment = targetTreatmentOption;
     }
 }
 
@@ -169,9 +228,9 @@ class TailoredDomainList {
             this.entries.push(new TailoredDomainListEntry(this));
         }
 
-        storageData.tailoredDomains.forEach(tailoredDomain =>
+        storageData.tailoredDomains.forEach(tailoredDomainSettings =>
             this.entries.push(
-                new TailoredDomainListEntry(this, tailoredDomain.domain)
+                new TailoredDomainListEntry(this, tailoredDomainSettings)
             )
         );
     }

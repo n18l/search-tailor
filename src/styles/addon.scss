@@ -5,6 +5,10 @@
         opacity: 0.5;
     }
 
+    &.screen {
+        display: none;
+    }
+
     &.spotlight {
         position: relative;
     }
@@ -28,6 +32,10 @@
 .result {
     &.suppress {
         opacity: 0.5;
+    }
+
+    &.screen {
+        display: none;
     }
 
     &.spotlight {
@@ -58,6 +66,10 @@
 .b_algo {
     &.suppress {
         opacity: 0.5;
+    }
+
+    &.screen {
+        display: none;
     }
 
     &.spotlight {
@@ -93,6 +105,10 @@
 .algo {
     &.suppress {
         opacity: 0.5;
+    }
+
+    &.screen {
+        display: none;
     }
 
     &.spotlight {

@@ -111,8 +111,32 @@ main {
             }
         }
 
-        svg {
+        &__icon {
             margin: auto;
+
+            &--spotlight {
+                display: none;
+
+                #{$thisEntryAction}[data-active-treatment="spotlight"] & {
+                    display: block;
+                }
+            }
+
+            &--suppress {
+                display: none;
+
+                #{$thisEntryAction}[data-active-treatment="suppress"] & {
+                    display: block;
+                }
+            }
+
+            &--screen {
+                display: none;
+
+                #{$thisEntryAction}[data-active-treatment="screen"] & {
+                    display: block;
+                }
+            }
         }
     }
 
