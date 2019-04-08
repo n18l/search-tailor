@@ -1,115 +1,145 @@
-const searchEngines = {
-    google: {
-        resultContainer: ".srg",
-        result: ".rc",
-        resultLink: ".r > a",
-    },
+/* global addonData */
 
-    duckduckgo: {
-        resultContainer: ".results",
-        result: ".result",
-        resultLink: ".result__a",
-    },
-
-    bing: {
-        resultContainer: "#b_results",
-        result: ".b_algo",
-        resultLink: ".b_algo h2 a",
-    },
-
-    yahoo: {
-        resultContainer: "#web > ol",
-        result: ".algo",
-        resultLink: ".algo .ac-algo",
-    },
-};
-
-function filter(searchEngine, tailoredDomains) {
-    document
-        .querySelectorAll(".spotlight, .suppress, .screen")
-        .forEach(el => el.classList.remove("spotlight", "suppress", "screen"));
-
-    document.querySelectorAll(searchEngine.result).forEach(result => {
-        const resultLink = result.querySelector(searchEngine.resultLink);
-
-        if (!resultLink) return;
-
-        tailoredDomains.forEach(tailoredDomain => {
-            if (
-                RegExp(`.*://.*.?${tailoredDomain.domain}.*`).test(resultLink)
-            ) {
-                result.classList.add(tailoredDomain.treatment);
-            }
-        });
-    });
+function logError(error) {
+    console.error(error);
 }
 
-function initialize(items) {
-    if (RegExp(".*://.*.?duckduckgo.com/.*").test(window.location)) {
-        filter(searchEngines.duckduckgo, items.tailoredDomains);
-        // Start observing the target node for configured mutations
-        new MutationObserver(() =>
-            filter(searchEngines.duckduckgo, items.tailoredDomains)
-        ).observe(
-            document.querySelector(searchEngines.duckduckgo.resultContainer),
-            {
-                childList: true,
-            }
+/* Class representing a user's search that is eligible for tailoring. */
+class TailorableSearch {
+    /**
+     * Create a new Tailorable Search, attached to the current window.
+     * @param {object} searchWindow - The window object of the tab containing a
+     * valid search.
+     */
+    constructor(searchWindow) {
+        this.document = searchWindow.document;
+
+        // Identify which of the predefined search engines we're targeting,
+        // returning if one isn't found.
+        this.searchEngine = addonData.searchEngines.find(searchEngine =>
+            RegExp(searchEngine.matchPattern).test(searchWindow.location)
+        );
+        if (!this.searchEngine) return false;
+
+        this.tailorResults();
+    }
+
+    /**
+     * Get the current search result container.
+     */
+    get searchResultsContainer() {
+        return this.document.querySelector(
+            this.searchEngine.selectors.resultContainer
         );
     }
 
-    if (RegExp(".*://.*.?bing.com/search.*").test(window.location)) {
-        filter(searchEngines.bing, items.tailoredDomains);
+    /**
+     * Get all current search results.
+     */
+    get searchResults() {
+        return this.searchResultsContainer.querySelectorAll(
+            this.searchEngine.selectors.result
+        );
     }
 
-    if (RegExp(".*://.*.?google.com/search.*").test(window.location)) {
-        filter(searchEngines.google, items.tailoredDomains);
+    /**
+     * Get all current search results that have a treatment applied to them.
+     */
+    get tailoredResults() {
+        return this.searchResultsContainer.querySelectorAll(
+            ".spotlight, .suppress, .screen"
+        );
     }
 
-    if (RegExp(".*://search.yahoo.com/search.*").test(window.location)) {
-        filter(searchEngines.yahoo, items.tailoredDomains);
+    /**
+     * Remove all treatment classes from the current search results.
+     */
+    resetTailoring() {
+        this.tailoredResults.forEach(tailoredResult =>
+            tailoredResult.classList.remove("spotlight", "suppress", "screen")
+        );
+    }
+
+    /**
+     * Get the current user-defined list of tailored domains, then apply fresh
+     * treatments to matching search results.
+     */
+    tailorResults() {
+        this.resetTailoring();
+
+        /**
+         * Apply the appropriate treatment class to each result that matches an
+         * entry from the user-defined list of tailored domains.
+         * @param {object} storageData - Freshly retrieved data from the extension's synchronized storage.
+         */
+        const applyTailoringTreatments = storageData => {
+            // If this search engine loads results asynchronously, watch its
+            // results container for changes.
+            if (this.searchEngine.observe) this.setUpObserver();
+
+            // Cache the current search results.
+            const currentSearchResults = Array.from(this.searchResults);
+
+            // Filter the search results against each user-defined tailored
+            // domain, applying treatments to matching results.
+            storageData.tailoredDomains.forEach(tailoredDomain => {
+                const matchingResults = currentSearchResults.filter(result =>
+                    RegExp(`.*://.*.?${tailoredDomain.domain}.*`).test(
+                        result.querySelector(
+                            this.searchEngine.selectors.resultLink
+                        )
+                    )
+                );
+
+                matchingResults.forEach(matchingResult =>
+                    matchingResult.classList.add(tailoredDomain.treatment)
+                );
+            });
+        };
+
+        browser.storage.sync
+            .get("tailoredDomains")
+            .then(applyTailoringTreatments, logError);
+    }
+
+    /**
+     * Observe mutations to this search page's results container, tailoring the
+     * results appropriately whenever they change.
+     */
+    setUpObserver() {
+        // Disconnect any existing observers.
+        if (this.searchObserver) this.searchObserver.disconnect();
+
+        // Create a new observer to tailor currently-matching domains on
+        // mutation.
+        this.searchObserver = new MutationObserver(() => this.tailorResults());
+
+        // Have the observer watch for changes to the current page's search
+        // results.
+        this.searchObserver.observe(this.searchResultsContainer, {
+            childList: true,
+        });
     }
 }
 
-function onError(error) {
-    console.log(error);
-}
-
-browser.runtime.onMessage.addListener(request => {
-    if (request.command === "reinitialize") {
-        browser.storage.sync.get("tailoredDomains").then(initialize, onError);
-    }
-});
-
-(function runtime() {
+const currentSearch = (function initAddon() {
     /**
      * Check and set a global guard variable.
-     * If this content script is injected into the same page again,
-     * it will do nothing next time.
+     * If this content script is injected into the same page again, it will do
+     * nothing next time.
      */
 
-    if (window.hasRun) {
-        return;
-    }
+    if (window.hasRun) return null;
+
     window.hasRun = true;
 
-    browser.storage.sync.get("tailoredDomains").then(initialize, onError);
+    return new TailorableSearch(window);
 })();
 
-// function getStyle(themeInfo) {
-//     if (themeInfo.colors) {
-//         console.log("accent color : " + themeInfo.colors.accentcolor);
-//         console.log("toolbar : " + themeInfo.colors.toolbar);
-//     } else {
-//         console.log('no themeinfo');
-//     }
-
-//     console.log('getStyle ran');
-//     // document.querySelector('#popup-content').append(JSON.stringify(themeInfo));
-// }
-
-// async function getCurrentThemeInfo() {
-//     console.log(browser);
-//     var themeInfo = await browser.theme.getCurrent();
-//     getStyle(themeInfo);
-// }
+// Listen for extension-initiated messages
+browser.runtime.onMessage.addListener(request => {
+    // Re-tailor results on request
+    if (request.command === "reinitialize") {
+        currentSearch.tailorResults();
+    }
+});

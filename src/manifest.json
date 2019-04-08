@@ -12,15 +12,15 @@
             "id": "nick@brombal.com"
         }
     },
-    
+
     "icons": {
         "48": "assets/icons/black.svg",
         "96": "assets/icons/black.svg"
     },
 
     "browser_action": {
-      "default_icon": "assets/icons/search-light.svg",
-      "default_popup": "markup/popup.html"
+        "default_icon": "assets/icons/search-light.svg",
+        "default_popup": "markup/popup.html"
     },
 
     "permissions": ["theme", "storage", "tabs"],
@@ -33,12 +33,8 @@
                 "*://*.bing.com/search*",
                 "*://search.yahoo.com/search*"
             ],
-            "js": [
-                "scripts/addon.js"
-            ],
-            "css": [
-                "styles/addon.css"
-            ]
+            "js": ["scripts/addonData.js", "scripts/addon.js"],
+            "css": ["styles/addon.css"]
         }
     ]
 }
