@@ -1,10 +1,10 @@
 const entryTemplate = document.querySelector("template#entry");
 
-function onError(error) {
+function logError(error) {
     console.error(error);
 }
 
-/* Class representing an entry in the list of tailored domains */
+/* Class representing an entry in the list of tailored domains. */
 class TailoredDomainListEntry {
     /**
      * Initialize the list entry.
@@ -119,7 +119,8 @@ class TailoredDomainListEntry {
     }
 
     /**
-     * Remove the entry from its parent list, or reset it if it is the last entry.
+     * Remove the entry from its parent list, or reset it if it is the only
+     * remaining entry.
      */
     delete() {
         const numberOfEntries = this.parentList.entries.length;
@@ -190,7 +191,7 @@ class TailoredDomainList {
 
         browser.storage.sync
             .get("tailoredDomains")
-            .then(storageData => this.populate(storageData), onError);
+            .then(storageData => this.populate(storageData), logError);
     }
 
     /**
@@ -291,12 +292,12 @@ class TailoredDomainList {
             browser.tabs
                 .query({ url: allowedDomains })
                 .then(requestTabUpdate)
-                .catch(onError);
+                .catch(logError);
         }
 
         browser.storage.sync
             .set({ tailoredDomains: validTailoredDomains })
-            .then(getAffectedTabs, onError);
+            .then(getAffectedTabs, logError);
     }
 }
 
