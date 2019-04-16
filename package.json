@@ -55,6 +55,16 @@
         "parserOptions": {
             "ecmaVersion": 2018,
             "sourceType": "module"
+        },
+        "rules": {
+            "no-console": [
+                "warn",
+                {
+                    "allow": [
+                        "error"
+                    ]
+                }
+            ]
         }
     },
     "devDependencies": {
