@@ -7,6 +7,42 @@ html
 
     body
         main(id="search-tailor-options-panel")
+
+            div(class="search-tailor-option")
+                span(class="search-tailor-option__label") Search Engines
+                div(class="search-tailor-option__input-wrapper search-tailor-option__input-wrapper--enable-bing")
+                    input#bing(
+                        class="js-option-input"
+                        type="checkbox"
+                        name="bing"
+                        data-input-group="enableSearchEngine"
+                    )
+                    label(for="bing") Bing
+                div(class="search-tailor-option__input-wrapper search-tailor-option__input-wrapper--enable-duckduckgo")
+                    input#duckduckgo(
+                        class="js-option-input"
+                        type="checkbox"
+                        name="duckduckgo"
+                        data-input-group="enableSearchEngine"
+                    )
+                    label(for="duckduckgo") DuckDuckGo
+                div(class="search-tailor-option__input-wrapper search-tailor-option__input-wrapper--enable-google")
+                    input#google(
+                        class="js-option-input"
+                        type="checkbox"
+                        name="google"
+                        data-input-group="enableSearchEngine"
+                    )
+                    label(for="google") Google
+                div(class="search-tailor-option__input-wrapper search-tailor-option__input-wrapper--enable-yahoo")
+                    input#yahoo(
+                        class="js-option-input"
+                        type="checkbox"
+                        name="yahoo"
+                        data-input-group="enableSearchEngine"
+                    )
+                    label(for="yahoo") Yahoo!
+
             div(class="search-tailor-option")
                 span(class="search-tailor-option__label") JSON Export
                 div(class="search-tailor-option__input-wrapper search-tailor-option__input-wrapper--raw-json")
