@@ -76,7 +76,7 @@ class TailoredDomainListEntry {
      */
     bindEvents() {
         this.domainInput.addEventListener("change", () =>
-            this.parentList.synchronize()
+            this.parentList.syncToStorage()
         );
 
         this.domainInput.addEventListener("input", () =>
@@ -91,7 +91,7 @@ class TailoredDomainListEntry {
         });
 
         this.treatmentSelect.addEventListener("change", () =>
-            this.parentList.synchronize()
+            this.parentList.syncToStorage()
         );
 
         this.actionButtons.toggleEntryTreatment.addEventListener("click", () =>
@@ -137,7 +137,7 @@ class TailoredDomainListEntry {
             () => this.parentList.enableNewEntries(),
             () => this.parentList.disableNewEntries()
         );
-        this.parentList.synchronize();
+        this.parentList.syncToStorage();
     }
 
     /**
@@ -272,32 +272,14 @@ class TailoredDomainList {
      * Synchronize the list's current entries with the browser.storage API,
      * then reinitialize the addon in any tabs affected by the extension.
      */
-    synchronize() {
+    syncToStorage() {
         const validTailoredDomains = this.entryValues.filter(
             entryValueSet => entryValueSet.domain !== ""
         );
 
-        function getAffectedTabs() {
-            const addonManifest = browser.runtime.getManifest();
-            const allowedDomains = addonManifest.content_scripts[0].matches;
-
-            function requestTabUpdate(tabs) {
-                tabs.forEach(tab => {
-                    browser.tabs.sendMessage(tab.id, {
-                        command: "reinitialize",
-                    });
-                });
-            }
-
-            browser.tabs
-                .query({ url: allowedDomains })
-                .then(requestTabUpdate)
-                .catch(logError);
-        }
-
         browser.storage.sync
             .set({ tailoredDomains: validTailoredDomains })
-            .then(getAffectedTabs, logError);
+            .then(null, logError);
     }
 }
 

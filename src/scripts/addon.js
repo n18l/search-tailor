@@ -136,10 +136,5 @@ const currentSearch = (function initAddon() {
     return new TailorableSearch(window);
 })();
 
-// Listen for extension-initiated messages
-browser.runtime.onMessage.addListener(request => {
-    // Re-tailor results on request
-    if (request.command === "reinitialize") {
-        currentSearch.tailorResults();
-    }
-});
+// Listen for storage updates, retailoring on change
+browser.storage.onChanged.addListener(() => currentSearch.tailorResults());
