@@ -1,3 +1,5 @@
+/* global addonData */
+
 function logError(error) {
     console.error(error);
 }
