@@ -57,18 +57,20 @@ class TailoredSearchOptionsPanel {
      * Populate the option fields with current extension data.
      */
     populateOptions() {
-        browser.storage.sync.get("tailoredDomains").then(storageData => {
-            // Output the current Tailored Domains to the JSON Export field.
-            this.currentJSONExport = JSON.stringify(
-                storageData.tailoredDomains,
-                null,
-                4
-            );
-            this.inputs.jsonExport.value = this.currentJSONExport;
-            this.inputs.jsonExport.style.height = `${
-                this.inputs.jsonExport.scrollHeight
-            }px`;
-        }, logError);
+        browser.storage.sync
+            .get(addonData.defaultUserData)
+            .then(storageData => {
+                // Output the current Tailored Domains to the JSON Export field.
+                this.currentJSONExport = JSON.stringify(
+                    storageData.tailoredDomains,
+                    null,
+                    4
+                );
+                this.inputs.jsonExport.value = this.currentJSONExport;
+                this.inputs.jsonExport.style.height = `${
+                    this.inputs.jsonExport.scrollHeight
+                }px`;
+            }, logError);
     }
 
     /**
