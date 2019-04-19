@@ -28,14 +28,25 @@ class TailoredSearchOptionsPanel {
     }
 
     /**
-     * Identify and assign the option panel's inputs.
+     * Identify and assign the option panel's inputs as local properties.
      */
     defineInputs() {
         this.inputs = {};
-        const inputs = this.element.querySelectorAll(".js-option-input");
+        const allInputs = this.element.querySelectorAll(".js-option-input");
 
-        inputs.forEach(input => {
-            this.inputs[input.name || input.getAttribute("name")] = input;
+        allInputs.forEach(input => {
+            // Identify this input's name and group (if provided).
+            const inputName = input.name;
+            const { inputGroup } = input.dataset;
+
+            if (inputGroup) {
+                // If the input has a group, add it there, creating the group is necessary.
+                this.inputs[inputGroup] = this.inputs[inputGroup] || [];
+                this.inputs[inputGroup].push(input);
+            } else {
+                // Otherwise, simply add it under its own name.
+                this.inputs[inputName] = input;
+            }
         });
     }
 
