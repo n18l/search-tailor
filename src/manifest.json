@@ -36,5 +36,9 @@
             "js": ["scripts/addonData.js", "scripts/addon.js"],
             "css": ["styles/addon.css"]
         }
-    ]
+    ],
+
+    "options_ui": {
+        "page": "markup/options.html"
+    }
 }

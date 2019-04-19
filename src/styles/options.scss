@@ -1,0 +1,102 @@
+@import "reset";
+
+#search-tailor-options-panel {
+    margin: 10px;
+}
+
+.search-tailor-option {
+    &:not(:first-child) {
+        margin-top: 10px;
+    }
+
+    &__label {
+    }
+
+    &__input-wrapper {
+        $this-wrapper: &;
+        margin-top: 5px;
+        position: relative;
+
+        &--raw-json {
+            resize: vertical;
+            min-height: 200px;
+            height: 200px;
+            overflow: scroll;
+            background-color: #252525;
+            border-radius: 4px;
+            border-bottom-right-radius: 2px;
+        }
+
+        &::after {
+            content: attr(data-validation-message);
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 32px;
+            padding: 8px 12px;
+            background-color: hsl(0, 100%, 50%, 0.35);
+            color: hsl(0, 100%, 100%);
+            opacity: 0;
+            transition: opacity 0.25s;
+
+            @at-root #{$this-wrapper}[data-validation-message]:not([data-validation-message=""])::after {
+                opacity: 1;
+            }
+        }
+    }
+
+    &__input {
+        &--raw-json {
+            resize: none;
+            width: 100%;
+            border: 0;
+            background-color: transparent;
+            color: #e6e6e6;
+            margin: 0;
+            padding: 10px;
+            min-height: 100%;
+            position: relative;
+        }
+    }
+
+    &__action-container {
+        margin-top: 10px;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    &__action {
+        all: unset;
+        border: 1px solid hsl(0, 0%, 88%);
+        border-radius: 4px;
+        cursor: pointer;
+        color: hsl(0, 0%, 30%);
+        font-size: 1.2rem;
+        font-weight: 600;
+        letter-spacing: 0.05rem;
+        padding: 8px 14px;
+        text-transform: uppercase;
+
+        &:hover {
+            background-color: hsl(0, 0%, 88%);
+        }
+
+        &:focus {
+            border-color: hsl(200, 100%, 75%);
+        }
+
+        &:active {
+            background-color: hsl(0, 0%, 75%);
+            border-color: hsl(0, 0%, 75%);
+        }
+
+        &::-moz-focus-inner {
+            border: 0;
+        }
+
+        & + & {
+            margin-left: 6px;
+        }
+    }
+}

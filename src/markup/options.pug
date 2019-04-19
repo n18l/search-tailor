@@ -1,0 +1,34 @@
+doctype html
+
+html
+    head
+        meta(charset="utf-8")
+        link(rel="stylesheet" href="../styles/options.css")
+
+    body
+        main(id="search-tailor-options-panel")
+            div(class="search-tailor-option")
+                span(class="search-tailor-option__label") JSON Export
+                div(class="search-tailor-option__input-wrapper search-tailor-option__input-wrapper--raw-json")
+                    textarea(
+                        class="search-tailor-option__input search-tailor-option__input--raw-json js-option-input"
+                        name="jsonExport"
+                        spellcheck="false"
+                        readonly
+                    )
+                div(class="search-tailor-option__action-container")
+                    button(class="search-tailor-option__action" data-click-action="copyJSON") Copy
+
+            form(class="search-tailor-option")
+                span(class="search-tailor-option__label") JSON Import
+                div(class="search-tailor-option__input-wrapper search-tailor-option__input-wrapper--raw-json" data-validation-message="")
+                    textarea(
+                        class="search-tailor-option__input search-tailor-option__input--raw-json js-option-input"
+                        name="jsonImport"
+                        spellcheck="false"
+                    )
+                div(class="search-tailor-option__action-container")
+                    button(type="button" class="search-tailor-option__action" data-click-action="clearJSON") Clear
+                    button(type="button" class="search-tailor-option__action" data-click-action="importJSON") Import
+        
+        script(src="../scripts/options.js")
