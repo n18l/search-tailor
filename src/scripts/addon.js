@@ -99,7 +99,7 @@ class TailorableSearch {
         };
 
         browser.storage.sync
-            .get("tailoredDomains")
+            .get(addonData.defaultUserData)
             .then(applyTailoringTreatments, logError);
     }
 
