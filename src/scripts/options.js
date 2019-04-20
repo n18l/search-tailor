@@ -112,6 +112,18 @@ class TailoredSearchOptionsPanel {
      * Attach event handlers.
      */
     bindEvents() {
+        // Update and sync the search engine settings when checking/unchecking a search engine.
+        this.inputs.enableSearchEngine.forEach(input => {
+            input.addEventListener("input", e => {
+                this.currentSearchEngines[e.target.name].enabled =
+                    e.target.checked;
+
+                browser.storage.sync
+                    .set({ searchEngines: this.currentSearchEngines })
+                    .then(null, logError);
+            });
+        });
+
         // Automatically adjust the JSON Export textarea's height.
         this.inputs.jsonExport.addEventListener("input", () => {
             this.inputs.jsonExport.style.height = `${
