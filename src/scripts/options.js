@@ -71,16 +71,28 @@ class TailoredSearchOptionsPanel {
         browser.storage.sync
             .get(addonData.defaultUserData)
             .then(storageData => {
-                // Output the current Tailored Domains to the JSON Export field.
+                // Create a local, formatted copy of the current Tailored Domain settings.
                 this.currentJSONExport = JSON.stringify(
                     storageData.tailoredDomains,
                     null,
                     4
                 );
+
+                // Populate the JSON Export field and resize it so it can be scrolled cleanly.
                 this.inputs.jsonExport.value = this.currentJSONExport;
                 this.inputs.jsonExport.style.height = `${
                     this.inputs.jsonExport.scrollHeight
                 }px`;
+
+                // Create a local copy of the Search Engine settings.
+                this.currentSearchEngines = storageData.searchEngines;
+
+                // Set each Search Engine checkbox to match its "enabled" setting.
+                this.inputs.enableSearchEngine.forEach((input, index) => {
+                    this.inputs.enableSearchEngine[
+                        index
+                    ].checked = this.currentSearchEngines[input.name].enabled;
+                });
             }, logError);
     }
 
