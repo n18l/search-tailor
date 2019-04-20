@@ -51,16 +51,16 @@ const addonData = {
     defaultUserData: {
         tailoredDomains: [],
         searchEngines: {
-            google: {
+            Google: {
                 enabled: false,
             },
-            duckduckgo: {
+            DuckDuckGo: {
                 enabled: true,
             },
-            bing: {
+            Bing: {
                 enabled: true,
             },
-            yahoo: {
+            "Yahoo!": {
                 enabled: true,
             },
         },
