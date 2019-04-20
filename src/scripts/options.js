@@ -125,7 +125,9 @@ class TailoredSearchOptionsPanel {
 
             // Otherwise, update the current extension data with the valid JSON.
             browser.storage.sync
-                .set({ tailoredDomains: JSON.parse(currentImportContent) })
+                .set({
+                    tailoredDomains: JSON.parse(this.inputs.jsonImport.value),
+                })
                 .then(null, logError);
         });
     }
