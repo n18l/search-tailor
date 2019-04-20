@@ -19,6 +19,7 @@ class TailorableSearch {
         this.searchEngine = addonData.searchEngines.find(searchEngine =>
             RegExp(searchEngine.matchPattern).test(searchWindow.location)
         );
+
         if (!this.searchEngine) return false;
 
         this.tailorResults();
