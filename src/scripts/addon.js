@@ -19,6 +19,7 @@ class TailorableSearch {
         this.searchEngine = addonData.searchEngines.find(searchEngine =>
             RegExp(searchEngine.matchPattern).test(searchWindow.location)
         );
+
         if (!this.searchEngine) return false;
 
         this.tailorResults();
@@ -73,6 +74,9 @@ class TailorableSearch {
          * @param {object} storageData - Freshly retrieved data from the extension's synchronized storage.
          */
         const applyTailoringTreatments = storageData => {
+            if (!storageData.searchEngines[this.searchEngine.name].enabled)
+                return;
+
             // If this search engine loads results asynchronously, watch its
             // results container for changes.
             if (this.searchEngine.observe) this.setUpObserver();
@@ -98,7 +102,7 @@ class TailorableSearch {
         };
 
         browser.storage.sync
-            .get("tailoredDomains")
+            .get(addonData.defaultUserData)
             .then(applyTailoringTreatments, logError);
     }
 

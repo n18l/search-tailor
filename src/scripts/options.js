@@ -1,3 +1,5 @@
+/* global addonData */
+
 function logError(error) {
     console.error(error);
 }
@@ -26,14 +28,25 @@ class TailoredSearchOptionsPanel {
     }
 
     /**
-     * Identify and assign the option panel's inputs.
+     * Identify and assign the option panel's inputs as local properties.
      */
     defineInputs() {
         this.inputs = {};
-        const inputs = this.element.querySelectorAll(".js-option-input");
+        const allInputs = this.element.querySelectorAll(".js-option-input");
 
-        inputs.forEach(input => {
-            this.inputs[input.name || input.getAttribute("name")] = input;
+        allInputs.forEach(input => {
+            // Identify this input's name and group (if provided).
+            const inputName = input.name;
+            const { inputGroup } = input.dataset;
+
+            if (inputGroup) {
+                // If the input has a group, add it there, creating the group is necessary.
+                this.inputs[inputGroup] = this.inputs[inputGroup] || [];
+                this.inputs[inputGroup].push(input);
+            } else {
+                // Otherwise, simply add it under its own name.
+                this.inputs[inputName] = input;
+            }
         });
     }
 
@@ -55,18 +68,32 @@ class TailoredSearchOptionsPanel {
      * Populate the option fields with current extension data.
      */
     populateOptions() {
-        browser.storage.sync.get("tailoredDomains").then(storageData => {
-            // Output the current Tailored Domains to the JSON Export field.
-            this.currentJSONExport = JSON.stringify(
-                storageData.tailoredDomains,
-                null,
-                4
-            );
-            this.inputs.jsonExport.value = this.currentJSONExport;
-            this.inputs.jsonExport.style.height = `${
-                this.inputs.jsonExport.scrollHeight
-            }px`;
-        }, logError);
+        browser.storage.sync
+            .get(addonData.defaultUserData)
+            .then(storageData => {
+                // Create a local, formatted copy of the current Tailored Domain settings.
+                this.currentJSONExport = JSON.stringify(
+                    storageData.tailoredDomains,
+                    null,
+                    4
+                );
+
+                // Populate the JSON Export field and resize it so it can be scrolled cleanly.
+                this.inputs.jsonExport.value = this.currentJSONExport;
+                this.inputs.jsonExport.style.height = `${
+                    this.inputs.jsonExport.scrollHeight
+                }px`;
+
+                // Create a local copy of the Search Engine settings.
+                this.currentSearchEngines = storageData.searchEngines;
+
+                // Set each Search Engine checkbox to match its "enabled" setting.
+                this.inputs.enableSearchEngine.forEach((input, index) => {
+                    this.inputs.enableSearchEngine[
+                        index
+                    ].checked = this.currentSearchEngines[input.name].enabled;
+                });
+            }, logError);
     }
 
     /**
@@ -85,6 +112,18 @@ class TailoredSearchOptionsPanel {
      * Attach event handlers.
      */
     bindEvents() {
+        // Update and sync the search engine settings when checking/unchecking a search engine.
+        this.inputs.enableSearchEngine.forEach(input => {
+            input.addEventListener("input", e => {
+                this.currentSearchEngines[e.target.name].enabled =
+                    e.target.checked;
+
+                browser.storage.sync
+                    .set({ searchEngines: this.currentSearchEngines })
+                    .then(null, logError);
+            });
+        });
+
         // Automatically adjust the JSON Export textarea's height.
         this.inputs.jsonExport.addEventListener("input", () => {
             this.inputs.jsonExport.style.height = `${

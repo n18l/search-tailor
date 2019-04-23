@@ -7,6 +7,43 @@ html
 
     body
         main(id="search-tailor-options-panel")
+
+            -
+                var searchEngines = [
+                    { name: "Bing", id: "bing" },
+                    { name: "DuckDuckGo", id: "duckduckgo" },
+                    { name: "Google", id: "google" },
+                    { name: "Yahoo!", id: "yahoo" },
+                ];
+
+            div(class="search-tailor-option")
+                span(class="search-tailor-option__label") Search Engines
+                    mixin searchEngineToggle(searchEngine)
+                        label(
+                            class=[
+                                `search-tailor-option__input-wrapper`,
+                                `search-tailor-option__input-wrapper--toggle`,
+                            ]
+                        )
+                            input(
+                                id=searchEngine.id
+                                class=[
+                                    `search-tailor-option__input`,
+                                    `search-tailor-option__input--toggle`,
+                                    `js-option-input`,
+                                ]
+                                type="checkbox"
+                                name=searchEngine.name
+                                data-input-group="enableSearchEngine"
+                            )
+                            span(class="toggle-switch")
+                                span(class="toggle-switch__track")
+                                span(class="toggle-switch__nub")
+                            span(class="search-tailor-option__input--toggle__label")= searchEngine.name
+
+                    each searchEngine in searchEngines
+                        +searchEngineToggle(searchEngine)
+
             div(class="search-tailor-option")
                 span(class="search-tailor-option__label") JSON Export
                 div(class="search-tailor-option__input-wrapper search-tailor-option__input-wrapper--raw-json")
@@ -31,4 +68,5 @@ html
                     button(type="button" class="search-tailor-option__action" data-click-action="clearJSON") Clear
                     button(type="button" class="search-tailor-option__action" data-click-action="importJSON") Import
         
+        script(src="../scripts/addonData.js")
         script(src="../scripts/options.js")

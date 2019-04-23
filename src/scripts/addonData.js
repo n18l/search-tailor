@@ -47,4 +47,22 @@ const addonData = {
             observe: false,
         },
     ],
+
+    defaultUserData: {
+        tailoredDomains: [],
+        searchEngines: {
+            Google: {
+                enabled: true,
+            },
+            DuckDuckGo: {
+                enabled: true,
+            },
+            Bing: {
+                enabled: true,
+            },
+            "Yahoo!": {
+                enabled: true,
+            },
+        },
+    },
 };
