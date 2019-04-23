@@ -19,15 +19,27 @@ html
             div(class="search-tailor-option")
                 span(class="search-tailor-option__label") Search Engines
                     mixin searchEngineToggle(searchEngine)
-                        div(class="search-tailor-option__input-wrapper search-tailor-option__input-wrapper--enable-" + searchEngine.id)
+                        label(
+                            class=[
+                                `search-tailor-option__input-wrapper`,
+                                `search-tailor-option__input-wrapper--toggle`,
+                            ]
+                        )
                             input(
                                 id=searchEngine.id
-                                class="js-option-input"
+                                class=[
+                                    `search-tailor-option__input`,
+                                    `search-tailor-option__input--toggle`,
+                                    `js-option-input`,
+                                ]
                                 type="checkbox"
                                 name=searchEngine.name
                                 data-input-group="enableSearchEngine"
                             )
-                            label(for=searchEngine.id)= searchEngine.name
+                            span(class="toggle-switch")
+                                span(class="toggle-switch__track")
+                                span(class="toggle-switch__nub")
+                            span(class="search-tailor-option__input--toggle__label")= searchEngine.name
 
                     each searchEngine in searchEngines
                         +searchEngineToggle(searchEngine)
