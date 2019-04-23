@@ -52,7 +52,7 @@ const addonData = {
         tailoredDomains: [],
         searchEngines: {
             Google: {
-                enabled: false,
+                enabled: true,
             },
             DuckDuckGo: {
                 enabled: true,
