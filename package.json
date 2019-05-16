@@ -31,7 +31,8 @@
         "*.{js,json,scss}": [
             "prettier --write",
             "git add"
-        ]
+        ],
+        "ignore": ["**/*.min.js"]
     },
     "prettier": {
         "tabWidth": 4,

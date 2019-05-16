@@ -35,10 +35,20 @@ main {
     height: 65px;
     display: flex;
 
+    &__sort-handle {
+        align-self: center;
+        cursor: move;
+
+        &__icon {
+            display: block;
+        }
+    }
+
     &__input-wrapper {
         flex: 1 1 100%;
         display: flex;
         margin: 15px;
+        margin-left: 2px;
         position: relative;
         overflow: hidden;
     }
