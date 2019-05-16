@@ -1,3 +1,5 @@
+/* global Sortable */
+
 const entryTemplate = document.querySelector("template#entry");
 
 function logError(error) {
@@ -251,6 +253,17 @@ class TailoredDomainList {
     }
 
     /**
+     * Update the order of the list's entries.
+     * @param {integer} fromIndex - The index of the entry being reordered.
+     * @param {integer} toIndex - The index where the reordered entry should be placed.
+     */
+    reorderEntry(fromIndex, toIndex) {
+        const entryToMove = this.entries.splice(fromIndex, 1)[0];
+        this.entries.splice(toIndex, 0, entryToMove);
+        this.syncToStorage();
+    }
+
+    /**
      * Validate each of the list's entries.
      * @param {function} [validCallback] - A function to call if all entries are valid.
      * @param {function} [invalidCallback] - A function to call if any entries are invalid.
@@ -284,5 +297,18 @@ class TailoredDomainList {
 }
 
 (function initPopup() {
-    return new TailoredDomainList(document.querySelector(".entry-list"));
+    const entryList = document.querySelector(".entry-list");
+    const currentTailoredDomainList = new TailoredDomainList(entryList);
+    const currentSortableDomainList = new Sortable(entryList, {
+        handle: '.js-sort-handle',
+        animation: 150,
+        onUpdate(event) {
+            currentTailoredDomainList.reorderEntry(event.oldIndex, event.newIndex);
+        },
+    });
+
+    return {
+        currentTailoredDomainList,
+        currentSortableDomainList,
+    }
 })();
