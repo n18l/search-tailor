@@ -50,6 +50,16 @@ const addonData = {
 
     defaultUserData: {
         tailoredDomains: [],
+        tailoringTemplates: [
+            {
+                id: "default",
+                label: "Default",
+                backgroundColor: "#007F00",
+                backgroundOpacity: ".25",
+                borderColor: "#19E54C",
+                borderOpacity: ".35",
+            }
+        ],
         searchEngines: {
             Google: {
                 enabled: true,
