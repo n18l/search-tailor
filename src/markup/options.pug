@@ -8,6 +8,25 @@ html
     body
         main(id="search-tailor-options-panel")
 
+            div(class="search-tailor-option")
+                span(class="search-tailor-option__label") Tailoring Templates
+                div(class="search-tailor-option__input-wrapper")
+                    ul(class="tailoring-template-list" id="search-tailor-tailoring-templates")
+                        template#tailoring-template
+                            li(class="tailoring-template js-tailoring-template")
+                                input(class="tailoring-template__id-input js-template-id-input" type="text" hidden readonly)
+                                input(class="tailoring-template__label-input js-template-label-input" type="text" placeholder="template label")
+                                input(class="tailoring-template__background-color-input js-template-background-color-input" type="color")
+                                input(class="tailoring-template__background-opacity-input js-template-background-opacity-input" type="range" min="0" max="1" step=".01" value="1")
+                                input(class="tailoring-template__border-color-input js-template-border-color-input" type="color")
+                                input(class="tailoring-template__border-opacity-input js-template-border-opacity-input" type="range" min="0" max="1" step=".01" value="1")
+
+                                div(class="tailoring-template__actions")
+                                    button(class="tailoring-template__action" data-click-action="deleteTemplate") Delete
+
+                div(class="search-tailor-option__action-container")
+                    button(class="search-tailor-option__action" data-click-action="addTemplate") Add New
+
             -
                 var searchEngines = [
                     { name: "Bing", id: "bing" },
