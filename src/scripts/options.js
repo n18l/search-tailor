@@ -73,7 +73,7 @@ class TailoredSearchOptionsPanel {
             .then(storageData => {
                 // Create a local, formatted copy of the current Tailored Domain settings.
                 this.currentJSONExport = JSON.stringify(
-                    storageData.tailoredDomains,
+                    storageData,
                     null,
                     4
                 );
@@ -164,9 +164,7 @@ class TailoredSearchOptionsPanel {
 
             // Otherwise, update the current extension data with the valid JSON.
             browser.storage.sync
-                .set({
-                    tailoredDomains: JSON.parse(this.inputs.jsonImport.value),
-                })
+                .set(JSON.parse(this.inputs.jsonImport.value))
                 .then(null, logError);
         });
     }
