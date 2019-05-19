@@ -1,6 +1,7 @@
-/* global Sortable */
+/* global addonData, Sortable */
 
 const entryTemplate = document.querySelector("template#entry");
+const swatchTemplate = document.querySelector("template#swatch");
 
 function logError(error) {
     console.error(error);
@@ -11,33 +12,55 @@ class TailoredDomainListEntry {
     /**
      * Initialize the list entry.
      * @param {object} parentTailoredDomainList - The list object to add this entry to.
-     * @param {string} [tailoredDomainSettings] - An object containing the settings to use for this entry.
+     * @param {object} [tailoredDomainSettings] - An object containing the settings to use for this entry.
      */
     constructor(
         parentTailoredDomainList,
         tailoredDomainSettings = {
             domain: "",
+            tailoringTemplateID: "",
             treatment: null,
         }
     ) {
         this.parentList = parentTailoredDomainList;
+        this.currentTailoringTemplates =
+            this.parentList.tailoringTemplates ||
+            addonData.defaultUserData.tailoringTemplates;
         this.element = document
             .importNode(entryTemplate.content, true)
             .querySelector(".js-entry");
+
         this.domainInput = this.element.querySelector(".js-entry-domain-input");
+        this.tailoringTemplateIDInput = this.element.querySelector(
+            ".js-entry-tailoring-template-id-input"
+        );
         this.treatmentSelect = this.element.querySelector(
             ".js-entry-treatment-select"
         );
+
         this.treatmentOptions = Array.from(this.treatmentSelect.options).map(
             option => option.value
         );
 
+        this.swatchDrawer = this.element.querySelector(".js-swatch-drawer");
+
+        this.populateSwatchDrawer();
         this.defineActions();
         this.bindEvents();
 
         if (tailoredDomainSettings.domain) {
             this.domainInput.value = tailoredDomainSettings.domain;
         }
+
+        this.tailoringTemplateIDInput.value = this.getTailoringTemplateByID(
+            tailoredDomainSettings.tailoringTemplateID
+        )
+            ? tailoredDomainSettings.tailoringTemplateID
+            : this.currentTailoringTemplates[0].id;
+        this.updateActiveTailoringTemplateSwatch(
+            this.actionButtons.toggleSwatchDrawer,
+            this.tailoringTemplateIDInput.value
+        );
 
         if (tailoredDomainSettings.treatment) {
             this.treatmentSelect.value = tailoredDomainSettings.treatment;
@@ -55,6 +78,7 @@ class TailoredDomainListEntry {
     get value() {
         return {
             domain: this.domainInput.value,
+            tailoringTemplateID: this.tailoringTemplateIDInput.value,
             treatment: this.treatmentSelect.value,
         };
     }
@@ -71,13 +95,23 @@ class TailoredDomainListEntry {
 
         actionButtons.forEach(actionButton => {
             if (this.actionButtons[actionButton.dataset.clickAction]) {
-                if (!Array.isArray(this.actionButtons[actionButton.dataset.clickAction])) {
-                    this.actionButtons[actionButton.dataset.clickAction] = [this.actionButtons[actionButton.dataset.clickAction]];
+                if (
+                    !Array.isArray(
+                        this.actionButtons[actionButton.dataset.clickAction]
+                    )
+                ) {
+                    this.actionButtons[actionButton.dataset.clickAction] = [
+                        this.actionButtons[actionButton.dataset.clickAction],
+                    ];
                 }
 
-                this.actionButtons[actionButton.dataset.clickAction].push(actionButton);
+                this.actionButtons[actionButton.dataset.clickAction].push(
+                    actionButton
+                );
             } else {
-                this.actionButtons[actionButton.dataset.clickAction] = actionButton;
+                this.actionButtons[
+                    actionButton.dataset.clickAction
+                ] = actionButton;
             }
         });
     }
@@ -101,6 +135,14 @@ class TailoredDomainListEntry {
             if (e.key === " ") e.preventDefault();
         });
 
+        this.tailoringTemplateIDInput.addEventListener("change", e => {
+            this.updateActiveTailoringTemplateSwatch(
+                this.actionButtons.toggleSwatchDrawer,
+                e.target.value
+            );
+            this.parentList.syncToStorage();
+        });
+
         this.treatmentSelect.addEventListener("change", () =>
             this.parentList.syncToStorage()
         );
@@ -120,6 +162,88 @@ class TailoredDomainListEntry {
         this.actionButtons.deleteEntry.addEventListener("click", () =>
             this.delete()
         );
+
+        this.actionButtons.toggleSwatchDrawer.addEventListener("click", () =>
+            this.toggleSwatchDrawer()
+        );
+
+        if (Array.isArray(this.actionButtons.selectTailoringTemplate)) {
+            this.actionButtons.selectTailoringTemplate.forEach(
+                selectTailoringTemplateButton => {
+                    selectTailoringTemplateButton.addEventListener(
+                        "click",
+                        e => {
+                            this.updateEntryTailoringTemplate(
+                                e.target.tailoringTemplate.id
+                            );
+                        }
+                    );
+                }
+            );
+        } else {
+            this.actionButtons.selectTailoringTemplate.addEventListener(
+                "click",
+                e => {
+                    this.updateEntryTailoringTemplate(
+                        e.target.tailoringTemplate.id
+                    );
+                }
+            );
+        }
+    }
+
+    updateEntryTailoringTemplate(newTemplateID) {
+        this.tailoringTemplateIDInput.value = newTemplateID;
+        this.tailoringTemplateIDInput.dispatchEvent(new Event("change"));
+    }
+
+    getTailoringTemplateByID(templateID) {
+        return this.currentTailoringTemplates.find(
+            template => template.id === templateID
+        );
+    }
+
+    populateSwatchDrawer() {
+        this.swatchList = this.swatchDrawer.querySelector(".js-swatch-list");
+
+        this.currentTailoringTemplates.forEach(tailoringTemplate => {
+            const swatchWrapper = document
+                .importNode(swatchTemplate.content, true)
+                .querySelector(".js-swatch-wrapper");
+
+            const swatch = swatchWrapper.querySelector(".js-swatch");
+
+            swatch.tailoringTemplate = tailoringTemplate;
+
+            this.updateActiveTailoringTemplateSwatch(
+                swatch,
+                tailoringTemplate.id
+            );
+
+            this.swatchList.appendChild(swatchWrapper);
+        });
+    }
+
+    updateActiveTailoringTemplateSwatch(swatchElement, tailoringTemplateID) {
+        const swatch = swatchElement;
+        const newTailoringTemplate = this.getTailoringTemplateByID(
+            tailoringTemplateID
+        );
+
+        const backgroundOpacityHexString = Math.round(
+            255 * newTailoringTemplate.backgroundOpacity
+        ).toString(16);
+        const borderOpacityHexString = Math.round(
+            255 * newTailoringTemplate.borderOpacity
+        ).toString(16);
+
+        swatch.style.backgroundColor = `${
+            newTailoringTemplate.backgroundColor
+        }${backgroundOpacityHexString}`;
+        swatch.style.borderColor = `${
+            newTailoringTemplate.borderColor
+        }${borderOpacityHexString}`;
+        swatch.title = newTailoringTemplate.label;
     }
 
     /**
@@ -127,6 +251,7 @@ class TailoredDomainListEntry {
      */
     reset() {
         this.domainInput.value = "";
+        [this.tailoringTemplateIDInput.value] = this.currentTailoringTemplates;
     }
 
     /**
@@ -183,6 +308,32 @@ class TailoredDomainListEntry {
         this.treatmentSelect.dispatchEvent(new Event("change"));
         this.actionButtons.toggleEntryTreatment.dataset.activeTreatment = targetTreatmentOption;
     }
+
+    toggleSwatchDrawer() {
+        const swatchDrawerOpenClass = "entry__swatch-drawer--is-open";
+        const swatchDrawerIsOpen = this.swatchDrawer.classList.contains(
+            swatchDrawerOpenClass
+        );
+        this.swatchDrawer.classList[swatchDrawerIsOpen ? "remove" : "add"](
+            swatchDrawerOpenClass
+        );
+    }
+
+    selectTailoringTemplate(tailoringTemplate) {
+        const backgroundOpacityHexString = Math.round(
+            255 * tailoringTemplate.backgroundOpacity
+        ).toString(16);
+        const borderOpacityHexString = Math.round(
+            255 * tailoringTemplate.borderOpacity
+        ).toString(16);
+
+        this.actionButtons.selectTailoringTemplate.style.backgroundColor = `${
+            tailoringTemplate.backgroundColor
+        }${backgroundOpacityHexString}`;
+        this.actionButtons.selectTailoringTemplate.style.borderColor = `${
+            tailoringTemplate.borderColor
+        }${borderOpacityHexString}`;
+    }
 }
 
 /** Class representing the interactive list of tailored domains. */
@@ -201,8 +352,11 @@ class TailoredDomainList {
         this.bindEvents();
 
         browser.storage.sync
-            .get("tailoredDomains")
-            .then(storageData => this.populate(storageData), logError);
+            .get(["tailoredDomains", "tailoringTemplates"])
+            .then(storageData => {
+                this.tailoringTemplates = storageData.tailoringTemplates;
+                this.populate(storageData);
+            }, logError);
     }
 
     /**
@@ -309,15 +463,18 @@ class TailoredDomainList {
     const entryList = document.querySelector(".entry-list");
     const currentTailoredDomainList = new TailoredDomainList(entryList);
     const currentSortableDomainList = new Sortable(entryList, {
-        handle: '.js-sort-handle',
+        handle: ".js-sort-handle",
         animation: 150,
         onUpdate(event) {
-            currentTailoredDomainList.reorderEntry(event.oldIndex, event.newIndex);
+            currentTailoredDomainList.reorderEntry(
+                event.oldIndex,
+                event.newIndex
+            );
         },
     });
 
     return {
         currentTailoredDomainList,
         currentSortableDomainList,
-    }
+    };
 })();
