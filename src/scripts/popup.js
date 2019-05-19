@@ -60,7 +60,8 @@ class TailoredDomainListEntry {
     }
 
     /**
-     * Identify and assign the entry's action buttons.
+     * Identify and assign the entry's action buttons. If multiple buttons with
+     * the same action are found, define them as an array.
      */
     defineActions() {
         this.actionButtons = {};
@@ -69,7 +70,15 @@ class TailoredDomainListEntry {
         );
 
         actionButtons.forEach(actionButton => {
-            this.actionButtons[actionButton.dataset.clickAction] = actionButton;
+            if (this.actionButtons[actionButton.dataset.clickAction]) {
+                if (!Array.isArray(this.actionButtons[actionButton.dataset.clickAction])) {
+                    this.actionButtons[actionButton.dataset.clickAction] = [this.actionButtons[actionButton.dataset.clickAction]];
+                }
+
+                this.actionButtons[actionButton.dataset.clickAction].push(actionButton);
+            } else {
+                this.actionButtons[actionButton.dataset.clickAction] = actionButton;
+            }
         });
     }
 
