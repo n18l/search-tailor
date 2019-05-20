@@ -22,28 +22,7 @@ class TailoredDomainListEntry {
             treatment: null,
         }
     ) {
-        this.parentList = parentTailoredDomainList;
-        this.currentTailoringTemplates =
-            this.parentList.tailoringTemplates ||
-            addonData.defaultUserData.tailoringTemplates;
-        this.element = document
-            .importNode(entryTemplate.content, true)
-            .querySelector(".js-entry");
-
-        this.domainInput = this.element.querySelector(".js-entry-domain-input");
-        this.tailoringTemplateIDInput = this.element.querySelector(
-            ".js-entry-tailoring-template-id-input"
-        );
-        this.treatmentSelect = this.element.querySelector(
-            ".js-entry-treatment-select"
-        );
-
-        this.treatmentOptions = Array.from(this.treatmentSelect.options).map(
-            option => option.value
-        );
-
-        this.swatchDrawer = this.element.querySelector(".js-swatch-drawer");
-
+        this.cacheData(parentTailoredDomainList);
         this.populateSwatchDrawer();
         this.defineActions();
         this.bindEvents();
@@ -56,7 +35,7 @@ class TailoredDomainListEntry {
             tailoredDomainSettings.tailoringTemplateID
         )
             ? tailoredDomainSettings.tailoringTemplateID
-            : this.currentTailoringTemplates[0].id;
+            : this.parentList.tailoringTemplates[0].id;
         this.updateActiveTailoringTemplateSwatch(
             this.actionButtons.toggleSwatchDrawer,
             this.tailoringTemplateIDInput.value
@@ -84,8 +63,38 @@ class TailoredDomainListEntry {
     }
 
     /**
-     * Identify and assign the entry's action buttons. If multiple buttons with
-     * the same action are found, define them as an array.
+     * Cache selectors and other immutable data for this entry.
+     */
+    cacheData(parentTailoredDomainList) {
+        // This entry.
+        this.element = document
+            .importNode(entryTemplate.content, true)
+            .querySelector(".js-entry");
+
+        // The list object containing this entry.
+        this.parentList = parentTailoredDomainList;
+
+        // Input elements for this entry.
+        this.domainInput = this.element.querySelector(".js-entry-domain-input");
+        this.tailoringTemplateIDInput = this.element.querySelector(
+            ".js-entry-tailoring-template-id-input"
+        );
+        this.treatmentSelect = this.element.querySelector(
+            ".js-entry-treatment-select"
+        );
+
+        // Options from the treatment select input.
+        this.treatmentOptions = Array.from(this.treatmentSelect.options).map(
+            option => option.value
+        );
+
+        // The drawer and list elements for tailoring template swatches.
+        this.swatchDrawer = this.element.querySelector(".js-swatch-drawer");
+        this.swatchList = this.swatchDrawer.querySelector(".js-swatch-list");
+    }
+
+    /**
+     * Identify and assign the entry's action buttons.
      */
     defineActions() {
         this.actionButtons = {};
@@ -198,15 +207,13 @@ class TailoredDomainListEntry {
     }
 
     getTailoringTemplateByID(templateID) {
-        return this.currentTailoringTemplates.find(
+        return this.parentList.tailoringTemplates.find(
             template => template.id === templateID
         );
     }
 
     populateSwatchDrawer() {
-        this.swatchList = this.swatchDrawer.querySelector(".js-swatch-list");
-
-        this.currentTailoringTemplates.forEach(tailoringTemplate => {
+        this.parentList.tailoringTemplates.forEach(tailoringTemplate => {
             const swatchWrapper = document
                 .importNode(swatchTemplate.content, true)
                 .querySelector(".js-swatch-wrapper");
@@ -251,7 +258,9 @@ class TailoredDomainListEntry {
      */
     reset() {
         this.domainInput.value = "";
-        [this.tailoringTemplateIDInput.value] = this.currentTailoringTemplates;
+        [
+            this.tailoringTemplateIDInput.value,
+        ] = this.parentList.tailoringTemplates;
     }
 
     /**
@@ -354,7 +363,9 @@ class TailoredDomainList {
         browser.storage.sync
             .get(["tailoredDomains", "tailoringTemplates"])
             .then(storageData => {
-                this.tailoringTemplates = storageData.tailoringTemplates;
+                this.tailoringTemplates =
+                    storageData.tailoringTemplates ||
+                    addonData.defaultUserData.tailoringTemplates;
                 this.populate(storageData);
             }, logError);
     }
