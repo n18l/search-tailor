@@ -79,11 +79,7 @@ class TailoredSearchOptionsPanel {
             .get(addonData.defaultUserData)
             .then(storageData => {
                 // Create a local, formatted copy of the current Tailored Domain settings.
-                this.currentJSONExport = JSON.stringify(
-                    storageData,
-                    null,
-                    4
-                );
+                this.currentJSONExport = JSON.stringify(storageData, null, 4);
 
                 // Populate the JSON Export field and resize it so it can be scrolled cleanly.
                 this.inputs.jsonExport.value = this.currentJSONExport;
@@ -177,8 +173,9 @@ class TailoredSearchOptionsPanel {
     }
 }
 
-
-const tailoringTemplateTemplate = document.querySelector("template#tailoring-template");
+const tailoringTemplateTemplate = document.querySelector(
+    "template#tailoring-template"
+);
 
 /* Class representing an entry in the list of tailored domains. */
 class TailoringTemplate {
@@ -192,10 +189,15 @@ class TailoringTemplate {
         tailoringTemplateSettings = {
             id: generateID(),
             label: "",
-            backgroundColor: addonData.defaultUserData.tailoringTemplates[0].backgroundColor,
-            backgroundOpacity: addonData.defaultUserData.tailoringTemplates[0].backgroundOpacity,
-            borderColor: addonData.defaultUserData.tailoringTemplates[0].borderColor,
-            borderOpacity: addonData.defaultUserData.tailoringTemplates[0].borderOpacity,
+            backgroundColor:
+                addonData.defaultUserData.tailoringTemplates[0].backgroundColor,
+            backgroundOpacity:
+                addonData.defaultUserData.tailoringTemplates[0]
+                    .backgroundOpacity,
+            borderColor:
+                addonData.defaultUserData.tailoringTemplates[0].borderColor,
+            borderOpacity:
+                addonData.defaultUserData.tailoringTemplates[0].borderOpacity,
         }
     ) {
         this.parentList = parentTailoringTemplateList;
@@ -203,7 +205,9 @@ class TailoringTemplate {
             .importNode(tailoringTemplateTemplate.content, true)
             .querySelector(".js-tailoring-template");
         this.idInput = this.element.querySelector(".js-template-id-input");
-        this.labelInput = this.element.querySelector(".js-template-label-input");
+        this.labelInput = this.element.querySelector(
+            ".js-template-label-input"
+        );
         this.backgroundColorInput = this.element.querySelector(
             ".js-template-background-color-input"
         );
@@ -229,12 +233,15 @@ class TailoringTemplate {
         }
 
         if (tailoringTemplateSettings.backgroundColor) {
-            this.backgroundColorInput.value = tailoringTemplateSettings.backgroundColor;
+            this.backgroundColorInput.value =
+                tailoringTemplateSettings.backgroundColor;
         }
 
         if (tailoringTemplateSettings.backgroundOpacity) {
-            this.backgroundOpacityInput.value = tailoringTemplateSettings.backgroundOpacity;
-            this.backgroundColorInput.style.opacity = tailoringTemplateSettings.backgroundOpacity;
+            this.backgroundOpacityInput.value =
+                tailoringTemplateSettings.backgroundOpacity;
+            this.backgroundColorInput.style.opacity =
+                tailoringTemplateSettings.backgroundOpacity;
         }
 
         if (tailoringTemplateSettings.borderColor) {
@@ -242,8 +249,10 @@ class TailoringTemplate {
         }
 
         if (tailoringTemplateSettings.borderOpacity) {
-            this.borderOpacityInput.value = tailoringTemplateSettings.borderOpacity;
-            this.borderColorInput.style.opacity = tailoringTemplateSettings.borderOpacity;
+            this.borderOpacityInput.value =
+                tailoringTemplateSettings.borderOpacity;
+            this.borderColorInput.style.opacity =
+                tailoringTemplateSettings.borderOpacity;
         }
 
         this.parentList.element.appendChild(this.element);
@@ -293,26 +302,22 @@ class TailoringTemplate {
             )
         );
 
-        this.labelInput.addEventListener("keypress", e => {
-            if (e.key === " ") e.preventDefault();
-        });
-
         this.backgroundColorInput.addEventListener("change", () =>
             this.parentList.syncToStorage()
         );
 
-        this.backgroundOpacityInput.addEventListener("change", (e) => {
+        this.backgroundOpacityInput.addEventListener("change", e => {
             this.backgroundColorInput.style.opacity = e.target.value;
-            this.parentList.syncToStorage()
+            this.parentList.syncToStorage();
         });
 
         this.borderColorInput.addEventListener("change", () =>
             this.parentList.syncToStorage()
         );
 
-        this.borderOpacityInput.addEventListener("change", (e) => {
+        this.borderOpacityInput.addEventListener("change", e => {
             this.borderColorInput.style.opacity = e.target.value;
-            this.parentList.syncToStorage()
+            this.parentList.syncToStorage();
         });
 
         this.actionButtons.deleteTemplate.addEventListener("click", () =>
@@ -324,12 +329,15 @@ class TailoringTemplate {
      * Reset the entry to its default state.
      */
     reset() {
-        const defaultTailoringTemplate = addonData.defaultUserData.tailoringTemplates[0];
+        const defaultTailoringTemplate =
+            addonData.defaultUserData.tailoringTemplates[0];
 
         this.idInput.value = defaultTailoringTemplate.id;
         this.labelInput.value = defaultTailoringTemplate.label;
-        this.backgroundColorInput.value = defaultTailoringTemplate.backgroundColor;
-        this.backgroundOpacityInput.value = defaultTailoringTemplate.backgroundOpacity;
+        this.backgroundColorInput.value =
+            defaultTailoringTemplate.backgroundColor;
+        this.backgroundOpacityInput.value =
+            defaultTailoringTemplate.backgroundOpacity;
         this.borderColorInput.value = defaultTailoringTemplate.borderColor;
         this.borderOpacityInput.value = defaultTailoringTemplate.borderOpacity;
     }
@@ -407,7 +415,10 @@ class TailoringTemplateList {
         document.addEventListener("click", e => {
             const clickTarget = e.target.closest("[data-click-action]");
 
-            if (clickTarget && clickTarget.dataset.clickAction === "addTemplate") {
+            if (
+                clickTarget &&
+                clickTarget.dataset.clickAction === "addTemplate"
+            ) {
                 this.disableNewEntries();
                 this.entries.push(new TailoringTemplate(this));
             }
@@ -480,8 +491,6 @@ class TailoringTemplateList {
             .then(null, logError);
     }
 }
-
-
 
 const currentOptionsPanel = (function initOptionsPanel() {
     return new TailoredSearchOptionsPanel(
