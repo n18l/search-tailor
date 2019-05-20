@@ -95,9 +95,46 @@ class TailorableSearch {
                     )
                 );
 
-                matchingResults.forEach(matchingResult =>
-                    matchingResult.classList.add(tailoredDomain.treatment)
-                );
+                matchingResults.forEach(matchingResult => {
+                    if (tailoredDomain.treatment === "spotlight") {
+                        const div = document.createElement("div");
+                        div.classList.add("spotlight__treatment");
+
+                        const tailoringTemplate = storageData.tailoringTemplates.find(
+                            template =>
+                                template.id ===
+                                tailoredDomain.tailoringTemplateID
+                        );
+
+                        const backgroundOpacityHexString = Math.round(
+                            255 * tailoringTemplate.backgroundOpacity
+                        ).toString(16);
+                        const borderOpacityHexString = Math.round(
+                            255 * tailoringTemplate.borderOpacity
+                        ).toString(16);
+
+                        div.style.backgroundColor = `${
+                            tailoringTemplate.backgroundColor
+                        }${backgroundOpacityHexString}`;
+                        div.style.borderColor = `${
+                            tailoringTemplate.borderColor
+                        }${borderOpacityHexString}`;
+
+                        const existingTreatment = matchingResult.querySelector(
+                            ".spotlight__treatment"
+                        );
+                        if (existingTreatment) {
+                            matchingResult.replaceChild(div, existingTreatment);
+                        } else {
+                            matchingResult.insertAdjacentElement(
+                                "afterbegin",
+                                div
+                            );
+                        }
+                    }
+
+                    matchingResult.classList.add(tailoredDomain.treatment);
+                });
             });
         };
 
