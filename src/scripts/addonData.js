@@ -54,11 +54,11 @@ const addonData = {
             {
                 id: "default",
                 label: "Default",
-                backgroundColor: "#007F00",
+                backgroundColor: "#19E54C",
                 backgroundOpacity: ".25",
-                borderColor: "#19E54C",
+                borderColor: "#007F00",
                 borderOpacity: ".35",
-            }
+            },
         ],
         searchEngines: {
             Google: {
