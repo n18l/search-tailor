@@ -98,30 +98,29 @@ class TailoredDomainListEntry {
      */
     defineActions() {
         this.actionButtons = {};
+
+        // Assign each Node with a "data-click-action" attribute value to a
+        // matching actionButton property.
         const actionButtons = this.element.querySelectorAll(
             "[data-click-action]"
         );
 
         actionButtons.forEach(actionButton => {
-            if (this.actionButtons[actionButton.dataset.clickAction]) {
-                if (
-                    !Array.isArray(
-                        this.actionButtons[actionButton.dataset.clickAction]
-                    )
-                ) {
-                    this.actionButtons[actionButton.dataset.clickAction] = [
-                        this.actionButtons[actionButton.dataset.clickAction],
-                    ];
-                }
+            const { clickAction } = actionButton.dataset;
+            this.actionButtons[clickAction] = actionButton;
+        });
 
-                this.actionButtons[actionButton.dataset.clickAction].push(
-                    actionButton
-                );
-            } else {
-                this.actionButtons[
-                    actionButton.dataset.clickAction
-                ] = actionButton;
-            }
+        // Assign a NodeList of all Nodes sharing a "data-click-action[]"
+        // attribute value to a matching actionButton property.
+        const actionButtonArrays = this.element.querySelectorAll(
+            "[data-click-action\\[\\]]"
+        );
+
+        actionButtonArrays.forEach(actionButtonArray => {
+            const clickAction = actionButtonArray.dataset["clickAction[]"];
+            this.actionButtons[clickAction] = this.element.querySelectorAll(
+                `[data-click-action\\[\\]="${clickAction}"]`
+            );
         });
     }
 
@@ -176,29 +175,13 @@ class TailoredDomainListEntry {
             this.toggleSwatchDrawer()
         );
 
-        if (Array.isArray(this.actionButtons.selectTailoringTemplate)) {
-            this.actionButtons.selectTailoringTemplate.forEach(
-                selectTailoringTemplateButton => {
-                    selectTailoringTemplateButton.addEventListener(
-                        "click",
-                        e => {
-                            this.updateEntryTailoringTemplate(
-                                e.target.tailoringTemplate.id
-                            );
-                        }
-                    );
-                }
-            );
-        } else {
-            this.actionButtons.selectTailoringTemplate.addEventListener(
-                "click",
-                e => {
-                    this.updateEntryTailoringTemplate(
-                        e.target.tailoringTemplate.id
-                    );
-                }
-            );
-        }
+        this.actionButtons.selectTailoringTemplate.forEach(actionButton => {
+            actionButton.addEventListener("click", e => {
+                this.updateEntryTailoringTemplate(
+                    e.target.tailoringTemplate.id
+                );
+            });
+        });
     }
 
     updateEntryTailoringTemplate(newTemplateID) {
