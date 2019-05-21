@@ -97,6 +97,11 @@ main {
     &__color-template-button {
         display: flex;
 
+        #{$thisEntry}[data-active-treatment="suppress"] &,
+        #{$thisEntry}[data-active-treatment="screen"] & {
+            display: none;
+        }
+
         &__swatch {
             width: 18px;
             height: 18px;
@@ -147,7 +152,7 @@ main {
             &--spotlight {
                 display: none;
 
-                #{$thisEntryAction}[data-active-treatment="spotlight"] & {
+                #{$thisEntry}[data-active-treatment="spotlight"] & {
                     display: block;
                 }
             }
@@ -155,7 +160,7 @@ main {
             &--suppress {
                 display: none;
 
-                #{$thisEntryAction}[data-active-treatment="suppress"] & {
+                #{$thisEntry}[data-active-treatment="suppress"] & {
                     display: block;
                 }
             }
@@ -163,7 +168,7 @@ main {
             &--screen {
                 display: none;
 
-                #{$thisEntryAction}[data-active-treatment="screen"] & {
+                #{$thisEntry}[data-active-treatment="screen"] & {
                     display: block;
                 }
             }

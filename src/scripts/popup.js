@@ -42,24 +42,12 @@ class TailoredDomainListEntry {
         );
 
         if (tailoredDomainSettings.treatment) {
-            this.treatmentSelect.value = tailoredDomainSettings.treatment;
-            this.actionButtons.toggleEntryTreatment.dataset.activeTreatment =
-                tailoredDomainSettings.treatment;
+            this.activeTreatment =
+                tailoredDomainSettings.treatment || this.treatmentSelect.value;
         }
 
         this.parentList.element.appendChild(this.element);
         this.domainInput.focus();
-    }
-
-    /**
-     * Get the value of the entry as an object.
-     */
-    get value() {
-        return {
-            domain: this.domainInput.value,
-            tailoringTemplateID: this.tailoringTemplateIDInput.value,
-            treatment: this.treatmentSelect.value,
-        };
     }
 
     /**
@@ -184,6 +172,25 @@ class TailoredDomainListEntry {
         });
     }
 
+    /**
+     * Get the value of the entry as an object.
+     */
+    get value() {
+        return {
+            domain: this.domainInput.value,
+            tailoringTemplateID: this.tailoringTemplateIDInput.value,
+            treatment: this.treatmentSelect.value,
+        };
+    }
+
+    /**
+     * Set the the entry's active tailoring treatment.
+     */
+    set activeTreatment(newTreatment) {
+        this.treatmentSelect.value = newTreatment;
+        this.element.dataset.activeTreatment = newTreatment;
+    }
+
     updateEntryTailoringTemplate(newTemplateID) {
         this.tailoringTemplateIDInput.value = newTemplateID;
         this.tailoringTemplateIDInput.dispatchEvent(new Event("change"));
@@ -275,9 +282,8 @@ class TailoredDomainListEntry {
             targetTreatmentIndex % this.treatmentOptions.length
         ];
 
-        this.treatmentSelect.value = targetTreatmentOption;
+        this.activeTreatment = targetTreatmentOption;
         this.treatmentSelect.dispatchEvent(new Event("change"));
-        this.actionButtons.toggleEntryTreatment.dataset.activeTreatment = targetTreatmentOption;
     }
 
     toggleSwatchDrawer() {

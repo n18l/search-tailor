@@ -10,7 +10,7 @@ html
             button(class="swatch js-swatch" data-click-action[]="selectTailoringTemplate")
 
     template(id="entry")
-        li(class="entry js-entry")
+        li(class="entry js-entry" data-active-treatment="spotlight")
             div(class="entry__primary-ui")
                 div(class="entry__sort-handle js-sort-handle")
                     svg(class="entry__sort-handle__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24")
@@ -30,7 +30,7 @@ html
                     option(value="screen") Screen
 
                 div(class="entry__action-container")
-                    button(class="entry__action" data-click-action="toggleEntryTreatment" data-active-treatment="spotlight" title="Change Treatment")
+                    button(class="entry__action" data-click-action="toggleEntryTreatment" title="Change Treatment")
                         svg(class="entry__action__icon entry__action__icon--spotlight" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24")
                             path(fill="none" d="M0 0h24v24H0z")
                             path(fill="hsla(0, 100%, 100%, .75)" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z")
