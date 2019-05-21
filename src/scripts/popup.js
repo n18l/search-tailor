@@ -189,6 +189,7 @@ class TailoredDomainListEntry {
     set activeTreatment(newTreatment) {
         this.treatmentSelect.value = newTreatment;
         this.element.dataset.activeTreatment = newTreatment;
+        this.toggleSwatchDrawer(false);
     }
 
     updateEntryTailoringTemplate(newTemplateID) {
@@ -286,13 +287,15 @@ class TailoredDomainListEntry {
         this.treatmentSelect.dispatchEvent(new Event("change"));
     }
 
-    toggleSwatchDrawer() {
+    toggleSwatchDrawer(shouldBeOpen = null) {
         const swatchDrawerOpenClass = "entry__swatch-drawer--is-open";
         const swatchDrawerIsOpen = this.swatchDrawer.classList.contains(
             swatchDrawerOpenClass
         );
-        this.swatchDrawer.classList[swatchDrawerIsOpen ? "remove" : "add"](
-            swatchDrawerOpenClass
+
+        this.swatchDrawer.classList.toggle(
+            swatchDrawerOpenClass,
+            shouldBeOpen !== null ? shouldBeOpen : !swatchDrawerIsOpen
         );
         this.actionButtons.toggleSwatchDrawer.title = swatchDrawerIsOpen
             ? "Change Template"
