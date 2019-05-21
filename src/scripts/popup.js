@@ -1,4 +1,4 @@
-/* global addonData, Sortable */
+/* global addonData, addonFunctions, Sortable */
 
 const entryTemplate = document.querySelector("template#entry");
 const swatchTemplate = document.querySelector("template#swatch");
@@ -36,9 +36,9 @@ class TailoredDomainListEntry {
         )
             ? tailoredDomainSettings.tailoringTemplateID
             : this.parentList.tailoringTemplates[0].id;
-        this.updateActiveTailoringTemplateSwatch(
-            this.actionButtons.toggleSwatchDrawer,
-            this.tailoringTemplateIDInput.value
+        addonFunctions.applyTailoringTemplateStyles(
+            this.getTailoringTemplateByID(this.tailoringTemplateIDInput.value),
+            this.actionButtons.toggleSwatchDrawer
         );
 
         if (tailoredDomainSettings.treatment) {
@@ -144,9 +144,9 @@ class TailoredDomainListEntry {
         });
 
         this.tailoringTemplateIDInput.addEventListener("change", e => {
-            this.updateActiveTailoringTemplateSwatch(
-                this.actionButtons.toggleSwatchDrawer,
-                e.target.value
+            addonFunctions.applyTailoringTemplateStyles(
+                this.getTailoringTemplateByID(e.target.value),
+                this.actionButtons.toggleSwatchDrawer
             );
             this.parentList.syncToStorage();
         });
@@ -205,35 +205,14 @@ class TailoredDomainListEntry {
 
             swatch.tailoringTemplate = tailoringTemplate;
 
-            this.updateActiveTailoringTemplateSwatch(
+            addonFunctions.applyTailoringTemplateStyles(
+                this.getTailoringTemplateByID(tailoringTemplate.id),
                 swatch,
-                tailoringTemplate.id
+                true
             );
 
             this.swatchList.appendChild(swatchWrapper);
         });
-    }
-
-    updateActiveTailoringTemplateSwatch(swatchElement, tailoringTemplateID) {
-        const swatch = swatchElement;
-        const newTailoringTemplate = this.getTailoringTemplateByID(
-            tailoringTemplateID
-        );
-
-        const backgroundOpacityHexString = Math.round(
-            255 * newTailoringTemplate.backgroundOpacity
-        ).toString(16);
-        const borderOpacityHexString = Math.round(
-            255 * newTailoringTemplate.borderOpacity
-        ).toString(16);
-
-        swatch.style.backgroundColor = `${
-            newTailoringTemplate.backgroundColor
-        }${backgroundOpacityHexString}`;
-        swatch.style.borderColor = `${
-            newTailoringTemplate.borderColor
-        }${borderOpacityHexString}`;
-        swatch.title = newTailoringTemplate.label;
     }
 
     /**
@@ -309,6 +288,9 @@ class TailoredDomainListEntry {
         this.swatchDrawer.classList[swatchDrawerIsOpen ? "remove" : "add"](
             swatchDrawerOpenClass
         );
+        this.actionButtons.toggleSwatchDrawer.title = swatchDrawerIsOpen
+            ? "Change Template"
+            : "Hide Templates";
     }
 
     selectTailoringTemplate(tailoringTemplate) {

@@ -1,4 +1,4 @@
-/* global addonData */
+/* global addonData, addonFunctions */
 
 function logError(error) {
     console.error(error);
@@ -96,9 +96,12 @@ class TailorableSearch {
                 );
 
                 matchingResults.forEach(matchingResult => {
+                    // If this treatment needs to be spotlit, create a new
+                    // element and apply the appropriate tailoring template
+                    // styles to it.
                     if (tailoredDomain.treatment === "spotlight") {
-                        const div = document.createElement("div");
-                        div.classList.add("spotlight__treatment");
+                        const newTreatmentDiv = document.createElement("div");
+                        newTreatmentDiv.classList.add("spotlight__treatment");
 
                         const tailoringTemplate = storageData.tailoringTemplates.find(
                             template =>
@@ -106,29 +109,24 @@ class TailorableSearch {
                                 tailoredDomain.tailoringTemplateID
                         );
 
-                        const backgroundOpacityHexString = Math.round(
-                            255 * tailoringTemplate.backgroundOpacity
-                        ).toString(16);
-                        const borderOpacityHexString = Math.round(
-                            255 * tailoringTemplate.borderOpacity
-                        ).toString(16);
+                        addonFunctions.applyTailoringTemplateStyles(
+                            tailoringTemplate,
+                            newTreatmentDiv
+                        );
 
-                        div.style.backgroundColor = `${
-                            tailoringTemplate.backgroundColor
-                        }${backgroundOpacityHexString}`;
-                        div.style.borderColor = `${
-                            tailoringTemplate.borderColor
-                        }${borderOpacityHexString}`;
-
-                        const existingTreatment = matchingResult.querySelector(
+                        const existingTreatmentDiv = matchingResult.querySelector(
                             ".spotlight__treatment"
                         );
-                        if (existingTreatment) {
-                            matchingResult.replaceChild(div, existingTreatment);
+
+                        if (existingTreatmentDiv) {
+                            matchingResult.replaceChild(
+                                newTreatmentDiv,
+                                existingTreatmentDiv
+                            );
                         } else {
                             matchingResult.insertAdjacentElement(
                                 "afterbegin",
-                                div
+                                newTreatmentDiv
                             );
                         }
                     }
