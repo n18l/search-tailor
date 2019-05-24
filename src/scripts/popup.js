@@ -444,10 +444,14 @@ class TailoredDomainList {
     }
 }
 
-(function initPopup() {
-    const entryList = document.querySelector(".entry-list");
-    const currentTailoredDomainList = new TailoredDomainList(entryList);
-    const currentSortableDomainList = new Sortable(entryList, {
+const entryListElement = document.querySelector(".entry-list");
+
+const currentTailoredDomainList = (function initTailoredDomainList() {
+    return new TailoredDomainList(entryListElement);
+})();
+
+(function enableDomainListSorting() {
+    return new Sortable(entryListElement, {
         handle: ".js-sort-handle",
         animation: 150,
         onUpdate(event) {
@@ -457,9 +461,4 @@ class TailoredDomainList {
             );
         },
     });
-
-    return {
-        currentTailoredDomainList,
-        currentSortableDomainList,
-    };
 })();
