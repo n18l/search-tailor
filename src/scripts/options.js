@@ -306,7 +306,7 @@ class TailoringTemplate {
             this.parentList.syncToStorage()
         );
 
-        this.backgroundOpacityInput.addEventListener("change", e => {
+        this.backgroundOpacityInput.addEventListener("input", e => {
             this.backgroundColorInput.style.opacity = e.target.value;
             this.parentList.syncToStorage();
         });
@@ -315,7 +315,7 @@ class TailoringTemplate {
             this.parentList.syncToStorage()
         );
 
-        this.borderOpacityInput.addEventListener("change", e => {
+        this.borderOpacityInput.addEventListener("input", e => {
             this.borderColorInput.style.opacity = e.target.value;
             this.parentList.syncToStorage();
         });
