@@ -1,4 +1,4 @@
-/* global addonData */
+/* global addonData, Sortable */
 
 function logError(error) {
     console.error(error);
@@ -460,6 +460,17 @@ class TailoringTemplateList {
     }
 
     /**
+     * Update the order of the list's entries.
+     * @param {integer} fromIndex - The index of the entry being reordered.
+     * @param {integer} toIndex - The index where the reordered entry should be placed.
+     */
+    reorderEntry(fromIndex, toIndex) {
+        const entryToMove = this.entries.splice(fromIndex, 1)[0];
+        this.entries.splice(toIndex, 0, entryToMove);
+        this.syncToStorage();
+    }
+
+    /**
      * Validate each of the list's entries.
      * @param {function} [validCallback] - A function to call if all entries are valid.
      * @param {function} [invalidCallback] - A function to call if any entries are invalid.
@@ -492,16 +503,33 @@ class TailoringTemplateList {
     }
 }
 
+const optionsPanelElement = document.querySelector(
+    "#search-tailor-options-panel"
+);
+const tailoringTemplateListElement = document.querySelector(
+    ".tailoring-template-list"
+);
+
 const currentOptionsPanel = (function initOptionsPanel() {
-    return new TailoredSearchOptionsPanel(
-        document.querySelector("#search-tailor-options-panel")
-    );
+    return new TailoredSearchOptionsPanel(optionsPanelElement);
 })();
 
-const currentTailoringTemplatesList = (function initTailoringTemplatesPanel() {
-    return new TailoringTemplateList(
-        document.querySelector("#search-tailor-tailoring-templates")
-    );
+const currentTailoringTemplateList = (function initTailoringTemplatesList() {
+    return new TailoringTemplateList(tailoringTemplateListElement);
+})();
+
+(function enableTailoringTemplatesListSorting() {
+    return new Sortable(tailoringTemplateListElement, {
+        handle: ".js-sort-handle",
+        animation: 150,
+        forceFallback: true,
+        onUpdate(event) {
+            currentTailoringTemplateList.reorderEntry(
+                event.oldIndex,
+                event.newIndex
+            );
+        },
+    });
 })();
 
 // Listen for storage updates, updating options on change

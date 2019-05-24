@@ -5,24 +5,30 @@ html
         meta(charset="utf-8")
         link(rel="stylesheet" href="../styles/options.css")
 
+    template(id="tailoring-template")
+        li(class="tailoring-template js-tailoring-template")
+            div(class="tailoring-template__sort-handle js-sort-handle")
+                svg(class="tailoring-template__sort-handle__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24")
+                    path(fill="none" d="M0 0h24v24H0V0z")
+                    path(fill="hsla(0, 100%, 100%, .25)" d="M11 18c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2zm-2-8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm6 4c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z")
+
+            input(class="tailoring-template__id-input js-template-id-input" type="text" hidden readonly)
+            input(class="tailoring-template__label-input js-template-label-input" type="text" placeholder="template label")
+            input(class="tailoring-template__background-color-input js-template-background-color-input" type="color")
+            input(class="tailoring-template__background-opacity-input js-template-background-opacity-input" type="range" min="0" max="1" step=".01" value="1")
+            input(class="tailoring-template__border-color-input js-template-border-color-input" type="color")
+            input(class="tailoring-template__border-opacity-input js-template-border-opacity-input" type="range" min="0" max="1" step=".01" value="1")
+
+            div(class="tailoring-template__actions")
+                button(class="tailoring-template__action" data-click-action="deleteTemplate") Delete
+
     body
         main(id="search-tailor-options-panel")
 
             div(class="search-tailor-option")
                 span(class="search-tailor-option__label") Tailoring Templates
                 div(class="search-tailor-option__input-wrapper")
-                    ul(class="tailoring-template-list" id="search-tailor-tailoring-templates")
-                        template#tailoring-template
-                            li(class="tailoring-template js-tailoring-template")
-                                input(class="tailoring-template__id-input js-template-id-input" type="text" hidden readonly)
-                                input(class="tailoring-template__label-input js-template-label-input" type="text" placeholder="template label")
-                                input(class="tailoring-template__background-color-input js-template-background-color-input" type="color")
-                                input(class="tailoring-template__background-opacity-input js-template-background-opacity-input" type="range" min="0" max="1" step=".01" value="1")
-                                input(class="tailoring-template__border-color-input js-template-border-color-input" type="color")
-                                input(class="tailoring-template__border-opacity-input js-template-border-opacity-input" type="range" min="0" max="1" step=".01" value="1")
-
-                                div(class="tailoring-template__actions")
-                                    button(class="tailoring-template__action" data-click-action="deleteTemplate") Delete
+                    ul(class="tailoring-template-list")
 
                 div(class="search-tailor-option__action-container")
                     button(class="search-tailor-option__action" data-click-action="addTemplate") Add New
@@ -87,5 +93,6 @@ html
                     button(type="button" class="search-tailor-option__action" data-click-action="clearJSON") Clear
                     button(type="button" class="search-tailor-option__action" data-click-action="importJSON") Import
         
+        script(src="../scripts/vendor/Sortable.min.js")
         script(src="../scripts/addonData.js")
         script(src="../scripts/options.js")
