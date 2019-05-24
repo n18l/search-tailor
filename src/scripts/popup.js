@@ -301,22 +301,6 @@ class TailoredDomainListEntry {
             ? "Change Template"
             : "Hide Templates";
     }
-
-    selectTailoringTemplate(tailoringTemplate) {
-        const backgroundOpacityHexString = Math.round(
-            255 * tailoringTemplate.backgroundOpacity
-        ).toString(16);
-        const borderOpacityHexString = Math.round(
-            255 * tailoringTemplate.borderOpacity
-        ).toString(16);
-
-        this.actionButtons.selectTailoringTemplate.style.backgroundColor = `${
-            tailoringTemplate.backgroundColor
-        }${backgroundOpacityHexString}`;
-        this.actionButtons.selectTailoringTemplate.style.borderColor = `${
-            tailoringTemplate.borderColor
-        }${borderOpacityHexString}`;
-    }
 }
 
 /** Class representing the interactive list of tailored domains. */
