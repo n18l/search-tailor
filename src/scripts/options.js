@@ -1,4 +1,4 @@
-/* global addonData, Sortable */
+/* global addonData, addonFunctions, Sortable */
 
 function logError(error) {
     console.error(error);
@@ -255,6 +255,20 @@ class TailoringTemplate {
                 tailoringTemplateSettings.borderOpacity;
         }
 
+        const newBackgroundColor = addonFunctions.hexToHSL(
+            tailoringTemplateSettings.backgroundColor,
+            true,
+            tailoringTemplateSettings.backgroundOpacity
+        );
+        this.element.style.backgroundColor = newBackgroundColor;
+
+        const newBorderColor = addonFunctions.hexToHSL(
+            tailoringTemplateSettings.borderColor,
+            true,
+            tailoringTemplateSettings.borderOpacity
+        );
+        this.element.style.borderColor = newBorderColor;
+
         this.parentList.element.appendChild(this.element);
         this.labelInput.focus();
     }
@@ -302,22 +316,64 @@ class TailoringTemplate {
             )
         );
 
+        this.actionButtons.setBackgroundColor.addEventListener("click", () =>
+            this.backgroundColorInput.click()
+        );
+
+        this.actionButtons.setBorderColor.addEventListener("click", () =>
+            this.borderColorInput.click()
+        );
+
+        this.backgroundColorInput.addEventListener("input", e => {
+            const newBackgroundColor = addonFunctions.hexToHSL(
+                e.target.value,
+                true,
+                this.backgroundOpacityInput.value
+            );
+            this.element.style.backgroundColor = newBackgroundColor;
+        });
+
         this.backgroundColorInput.addEventListener("change", () =>
             this.parentList.syncToStorage()
         );
 
+        this.backgroundOpacityInput.addEventListener("change", () =>
+            this.parentList.syncToStorage()
+        );
+
         this.backgroundOpacityInput.addEventListener("input", e => {
-            this.backgroundColorInput.style.opacity = e.target.value;
-            this.parentList.syncToStorage();
+            const newBackgroundColor = addonFunctions.hexToHSL(
+                this.backgroundColorInput.value,
+                true,
+                e.target.value
+            );
+            this.element.style.backgroundColor = newBackgroundColor;
         });
 
         this.borderColorInput.addEventListener("change", () =>
             this.parentList.syncToStorage()
         );
 
+        this.borderColorInput.addEventListener("input", e => {
+            const newBorderColor = addonFunctions.hexToHSL(
+                e.target.value,
+                true,
+                this.borderOpacityInput.value
+            );
+            this.element.style.borderColor = newBorderColor;
+        });
+
+        this.borderOpacityInput.addEventListener("change", () =>
+            this.parentList.syncToStorage()
+        );
+
         this.borderOpacityInput.addEventListener("input", e => {
-            this.borderColorInput.style.opacity = e.target.value;
-            this.parentList.syncToStorage();
+            const newBorderColor = addonFunctions.hexToHSL(
+                this.borderColorInput.value,
+                true,
+                e.target.value
+            );
+            this.element.style.borderColor = newBorderColor;
         });
 
         this.actionButtons.deleteTemplate.addEventListener("click", () =>
@@ -389,6 +445,12 @@ class TailoringTemplateList {
     constructor(entryListElement) {
         this.entries = [];
         this.element = entryListElement;
+        this.previewColorInput = document.querySelector(
+            ".js-template-preview-color-input"
+        );
+        this.setPreviewColorButton = document.querySelector(
+            '[data-click-action="setPreviewColor"]'
+        );
         this.addTemplateButton = document.querySelector(
             '[data-click-action="addTemplate"]'
         );
@@ -396,8 +458,19 @@ class TailoringTemplateList {
         this.bindEvents();
 
         browser.storage.sync
-            .get("tailoringTemplates")
-            .then(storageData => this.populate(storageData), logError);
+            .get({
+                tailoringTemplates:
+                    addonData.defaultUserData.tailoringTemplates,
+                tailoringTemplatePreviewColor:
+                    addonData.defaultUserData.tailoringTemplatePreviewColor,
+            })
+            .then(storageData => {
+                this.populate(storageData.tailoringTemplates);
+                this.previewColorInput.value =
+                    storageData.tailoringTemplatePreviewColor;
+                this.element.style.backgroundColor =
+                    storageData.tailoringTemplatePreviewColor;
+            }, logError);
     }
 
     /**
@@ -422,23 +495,35 @@ class TailoringTemplateList {
                 this.disableNewEntries();
                 this.entries.push(new TailoringTemplate(this));
             }
+
+            if (
+                clickTarget &&
+                clickTarget.dataset.clickAction === "setPreviewColor"
+            ) {
+                this.previewColorInput.click();
+            }
         });
+
+        this.previewColorInput.addEventListener("input", e => {
+            this.element.style.backgroundColor = e.target.value;
+        });
+
+        this.previewColorInput.addEventListener("change", () =>
+            this.syncToStorage()
+        );
     }
 
     /**
      * Populate the list with existing extension data or an empty entry.
      * @param {object} storageData - Existing extension data passed by the browser.storage API.
      */
-    populate(storageData) {
-        if (
-            !storageData.tailoringTemplates ||
-            storageData.tailoringTemplates.length === 0
-        ) {
+    populate(tailoringTemplates) {
+        if (!tailoringTemplates || tailoringTemplates.length === 0) {
             this.disableNewEntries();
             this.entries.push(new TailoringTemplate(this));
         }
 
-        storageData.tailoringTemplates.forEach(tailoringTemplateSettings =>
+        tailoringTemplates.forEach(tailoringTemplateSettings =>
             this.entries.push(
                 new TailoringTemplate(this, tailoringTemplateSettings)
             )
@@ -498,7 +583,10 @@ class TailoringTemplateList {
         );
 
         browser.storage.sync
-            .set({ tailoringTemplates: validTailoringTemplates })
+            .set({
+                tailoringTemplates: validTailoringTemplates,
+                tailoringTemplatePreviewColor: this.previewColorInput.value,
+            })
             .then(null, logError);
     }
 }

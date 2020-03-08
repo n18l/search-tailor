@@ -60,6 +60,7 @@ const addonData = {
                 borderOpacity: ".35",
             },
         ],
+        tailoringTemplatePreviewColor: "#FFFFFF",
         searchEngines: {
             Google: {
                 enabled: true,
