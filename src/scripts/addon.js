@@ -1,4 +1,4 @@
-/* global addonData */
+/* global addonData, addonFunctions */
 
 function logError(error) {
     console.error(error);
@@ -95,9 +95,44 @@ class TailorableSearch {
                     )
                 );
 
-                matchingResults.forEach(matchingResult =>
-                    matchingResult.classList.add(tailoredDomain.treatment)
-                );
+                matchingResults.forEach(matchingResult => {
+                    // If this treatment needs to be spotlit, create a new
+                    // element and apply the appropriate tailoring template
+                    // styles to it.
+                    if (tailoredDomain.treatment === "spotlight") {
+                        const newTreatmentDiv = document.createElement("div");
+                        newTreatmentDiv.classList.add("spotlight__treatment");
+
+                        const tailoringTemplate = storageData.tailoringTemplates.find(
+                            template =>
+                                template.id ===
+                                tailoredDomain.tailoringTemplateID
+                        );
+
+                        addonFunctions.applyTailoringTemplateStyles(
+                            tailoringTemplate,
+                            newTreatmentDiv
+                        );
+
+                        const existingTreatmentDiv = matchingResult.querySelector(
+                            ".spotlight__treatment"
+                        );
+
+                        if (existingTreatmentDiv) {
+                            matchingResult.replaceChild(
+                                newTreatmentDiv,
+                                existingTreatmentDiv
+                            );
+                        } else {
+                            matchingResult.insertAdjacentElement(
+                                "afterbegin",
+                                newTreatmentDiv
+                            );
+                        }
+                    }
+
+                    matchingResult.classList.add(tailoredDomain.treatment);
+                });
             });
         };
 

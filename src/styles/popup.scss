@@ -8,32 +8,38 @@
 
 html,
 body {
-    background-color: #4a4a4f;
+    background-color: hsl(240, 3%, 30%);
     border-radius: 2px;
     overflow: hidden;
 }
 
 body {
-    width: 375px;
+    width: 370px;
 }
 
 main {
     display: flex;
     flex-direction: column;
     height: 100%;
-    color: #fff;
+    color: hsl(0, 0%, 100%);
 }
 
 .entry-list {
     padding: 0;
     margin: 0;
     overflow: scroll;
+    max-height: 400px;
 }
 
 .entry {
     $thisEntry: &;
-    height: 65px;
     display: flex;
+    flex-direction: column;
+
+    &__primary-ui {
+        display: flex;
+        height: 65px;
+    }
 
     &__sort-handle {
         align-self: center;
@@ -45,6 +51,8 @@ main {
     }
 
     &__input-wrapper {
+        background-color: var(--color-button);
+        border-radius: 2px;
         flex: 1 1 100%;
         display: flex;
         margin: 15px;
@@ -54,12 +62,10 @@ main {
     }
 
     &__domain-input {
-        background-color: var(--color-button);
-        padding: 0 8px;
+        padding: 0 0 0 8px;
         height: 100%;
         width: 100%;
         margin: auto;
-        border-radius: 2px;
     }
 
     &__input-effects {
@@ -85,6 +91,24 @@ main {
             #{$thisEntry}__domain-input:active + & {
                 transform: scaleX(1);
             }
+        }
+    }
+
+    &__color-template-button {
+        display: flex;
+
+        #{$thisEntry}[data-active-treatment="suppress"] &,
+        #{$thisEntry}[data-active-treatment="screen"] & {
+            display: none;
+        }
+
+        &__swatch {
+            width: 18px;
+            height: 18px;
+            margin: auto 6px;
+            background-color: hsla(0, 0%, 90%, 0.25);
+            border: 1px solid hsla(0, 0%, 48%, 0.35);
+            border-radius: 9px;
         }
     }
 
@@ -128,7 +152,7 @@ main {
             &--spotlight {
                 display: none;
 
-                #{$thisEntryAction}[data-active-treatment="spotlight"] & {
+                #{$thisEntry}[data-active-treatment="spotlight"] & {
                     display: block;
                 }
             }
@@ -136,7 +160,7 @@ main {
             &--suppress {
                 display: none;
 
-                #{$thisEntryAction}[data-active-treatment="suppress"] & {
+                #{$thisEntry}[data-active-treatment="suppress"] & {
                     display: block;
                 }
             }
@@ -144,15 +168,46 @@ main {
             &--screen {
                 display: none;
 
-                #{$thisEntryAction}[data-active-treatment="screen"] & {
+                #{$thisEntry}[data-active-treatment="screen"] & {
                     display: block;
                 }
             }
         }
     }
 
+    &__swatch-drawer {
+        background-color: var(--color-button);
+        height: 0;
+        overflow: hidden;
+
+        &--is-open {
+            height: auto;
+        }
+    }
+
     & + & {
         border-top: 1px solid var(--color-button);
+    }
+}
+
+.swatch-list {
+    list-style: none;
+    padding: 5px;
+    display: flex;
+    flex-wrap: wrap;
+
+    .swatch-wrapper {
+        flex: 0 1 30px;
+        height: 30px;
+        display: flex;
+    }
+
+    .swatch {
+        height: 18px;
+        width: 18px;
+        border: 1px solid white;
+        border-radius: 50%;
+        margin: auto;
     }
 }
 

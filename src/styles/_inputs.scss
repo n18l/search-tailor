@@ -1,0 +1,89 @@
+:root {
+    --input-color-1: hsla(0, 0%, 100%, 0.1);
+    --input-color-text-highlight: hsla(200, 100%, 50%, 1);
+}
+
+.search-tailor-input {
+    &__text-input-container {
+        background-color: var(--input-color-1);
+        border-radius: 2px;
+        color: hsla(0, 0%, 100%, 1);
+        display: flex;
+        flex: 1 1 100%;
+        min-height: 36px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    &__text-input {
+        $thisInput: &;
+        padding: 0 8px;
+        flex: 1;
+
+        &-effects {
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            border-radius: 2px;
+            overflow: hidden;
+            pointer-events: none;
+
+            &::after {
+                content: "";
+                height: 2px;
+                width: 100%;
+                bottom: 0;
+                left: 0;
+                position: absolute;
+                background-color: var(--input-color-text-highlight);
+                transform: scaleX(0);
+                transition: transform 0.35s;
+
+                #{$thisInput}:focus + &,
+                #{$thisInput}:active + & {
+                    transform: scaleX(1);
+                }
+            }
+        }
+    }
+}
+
+.search-tailor-action-group {
+    display: flex;
+
+    &__action {
+        $thisAction: &;
+        display: flex;
+        position: relative;
+        width: 60px;
+
+        &:hover,
+        &:focus,
+        &:active {
+            background-color: var(--input-color-1);
+        }
+
+        &::before {
+            background-color: var(--input-color-1);
+            content: "";
+            height: calc(100% - 20px);
+            left: 0;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 1px;
+
+            @at-root {
+                #{$thisAction}:hover::before,
+                #{$thisAction}:focus::before,
+                #{$thisAction}:active::before {
+                    background-color: transparent;
+                }
+            }
+        }
+
+        &__icon {
+            margin: auto;
+        }
+    }
+}
