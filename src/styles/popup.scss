@@ -8,7 +8,7 @@
 
 html,
 body {
-    background-color: #4a4a4f;
+    background-color: hsl(240, 3%, 30%);
     border-radius: 2px;
     overflow: hidden;
 }
@@ -21,7 +21,7 @@ main {
     display: flex;
     flex-direction: column;
     height: 100%;
-    color: #fff;
+    color: hsl(0, 0%, 100%);
 }
 
 .entry-list {

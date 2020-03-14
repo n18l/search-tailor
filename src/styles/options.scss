@@ -105,7 +105,7 @@
             min-height: 200px;
             height: 200px;
             overflow: scroll;
-            background-color: #252525;
+            background-color: hsl(0, 0%, 15%);
             border-radius: 4px;
             border-bottom-right-radius: 2px;
         }
@@ -153,7 +153,7 @@
             width: 100%;
             border: 0;
             background-color: transparent;
-            color: #e6e6e6;
+            color: hsl(0, 0%, 90%);
             margin: 0;
             padding: 10px;
             min-height: 100%;
