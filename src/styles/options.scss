@@ -218,6 +218,7 @@
 .tailoring-template {
     --icon-color-1: hsla(0, 0%, 100%, 0.75);
     --icon-color-2: hsla(0, 0%, 100%, 0.25);
+    --icon-color-3: hsla(0, 0%, 100%, 0.1);
     background-color: hsl(240, 3%, 30%);
     border: 1px solid hsl(240, 3%, 30%);
     border-radius: 4px;
@@ -263,6 +264,10 @@
     }
 
     // &__id-input {}
+
+    &__label-input-container {
+        background-color: var(--icon-color-3);
+    }
 
     // &__label-input {}
 

@@ -1,6 +1,11 @@
+:root {
+    --input-color-1: hsla(0, 0%, 100%, 0.1);
+    --input-color-text-highlight: hsla(200, 100%, 50%, 1);
+}
+
 .search-tailor-input {
     &__text-input-container {
-        background-color: hsla(0, 0%, 100%, 0.1);
+        background-color: var(--input-color-1);
         border-radius: 2px;
         color: hsla(0, 0%, 100%, 1);
         display: flex;
@@ -30,7 +35,7 @@
                 bottom: 0;
                 left: 0;
                 position: absolute;
-                background-color: hsla(200, 100%, 50%, 1);
+                background-color: var(--input-color-text-highlight);
                 transform: scaleX(0);
                 transition: transform 0.35s;
 
@@ -55,11 +60,11 @@
         &:hover,
         &:focus,
         &:active {
-            background-color: hsla(0, 0%, 100%, 0.1);
+            background-color: var(--input-color-1);
         }
 
         &::before {
-            background-color: hsla(0, 0%, 100%, 0.1);
+            background-color: var(--input-color-1);
             content: "";
             height: calc(100% - 20px);
             left: 0;

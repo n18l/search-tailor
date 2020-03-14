@@ -17,10 +17,10 @@ html
                 input(class="tailoring-template__id-input js-template-id-input" type="text" hidden readonly)
 
                 div(class="tailoring-template__input-group")
-                    div(class="search-tailor-input__text-input-container")
+                    div(class="search-tailor-input__text-input-container tailoring-template__label-input-container")
                         input(class="search-tailor-input__text-input tailoring-template__label-input js-template-label-input" type="text" placeholder="template label")
                         div(class="search-tailor-input__text-input-effects")
-                
+
                 div(class="tailoring-template__input-group")
                     div(class="tailoring-template__full-color-inputs")
                         input(class="js-template-background-color-input" type="color" hidden)
@@ -41,8 +41,8 @@ html
 
             div(class="search-tailor-action-group")
                 button(class="search-tailor-action-group__action" data-click-action="deleteTemplate" title="Delete Template")
-                    svg(class="search-tailor-action-group__action__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24")
-                        path(fill="hsla(0, 100%, 100%, .75)" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z")
+                    svg(class="search-tailor-action-group__action__icon tailoring-template__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24")
+                        path(class="tailoring-template__icon__primary" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z")
 
 
     body
@@ -117,7 +117,7 @@ html
                 div(class="search-tailor-option__action-container")
                     button(type="button" class="search-tailor-option__action" data-click-action="clearJSON") Clear
                     button(type="button" class="search-tailor-option__action" data-click-action="importJSON") Import
-        
+
         script(src="../scripts/vendor/Sortable.min.js")
         script(src="../scripts/addonData.js")
         script(src="../scripts/addonFunctions.js")
