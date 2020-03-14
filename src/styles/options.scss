@@ -303,20 +303,15 @@
             margin-left: 15px;
 
             &::-moz-range-thumb {
-                background-color: transparent;
-                background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCI+CiAgPHBhdGggZmlsbD0ibm9uZSIgZD0iTTI0IDBIMHYyNGgyNFYwem0wIDBIMHYyNGgyNFYwek0wIDI0aDI0VjBIMHYyNHoiLz4KICA8cGF0aCBmaWxsPSJoc2xhKDAsMCUsMTAwJSwuNzUpIiBkPSJNMTcuNjYgOEwxMiAyLjM1IDYuMzQgOEE4LjAyIDguMDIgMCAwIDAgNCAxMy42NGMwIDIgLjc4IDQuMTEgMi4zNCA1LjY3YTcuOTkgNy45OSAwIDAgMCAxMS4zMiAwYzEuNTYtMS41NiAyLjM0LTMuNjcgMi4zNC01LjY3UzE5LjIyIDkuNTYgMTcuNjYgOHpNNiAxNGMuMDEtMiAuNjItMy4yNyAxLjc2LTQuNEwxMiA1LjI3bDQuMjQgNC4zOEMxNy4zOCAxMC43NyAxNy45OSAxMiAxOCAxNEg2eiIvPgo8L3N2Zz4=);
-                background-position: center;
-                background-repeat: no-repeat;
-                background-size: cover;
+                background-color: var(--icon-color-1);
                 border: 0;
-                border-radius: 50%;
                 cursor: pointer;
                 height: 24px;
-                width: 16px;
+                width: 6px;
             }
 
             &::-moz-range-track {
-                background-color: hsla(0, 0%, 100%, 0.25);
+                background-color: var(--icon-color-2);
                 height: 2px;
             }
         }
