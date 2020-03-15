@@ -1,4 +1,6 @@
-/* global addonData, addonFunctions, Sortable */
+const Sortable = require('sortablejs');
+const addonData = require('./addonData');
+const addonFunctions = require('./addonFunctions');
 
 function logError(error) {
     console.error(error);

@@ -98,3 +98,5 @@ const addonFunctions = {
         return [hue, saturation, lightness];
     },
 };
+
+module.exports = addonFunctions;

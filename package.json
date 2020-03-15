@@ -13,14 +13,23 @@
         "build:css": "sass --update src/styles:dist/styles --style compressed",
         "watch:css": "sass --watch src/styles:dist/styles --style compressed",
         "lint:js": "npx eslint src/scripts/*.js; exit 0",
-        "build:js": "npm run lint:js && npx babel src/scripts --out-dir dist/scripts --source-maps",
+        "bundle:js:addon": "browserify src/scripts/addon.js > dist/scripts/addon.js",
+        "bundle:js:popup": "browserify src/scripts/popup.js > dist/scripts/popup.js",
+        "bundle:js:options": "browserify src/scripts/options.js > dist/scripts/options.js",
+        "build:js": "run-s lint:js bundle:js",
+        "bundle:js": "run-p bundle:js:*",
         "watch:js": "chokidar \"src/scripts/*.js\" -c \"npm run build:js\" --initial",
         "build:assets": "cp -r src/assets dist",
         "watch:assets": "chokidar \"src/assets\" -c \"npm run build:assets\"  --initial",
-        "clean": "rimraf dist && mkdir dist",
-        "build": "npm run clean && npm-run-all --sequential build:*",
         "watch": "npm run build && npm-run-all --parallel watch:*",
+        "clean": "rimraf dist && mkdir -p dist/{assets,markup,scripts,styles}",
+        "build": "run-s clean build:*",
         "reinstall": "rimraf node_modules && npm cache verify && npm install"
+    },
+    "browserify": {
+        "transform": [
+            "babelify"
+        ]
     },
     "husky": {
         "hooks": {
@@ -74,6 +83,8 @@
         "@babel/cli": "^7.8.4",
         "@babel/core": "^7.8.7",
         "@babel/preset-env": "^7.8.7",
+        "babelify": "^10.0.0",
+        "browserify": "^16.5.0",
         "chokidar-cli": "^1.2.3",
         "eslint": "^6.8.0",
         "eslint-config-airbnb-base": "^13.2.0",
@@ -86,5 +97,8 @@
         "pug-cli": "^1.0.0-alpha6",
         "rimraf": "^2.7.1",
         "sass": "^1.26.2"
+    },
+    "dependencies": {
+        "sortablejs": "^1.10.2"
     }
 }

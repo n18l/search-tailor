@@ -33,11 +33,7 @@
                 "*://*.bing.com/search*",
                 "*://search.yahoo.com/search*"
             ],
-            "js": [
-                "scripts/addonData.js",
-                "scripts/addonFunctions.js",
-                "scripts/addon.js"
-            ],
+            "js": ["scripts/addon.js"],
             "css": ["styles/addon.css"]
         }
     ],
