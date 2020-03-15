@@ -1,4 +1,5 @@
-/* global addonData, addonFunctions */
+const addonData = require('./addonData');
+const addonFunctions = require('./addonFunctions');
 
 function logError(error) {
     console.error(error);

@@ -77,3 +77,5 @@ const addonData = {
         },
     },
 };
+
+module.exports = addonData;

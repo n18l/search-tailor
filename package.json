@@ -8,19 +8,49 @@
     "scripts": {
         "build:manifest": "cp src/manifest.json dist/",
         "watch:manifest": "chokidar \"src/manifest.json\" -c \"npm run build:manifest\" --initial",
-        "build:html": "npx pug src/markup --out dist/markup",
-        "watch:html": "chokidar \"src/markup/*.pug\" -c \"npx pug {path} --out dist/markup\" --initial",
+        "build:html": "pug src/markup --out dist/markup",
+        "watch:html": "chokidar \"src/markup/*.pug\" -c \"pug {path} --out dist/markup\" --initial",
         "build:css": "sass --update src/styles:dist/styles --style compressed",
         "watch:css": "sass --watch src/styles:dist/styles --style compressed",
-        "lint:js": "npx eslint src/scripts/*.js; exit 0",
-        "build:js": "npm run lint:js && npx babel src/scripts --out-dir dist/scripts --source-maps",
+        "lint:js": "eslint src/scripts/*.js; exit 0",
+        "bundle:js:addon": "browserify src/scripts/addon.js > dist/scripts/addon.js",
+        "bundle:js:popup": "browserify src/scripts/popup.js > dist/scripts/popup.js",
+        "bundle:js:options": "browserify src/scripts/options.js > dist/scripts/options.js",
+        "bundle:js": "run-p bundle:js:*",
+        "build:js": "run-s lint:js bundle:js",
         "watch:js": "chokidar \"src/scripts/*.js\" -c \"npm run build:js\" --initial",
         "build:assets": "cp -r src/assets dist",
-        "watch:assets": "chokidar \"src/assets\" -c \"npm run build:assets\"  --initial",
-        "clean": "rimraf dist && mkdir dist",
-        "build": "npm run clean && npm-run-all --sequential build:*",
-        "watch": "npm run build && npm-run-all --parallel watch:*",
+        "watch:assets": "chokidar \"src/assets\" -c \"npm run build:assets\" --initial",
+        "clean": "rimraf dist && mkdir -p dist/{assets,markup,scripts,styles}",
+        "build": "run-s clean build:*",
+        "watch": "npm-run-all build -p watch:*",
         "reinstall": "rimraf node_modules && npm cache verify && npm install"
+    },
+    "script-documentation": {
+        "build:manifest": "Directly copies the manifest file to the dist/ folder.",
+        "watch:manifest": "Watches the manifest file, running build:manifest on change.",
+        "build:html": "Compiles .pug files to .html files.",
+        "watch:html": "Watches .pug files, recompiling specific files on change.",
+        "build:css": "Compiles .scss files to .css files.",
+        "watch:css": "Watches .scss files, recompiling all such files on change.",
+        "lint:js": "Lints all .js files without exiting, so as not to interrupt watching.",
+        "bundle:js:addon": "Bundles the addon script and its requirements into a single dist/ file.",
+        "bundle:js:popup": "Bundles the popup script and its requirements into a single dist/ file.",
+        "bundle:js:options": "Bundles the options script and its requirements into a single dist/ file.",
+        "bundle:js": "Performs all bundling tasks in parallel.",
+        "build:js": "Lints and then bundles all .js files.",
+        "watch:js": "Watches .js files, rebuilding all such files on change.",
+        "build:assets": "Directly copies all src assets to dist assets.",
+        "watch:assets": "Watches assets, rebuilding all such files on change.",
+        "clean": "Removes and recreates the dist folder and its subfolders.",
+        "build": "Cleans and then builds all project files.",
+        "watch": "Cleans and then builds all project files, and then initiates all watches parallel.",
+        "reinstall": "Removes and reinstalls all npm dependencies."
+    },
+    "browserify": {
+        "transform": [
+            "babelify"
+        ]
     },
     "husky": {
         "hooks": {
@@ -74,6 +104,8 @@
         "@babel/cli": "^7.8.4",
         "@babel/core": "^7.8.7",
         "@babel/preset-env": "^7.8.7",
+        "babelify": "^10.0.0",
+        "browserify": "^16.5.0",
         "chokidar-cli": "^1.2.3",
         "eslint": "^6.8.0",
         "eslint-config-airbnb-base": "^13.2.0",
@@ -86,5 +118,8 @@
         "pug-cli": "^1.0.0-alpha6",
         "rimraf": "^2.7.1",
         "sass": "^1.26.2"
+    },
+    "dependencies": {
+        "sortablejs": "^1.10.2"
     }
 }
