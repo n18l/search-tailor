@@ -8,11 +8,11 @@
     "scripts": {
         "build:manifest": "cp src/manifest.json dist/",
         "watch:manifest": "chokidar \"src/manifest.json\" -c \"npm run build:manifest\" --initial",
-        "build:html": "npx pug src/markup --out dist/markup",
-        "watch:html": "chokidar \"src/markup/*.pug\" -c \"npx pug {path} --out dist/markup\" --initial",
+        "build:html": "pug src/markup --out dist/markup",
+        "watch:html": "chokidar \"src/markup/*.pug\" -c \"pug {path} --out dist/markup\" --initial",
         "build:css": "sass --update src/styles:dist/styles --style compressed",
         "watch:css": "sass --watch src/styles:dist/styles --style compressed",
-        "lint:js": "npx eslint src/scripts/*.js; exit 0",
+        "lint:js": "eslint src/scripts/*.js; exit 0",
         "bundle:js:addon": "browserify src/scripts/addon.js > dist/scripts/addon.js",
         "bundle:js:popup": "browserify src/scripts/popup.js > dist/scripts/popup.js",
         "bundle:js:options": "browserify src/scripts/options.js > dist/scripts/options.js",
@@ -20,10 +20,10 @@
         "bundle:js": "run-p bundle:js:*",
         "watch:js": "chokidar \"src/scripts/*.js\" -c \"npm run build:js\" --initial",
         "build:assets": "cp -r src/assets dist",
-        "watch:assets": "chokidar \"src/assets\" -c \"npm run build:assets\"  --initial",
-        "watch": "npm run build && npm-run-all --parallel watch:*",
+        "watch:assets": "chokidar \"src/assets\" -c \"npm run build:assets\" --initial",
         "clean": "rimraf dist && mkdir -p dist/{assets,markup,scripts,styles}",
         "build": "run-s clean build:*",
+        "watch": "npm-run-all build -p watch:*",
         "reinstall": "rimraf node_modules && npm cache verify && npm install"
     },
     "browserify": {
