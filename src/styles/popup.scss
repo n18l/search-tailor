@@ -26,11 +26,87 @@ main {
     color: hsl(0, 0%, 100%);
 }
 
-.entry-list {
-    padding: 0;
-    margin: 0;
-    overflow: scroll;
+.entry-group-container {
     max-height: 400px;
+    overflow: scroll;
+    padding-top: 5px;
+}
+
+.entry-group {
+
+    // .entry-group__header
+    &__header {
+        $header-height: 40px;
+
+        align-items: center;
+        background-color: hsl(240, 2%, 23%);
+        display: flex;
+        height: $header-height;
+        padding-left: 10px;
+
+        // .entry-group__header__icon
+        // &__icon {}
+
+        // .entry-group__header__title
+        &__title {
+            margin-left: 10px;
+            font-size: 1.2rem;
+        }
+
+        // .entry-group__header__action-container
+        &__action-container {
+            display: flex;
+            height: 100%;
+            margin-left: auto;
+        }
+
+        // .entry-group__header__action
+        &__action {
+            align-items: center;
+            display: flex;
+            justify-content: center;
+            width: $header-height;
+
+            &[disabled] {
+                cursor: not-allowed;
+                opacity: 0.5;
+            }
+
+            &:not([disabled]) {
+
+                &:hover,
+                &:focus {
+                    background-color: hsla(0, 0%, 100%, 0.2);
+                }
+
+                &:active {
+                    background-color: hsla(0, 0%, 100%, 0.4);
+                }
+            }
+
+        }
+    }
+
+    // .entry-group__list
+    &__list {
+        padding: 0;
+        margin: 0;
+
+        &:empty {
+
+            &::after {
+                align-items: center;
+                content: "Add new or drag existing entries here to apply this treatment.";
+                display: flex;
+                font-size: 1.2rem;
+                height: 65px;
+                opacity: .7;
+                padding: 0 100px;
+                text-align: center;
+            }
+        }
+
+    }
 }
 
 .entry {
@@ -210,33 +286,6 @@ main {
         border: 1px solid white;
         border-radius: 50%;
         margin: auto;
-    }
-}
-
-.button-bar {
-    flex: 0 0 40px;
-    margin-top: auto;
-    display: flex;
-    background-color: var(--color-button);
-
-    button {
-        cursor: not-allowed;
-        flex: 1 1 auto;
-        border: 0;
-        color: hsla(0, 0%, 100%, 0.5);
-        border-top: 1px solid var(--color-button-highlight-1);
-
-        &:not([disabled]) {
-            cursor: pointer;
-            color: hsl(0, 0%, 100%);
-
-            &:hover,
-            &:focus,
-            &:active {
-                background-color: var(--color-button-highlight-1);
-                border-color: var(--color-button-highlight-2);
-            }
-        }
     }
 }
 
