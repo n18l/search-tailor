@@ -174,9 +174,12 @@ class TailoredDomainListEntry {
             syncTailoredDomainsToStorage();
         });
 
-        this.treatmentSelect.addEventListener("change", () =>
-            syncTailoredDomainsToStorage()
-        );
+        this.treatmentSelect.addEventListener("change", e => {
+            // Identify the newly selected treatment group and move this entry
+            // to that group, updating the UI to match.
+            const newTreatmentGroup = tailoredDomainGroups[e.target.value];
+            this.move(newTreatmentGroup.entries.length, newTreatmentGroup, true);
+        });
 
         this.actionButtons.toggleEntryTreatment.addEventListener("click", () =>
             this.cycleTreatmentSelect()
@@ -208,6 +211,13 @@ class TailoredDomainListEntry {
     }
 
     /**
+     * Gets the position of this entry among others in its group.
+     */
+    get index() {
+        return this.parentGroup.entries.indexOf(this);
+    }
+
+    /**
      * Get the value of the entry as an object.
      */
     get value() {
@@ -222,6 +232,7 @@ class TailoredDomainListEntry {
      * Set the the entry's active tailoring treatment.
      */
     set activeTreatment(newTreatment) {
+        this.parentGroup = tailoredDomainGroups[newTreatment];
         this.treatmentSelect.value = newTreatment;
         this.element.dataset.activeTreatment = newTreatment;
         this.toggleSwatchDrawer(false);
@@ -259,11 +270,40 @@ class TailoredDomainListEntry {
     }
 
     /**
+     * Moves this entry within or between groups.
+     *
+     * @param {integer} targetIndex - The index in the target group where this entry should be placed.
+     * @param {integer} targetGroup - The group to which the moved entry should be assigned.
+     * @param {boolean} updateUI - Whether the entry's element should be removed and added to the new list.
+     */
+    move(targetIndex, targetGroup = this, updateUI = false) {
+        // Remove this entry from its current position in its parent group's
+        // entry array.
+        this.parentGroup.entries.splice(this.index, 1);
+
+        // Update the entry's treatment type if switching groups.
+        if (targetGroup !== this.parentGroup) {
+            this.activeTreatment = targetGroup.treatmentType;
+        }
+
+        if (updateUI) {
+            // Remove the entry's element and reinitialize it to manually create
+            // a new one.
+            this.element.remove();
+            targetGroup.entries.push(new TailoredDomainListEntry(targetGroup, this.value));
+        } else {
+            // Insert this entry's object into the target group's entry array.
+            targetGroup.entries.splice(targetIndex, 0, this);
+        }
+
+        syncTailoredDomainsToStorage();
+    }
+
+    /**
      * Remove the entry from its parent list.
      */
     delete() {
-        const entryIndex = this.parentGroup.entries.indexOf(this);
-        this.parentGroup.entries.splice(entryIndex, 1);
+        this.parentGroup.entries.splice(this.index, 1);
         this.element.remove();
 
         this.parentGroup.validateEntries(
@@ -412,19 +452,6 @@ class TailoredDomainGroup {
     }
 
     /**
-     * Update the order of the list's entries.
-     * @param {integer} fromIndex - The index of the entry being moved.
-     * @param {integer} toIndex - The index where the moved entry should be placed.
-     * @param {TailoredDomainGroup} toGroup - The group to which the moved entry should be assigned.
-     */
-    moveEntry(fromIndex, toIndex, toGroup = this) {
-        const entryToMove = this.entries.splice(fromIndex, 1)[0];
-        entryToMove.activeTreatment = toGroup.treatmentType;
-        toGroup.entries.splice(toIndex, 0, entryToMove);
-        syncTailoredDomainsToStorage();
-    }
-
-    /**
      * Validate each of the list's entries.
      * @param {function} [validCallback] - A function to call if all entries are valid.
      * @param {function} [invalidCallback] - A function to call if any entries are invalid.
@@ -472,9 +499,11 @@ entryGroupElements.forEach(entryGroupElement => {
                 const oldTreatment = event.from.closest('.js-entry-group').dataset.treatmentType;
                 const newTreatment = event.to.closest('.js-entry-group').dataset.treatmentType;
 
-                // Move the entry from the old treatment list to the new one.
-                tailoredDomainGroups[oldTreatment]
-                    .moveEntry(event.oldIndex, event.newIndex, tailoredDomainGroups[newTreatment]);
+                // Identify the entry being moved.
+                const draggedItem = tailoredDomainGroups[oldTreatment].entries[event.oldIndex];
+
+                // Move the entry from the old treatment group to the new one.
+                draggedItem.move(event.newIndex, tailoredDomainGroups[newTreatment]);
             },
         })
     );
