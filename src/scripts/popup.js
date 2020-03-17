@@ -181,18 +181,6 @@ class TailoredDomainListEntry {
             this.move(newTreatmentGroup.entries.length, newTreatmentGroup, true);
         });
 
-        this.actionButtons.toggleEntryTreatment.addEventListener("click", () =>
-            this.cycleTreatmentSelect()
-        );
-
-        this.actionButtons.toggleEntryTreatment.addEventListener(
-            "contextmenu",
-            e => {
-                e.preventDefault();
-                this.cycleTreatmentSelect(-1);
-            }
-        );
-
         this.actionButtons.deleteEntry.addEventListener("click", () =>
             this.delete()
         );
@@ -322,28 +310,6 @@ class TailoredDomainListEntry {
         const validityRequirements = [this.domainInput.value !== ""];
 
         return !validityRequirements.includes(false);
-    }
-
-    /**
-     * Programatically advance the treatment select field to the next option.
-     */
-    cycleTreatmentSelect(cycleAmount = 1) {
-        if (cycleAmount === 0) return;
-
-        const cycleDirection = cycleAmount > 0 ? "forwards" : "backwards";
-        const adjustedAmount =
-            cycleDirection === "backwards"
-                ? this.treatmentOptions.length + cycleAmount
-                : cycleAmount;
-        const targetTreatmentIndex =
-            this.treatmentOptions.indexOf(this.treatmentSelect.value) +
-            adjustedAmount;
-        const targetTreatmentOption = this.treatmentOptions[
-            targetTreatmentIndex % this.treatmentOptions.length
-        ];
-
-        this.activeTreatment = targetTreatmentOption;
-        this.treatmentSelect.dispatchEvent(new Event("change"));
     }
 
     toggleSwatchDrawer(shouldBeOpen = null) {
