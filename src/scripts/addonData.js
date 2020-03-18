@@ -5,6 +5,17 @@
  */
 
 const addonData = {
+    treatmentTypes: [
+        {
+            name: 'Screen',
+        },
+        {
+            name: 'Suppress',
+        },
+        {
+            name: 'Spotlight',
+        },
+    ],
     searchEngines: [
         {
             name: "Google",
