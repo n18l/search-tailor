@@ -431,18 +431,11 @@ class TailoredDomainGroup {
      * @param {object} storageData - Existing extension data passed by the browser.storage API.
      */
     populate(storageData) {
-        if (
-            !storageData.tailoredDomains ||
-            storageData.tailoredDomains.length === 0
-        ) {
-            this.disableNewEntries();
-            this.entries.push(new TailoredDomainListEntry(this));
-        }
-
         // Get all tailored domains for this group's treatment type.
         const tailoredDomainsOfType = storageData.tailoredDomains
             .filter(tailoredDomain => tailoredDomain.treatment === this.treatmentType);
 
+        // Initialize entry objects and UIs for each pre-existing entry.
         tailoredDomainsOfType.forEach(tailoredDomainSettings =>
             this.entries.push(
                 new TailoredDomainListEntry(this, tailoredDomainSettings)
