@@ -5,39 +5,39 @@ html
         meta(charset="utf-8")
         link(rel="stylesheet" href="../styles/popup.css")
 
-    template(id="swatch")
-        li(class="swatch-wrapper js-swatch-wrapper")
-            button(class="swatch js-swatch" data-click-action[]="selectTailoringTemplate")
-
-    template(id="entry")
-        li(class="entry js-entry" data-active-treatment="spotlight" data-drag-disabled="false")
-            div(class="entry__primary-ui")
-                div(class="entry__sort-handle js-sort-handle")
-                    svg(class="entry__sort-handle__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24")
-                        path(fill="none" d="M0 0h24v24H0V0z")
-                        path(fill="hsla(0, 100%, 100%, .25)" d="M11 18c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2zm-2-8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm6 4c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z")
-
-                div(class="entry__input-wrapper")
-                    input(class="entry__domain-input js-entry-domain-input" type="text" placeholder="domain")
-                    div(class="entry__input-effects")
-                    div(class="entry__color-template-button")
-                        input(class="entry__input-tailoring-template js-entry-tailoring-template-id-input" type="text" hidden readonly)
-                        button(class="entry__color-template-button__swatch" title="Change Template" data-click-action="toggleSwatchDrawer")
-
-                select(class="entry__treatment-select js-entry-treatment-select" hidden)
-                    option(value="spotlight" selected) Spotlight
-                    option(value="suppress") Suppress
-                    option(value="screen") Screen
-
-                div(class="entry__action-container")
-                    button(class="entry__action" data-click-action="deleteEntry" title="Delete Entry")
-                        svg(class="entry__action__icon entry__action__icon--delete-entry" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24")
-                            path(fill="hsla(0, 100%, 100%, .75)" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z")
-
-            div(class="entry__swatch-drawer js-swatch-drawer")
-                ul(class="swatch-list js-swatch-list")
-
     body
+        template(id="swatch")
+            li(class="swatch-wrapper js-swatch-wrapper")
+                button(class="swatch js-swatch" data-click-action[]="selectTailoringTemplate")
+
+        template(id="entry")
+            li(class="entry js-entry" data-active-treatment="spotlight" data-drag-disabled="false")
+                div(class="entry__primary-ui")
+                    div(class="entry__sort-handle js-sort-handle")
+                        svg(class="entry__sort-handle__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24")
+                            path(fill="none" d="M0 0h24v24H0V0z")
+                            path(fill="hsla(0, 100%, 100%, .25)" d="M11 18c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2zm-2-8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm6 4c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z")
+
+                    div(class="entry__input-wrapper")
+                        input(class="entry__domain-input js-entry-domain-input" type="text" placeholder="domain")
+                        div(class="entry__input-effects")
+                        div(class="entry__color-template-button")
+                            input(class="entry__input-tailoring-template js-entry-tailoring-template-id-input" type="text" hidden readonly)
+                            button(class="entry__color-template-button__swatch" title="Change Template" data-click-action="toggleSwatchDrawer")
+
+                    select(class="entry__treatment-select js-entry-treatment-select" hidden)
+                        option(value="spotlight" selected) Spotlight
+                        option(value="suppress") Suppress
+                        option(value="screen") Screen
+
+                    div(class="entry__action-container")
+                        button(class="entry__action" data-click-action="deleteEntry" title="Delete Entry")
+                            svg(class="entry__action__icon entry__action__icon--delete-entry" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24")
+                                path(fill="hsla(0, 100%, 100%, .75)" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z")
+
+                div(class="entry__swatch-drawer js-swatch-drawer")
+                    ul(class="swatch-list js-swatch-list")
+
         main(id="popup-content")
             div(class="entry-group-container")
 
@@ -55,12 +55,15 @@ html
                                     when 'Spotlight'
                                         path(fill="none" d="M0 0h24v24H0z")
                                         path(fill="hsla(0, 100%, 100%, .75)" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z")
+
                             div(class="entry-group__header__title")= treatmentData.name
+
                             div(class="entry-group__header__action-container")
                                 button(class="entry-group__header__action" data-click-action="addEntry" title="Add new entry")
                                     svg(xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24")
                                         path(fill="hsla(0, 100%, 100%, .75)" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z")
                                         path(fill="none" d="M0 0h24v24H0z")
+
                         ul(class="entry-group__list js-entry-list")
 
         div(id="error-content" class="hidden")
