@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-
 /**
  * Configuration data needed by the addon at runtime.
  */

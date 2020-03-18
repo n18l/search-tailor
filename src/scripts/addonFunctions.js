@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-
 /**
  * Functions used by multiple scripts in the addon.
  */
