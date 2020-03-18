@@ -26,9 +26,8 @@ html
                             button(class="entry__color-template-button__swatch" title="Change Template" data-click-action="toggleSwatchDrawer")
 
                     select(class="entry__treatment-select js-entry-treatment-select" hidden)
-                        option(value="spotlight" selected) Spotlight
-                        option(value="suppress") Suppress
-                        option(value="screen") Screen
+                        each treatment, index in treatmentTypes
+                            option(value=treatment.id selected=(index == 0))= treatment.label
 
                     div(class="entry__action-container")
                         button(class="entry__action" data-click-action="deleteEntry" title="Delete Entry")
