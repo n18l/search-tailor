@@ -7,13 +7,16 @@
 const addonData = {
     treatmentTypes: [
         {
-            name: 'Screen',
+            id: 'screen',
+            label: 'Screen',
         },
         {
-            name: 'Suppress',
+            id: 'suppress',
+            label: 'Suppress',
         },
         {
-            name: 'Spotlight',
+            id: 'spotlight',
+            label: 'Spotlight',
         },
     ],
     searchEngines: [

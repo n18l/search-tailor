@@ -33,6 +33,7 @@ main {
 }
 
 .entry-group {
+    $this-entry-group: &;
 
     // .entry-group__header
     &__header {
@@ -45,7 +46,22 @@ main {
         padding-left: 10px;
 
         // .entry-group__header__icon
-        // &__icon {}
+        &__icon {
+            display: none;
+
+            @each $treatmentType in ('screen', 'suppress', 'spotlight') {
+
+                // .entry-group__header__icon--screen
+                // .entry-group__header__icon--suppress
+                // .entry-group__header__icon--spotlight
+                &--#{$treatmentType} {
+
+                    #{$this-entry-group}[data-treatment-type=#{$treatmentType}] & {
+                        display: block;
+                    }
+                }
+            }
+        }
 
         // .entry-group__header__title
         &__title {

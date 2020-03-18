@@ -2,6 +2,8 @@ const Sortable = require('sortablejs');
 const addonData = require('./addonData');
 const addonFunctions = require('./addonFunctions');
 
+const entryGroupContainer = document.querySelector(".js-entry-group-container");
+const entryGroupTemplate = document.querySelector("template#entry-group");
 const entryTemplate = document.querySelector("template#entry");
 const swatchTemplate = document.querySelector("template#swatch");
 
@@ -331,19 +333,12 @@ class TailoredDomainListEntry {
 /** Class representing the interactive list of tailored domains. */
 class TailoredDomainGroup {
     /**
-     * Initialize the list UI.
-     * @param {object} entryGroupElement - The HTML element representing the list.
-     * @param {string} treatmentType - The tailoring treatment this group represents.
+     * Initialize the entry group's data object and corresponding UI.
+     *
+     * @param {Object} treatment - The treatment data to use to initialize this group.
      */
-    constructor(entryGroupElement, treatmentType) {
-        this.entries = [];
-        this.element = entryGroupElement;
-        this.treatmentType = treatmentType;
-        this.entryList = this.element.querySelector('.js-entry-list');
-        this.addEntryButton = this.element.querySelector(
-            '[data-click-action="addEntry"]'
-        );
-
+    constructor(treatment) {
+        this.cacheData(treatment);
         this.bindEvents();
 
         browser.storage.sync
@@ -354,14 +349,66 @@ class TailoredDomainGroup {
                     addonData.defaultUserData.tailoringTemplates;
                 this.populate(storageData);
             }, logError);
+
+        entryGroupContainer.appendChild(this.element);
     }
 
     /**
-     * Get all of the list's current entries.
+     * Caches immutable data for future access.
+     *
+     * @param {Object} treatment - The treatment data to use to initialize this group.
+     */
+    cacheData(treatment) {
+        // Save a reference to the data used to initialize the group.
+        this.treatment = treatment;
+
+        // Initialize the element representing this entry group.
+        this.element = document
+            .importNode(entryGroupTemplate.content, true)
+            .querySelector('.js-entry-group');
+
+        this.treatmentType = treatment.id;
+        this.title = treatment.label;
+
+        // Save references to relevant child nodes of this group.
+        this.entryList = this.element
+            .querySelector('.js-entry-list');
+        this.addEntryButton = this.element
+            .querySelector('[data-click-action="addEntry"]');
+
+        // Initialize the array of entries for the group.
+        this.entries = [];
+    }
+
+    /**
+     * Gets all of the list's current entries.
      * @returns {array} - An array of the current values of each list item.
      */
     get entryValues() {
         return this.entries.map(entry => entry.value);
+    }
+
+    /**
+     * The ID of this group's current treatment, which ties this group's UI to
+     * its object via data-attribute.
+     *
+     * @param {string} newTreatmentType - The treatment type to apply to this group.
+     */
+    set treatmentType(newTreatmentType) {
+        this.element.dataset.treatmentType = newTreatmentType;
+    }
+
+    get treatmentType() {
+        return this.treatment.id;
+    }
+
+    /**
+     * The text title of this group's UI.
+     *
+     * @param {string} newTitle - The title to apply to this group.
+     */
+    set title(newTitle) {
+        this.element.querySelector('.js-entry-group-title').textContent = newTitle;
     }
 
     /**
@@ -438,15 +485,10 @@ class TailoredDomainGroup {
 
 
 /**
- * Initialize each group of domain entries, keyed by treatment type.
+ * Initialize and store each group of domain entries, keyed by treatment type.
  */
-const entryGroupElements = document.querySelectorAll(".js-entry-group");
-
-entryGroupElements.forEach(entryGroupElement => {
-    tailoredDomainGroups[entryGroupElement.dataset.treatmentType] = new TailoredDomainGroup(
-        entryGroupElement,
-        entryGroupElement.dataset.treatmentType
-    );
+addonData.treatmentTypes.forEach(treatment => {
+    tailoredDomainGroups[treatment.id] = new TailoredDomainGroup(treatment);
 });
 
 /**
