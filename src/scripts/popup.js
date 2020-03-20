@@ -386,7 +386,13 @@ class TailoredDomainGroup {
             .querySelector('.js-entry-group');
 
         this.treatmentType = treatment.id;
-        this.title = treatment.label;
+
+        // Display this group's label, prepending "Spotlight" if applicable.
+        let entryGroupTitle = treatment.label;
+        if (treatment.id.startsWith('spotlight')) {
+            entryGroupTitle = `Spotlight: ${entryGroupTitle}`;
+        }
+        this.title = entryGroupTitle;
 
         // Save references to relevant child nodes of this group.
         this.entryList = this.element
