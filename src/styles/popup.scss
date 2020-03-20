@@ -15,25 +15,26 @@ body {
     overflow: hidden;
 }
 
-body {
-    width: 380px;
-}
-
 main {
+    color: hsl(0, 0%, 100%);
     display: flex;
     flex-direction: column;
     height: 100%;
-    color: hsl(0, 0%, 100%);
+    position: relative;
 }
 
 .entry-group-container {
     max-height: 400px;
     overflow: scroll;
     padding-top: 5px;
+    position: relative;
+    z-index: 1;
 }
 
 .entry-group {
     $this-entry-group: &;
+
+    background-color: hsl(240, 3%, 30%);
 
     // .entry-group__header
     &__header {
