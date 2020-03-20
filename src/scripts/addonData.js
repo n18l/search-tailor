@@ -13,7 +13,7 @@ const addonData = {
             label: 'Suppress',
         },
         {
-            id: 'spotlight',
+            id: 'spotlight:default',
             label: 'Spotlight',
         },
     ],
@@ -64,13 +64,32 @@ const addonData = {
         tailoredDomains: [],
         tailoringTemplates: [
             {
-                id: "default",
+                id: "screen",
+                label: "Screen",
+                backgroundColor: "#000000",
+                backgroundOpacity: "0",
+                borderColor: "#000000",
+                borderOpacity: "0",
+                contentOpacity: "0",
+            },
+            {
+                id: "suppress",
+                label: "Suppress",
+                backgroundColor: "#000000",
+                backgroundOpacity: "0",
+                borderColor: "#000000",
+                borderOpacity: "0",
+                contentOpacity: ".5",
+            },
+            {
+                id: "spotlight:default",
                 label: "Default",
                 backgroundColor: "#19E54C",
                 backgroundOpacity: ".25",
                 borderColor: "#007F00",
                 borderOpacity: ".35",
-            },
+                contentOpacity: "1",
+            }
         ],
         tailoringTemplatePreviewColor: "#FFFFFF",
         searchEngines: {

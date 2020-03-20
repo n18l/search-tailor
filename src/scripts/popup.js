@@ -7,7 +7,9 @@ const entryGroupTemplate = document.querySelector("template#entry-group");
 const entryTemplate = document.querySelector("template#entry");
 const swatchTemplate = document.querySelector("template#swatch");
 
-const tailoredDomainGroups = {};
+const tailoredDomainGroups = new Map();
+const allTailoringTemplates = [];
+const allTailoredDomains = [];
 
 function logError(error) {
     console.error(error);
@@ -20,7 +22,7 @@ function logError(error) {
 function syncTailoredDomainsToStorage() {
     let allEntryValues = [];
 
-    Object.entries(tailoredDomainGroups).forEach(([, tailoredDomainGroup]) => {
+    tailoredDomainGroups.forEach(tailoredDomainGroup => {
         allEntryValues = allEntryValues.concat(tailoredDomainGroup.entryValues);
     });
 
@@ -33,6 +35,12 @@ function syncTailoredDomainsToStorage() {
         .then(null, logError);
 }
 
+function getTailoringTemplateByID(templateID) {
+    return allTailoringTemplates.find(
+        template => template.id === templateID
+    );
+}
+
 /* Class representing an entry in the list of tailored domains. */
 class TailoredDomainListEntry {
     /**
@@ -42,7 +50,6 @@ class TailoredDomainListEntry {
      * @param {boolean} [focusInput] - Whether to focus this entry's domain input field on creation.
      */
     constructor(
-        parentTailoredDomainGroup,
         tailoredDomainSettings = {
             domain: "",
             tailoringTemplateID: "",
@@ -50,7 +57,8 @@ class TailoredDomainListEntry {
         },
         focusInput = false
     ) {
-        this.cacheData(parentTailoredDomainGroup);
+        this.cacheData(tailoredDomainSettings);
+        this.populateTreatmentSelect();
         this.populateSwatchDrawer();
         this.defineActions();
         this.bindEvents();
@@ -62,21 +70,18 @@ class TailoredDomainListEntry {
             this.element.dataset.dragDisabled = true;
         }
 
-        this.tailoringTemplateIDInput.value = this.getTailoringTemplateByID(
+        this.treatmentSelect.value = this.settings.treatment;
+
+        this.tailoringTemplateIDInput.value = getTailoringTemplateByID(
             tailoredDomainSettings.tailoringTemplateID
         )
             ? tailoredDomainSettings.tailoringTemplateID
-            : this.parentGroup.tailoringTemplates[0].id;
+            : allTailoringTemplates[0].id;
 
         addonFunctions.applyTailoringTemplateStyles(
-            this.getTailoringTemplateByID(this.tailoringTemplateIDInput.value),
+            getTailoringTemplateByID(this.treatmentSelect.value),
             this.actionButtons.toggleSwatchDrawer
         );
-
-        if (tailoredDomainSettings.treatment) {
-            this.activeTreatment =
-                tailoredDomainSettings.treatment || this.treatmentSelect.value;
-        }
 
         this.parentGroup.entryList.appendChild(this.element);
 
@@ -85,17 +90,26 @@ class TailoredDomainListEntry {
         }
     }
 
+    populateTreatmentSelect() {
+        allTailoringTemplates.forEach(template => {
+            const optionElement = document.createElement("option");
+            optionElement.setAttribute('value', template.id);
+            optionElement.textContent = template.label;
+
+            this.treatmentSelect.appendChild(optionElement);
+        });
+    }
+
     /**
      * Cache selectors and other immutable data for this entry.
      */
-    cacheData(parentTailoredDomainGroup) {
+    cacheData(tailoredDomainSettings) {
+        this.settings = tailoredDomainSettings;
+
         // This entry.
         this.element = document
             .importNode(entryTemplate.content, true)
             .querySelector(".js-entry");
-
-        // The list object containing this entry.
-        this.parentGroup = parentTailoredDomainGroup;
 
         // Input elements for this entry.
         this.domainInput = this.element.querySelector(".js-entry-domain-input");
@@ -107,9 +121,9 @@ class TailoredDomainListEntry {
         );
 
         // Options from the treatment select input.
-        this.treatmentOptions = Array.from(this.treatmentSelect.options).map(
-            option => option.value
-        );
+        // this.treatmentOptions = Array.from(this.treatmentSelect.options).map(
+        //     option => option.value
+        // );
 
         // The drawer and list elements for tailoring template swatches.
         this.swatchDrawer = this.element.querySelector(".js-swatch-drawer");
@@ -170,16 +184,23 @@ class TailoredDomainListEntry {
 
         this.tailoringTemplateIDInput.addEventListener("change", e => {
             addonFunctions.applyTailoringTemplateStyles(
-                this.getTailoringTemplateByID(e.target.value),
+                getTailoringTemplateByID(e.target.value),
                 this.actionButtons.toggleSwatchDrawer
             );
             syncTailoredDomainsToStorage();
         });
 
         this.treatmentSelect.addEventListener("change", e => {
+            addonFunctions.applyTailoringTemplateStyles(
+                getTailoringTemplateByID(e.target.value),
+                this.actionButtons.toggleSwatchDrawer
+            );
+
+            this.element.dataset.activeTreatment = e.target.value;
+
             // Identify the newly selected treatment group and move this entry
             // to that group, updating the UI to match.
-            const newTreatmentGroup = tailoredDomainGroups[e.target.value];
+            const newTreatmentGroup = tailoredDomainGroups.get(e.target.value);
             this.move(newTreatmentGroup.entries.length, newTreatmentGroup, true);
         });
 
@@ -198,6 +219,10 @@ class TailoredDomainListEntry {
                 );
             });
         });
+    }
+
+    get parentGroup() {
+        return tailoredDomainGroups.get(this.settings.treatment);
     }
 
     /**
@@ -221,26 +246,19 @@ class TailoredDomainListEntry {
     /**
      * Set the the entry's active tailoring treatment.
      */
-    set activeTreatment(newTreatment) {
-        this.parentGroup = tailoredDomainGroups[newTreatment];
-        this.treatmentSelect.value = newTreatment;
-        this.element.dataset.activeTreatment = newTreatment;
-        this.toggleSwatchDrawer(false);
-    }
+    // set activeTreatment(newTreatment) {
+    //     this.treatmentSelect.value = newTreatment;
+    //     this.element.dataset.activeTreatment = newTreatment;
+    //     this.toggleSwatchDrawer(false);
+    // }
 
     updateEntryTailoringTemplate(newTemplateID) {
         this.tailoringTemplateIDInput.value = newTemplateID;
         this.tailoringTemplateIDInput.dispatchEvent(new Event("change"));
     }
 
-    getTailoringTemplateByID(templateID) {
-        return this.parentGroup.tailoringTemplates.find(
-            template => template.id === templateID
-        );
-    }
-
     populateSwatchDrawer() {
-        this.parentGroup.tailoringTemplates.forEach(tailoringTemplate => {
+        allTailoringTemplates.forEach(tailoringTemplate => {
             const swatchWrapper = document
                 .importNode(swatchTemplate.content, true)
                 .querySelector(".js-swatch-wrapper");
@@ -250,7 +268,7 @@ class TailoredDomainListEntry {
             swatch.tailoringTemplate = tailoringTemplate;
 
             addonFunctions.applyTailoringTemplateStyles(
-                this.getTailoringTemplateByID(tailoringTemplate.id),
+                getTailoringTemplateByID(tailoringTemplate.id),
                 swatch,
                 true
             );
@@ -266,24 +284,33 @@ class TailoredDomainListEntry {
      * @param {integer} targetGroup - The group to which the moved entry should be assigned.
      * @param {boolean} updateUI - Whether the entry's element should be removed and added to the new list.
      */
-    move(targetIndex, targetGroup = this, updateUI = false) {
+    move(targetIndex, targetGroup = this.parentGroup, updateUI = false) {
+        let entry = this;
+
         // Remove this entry from its current position in its parent group's
         // entry array.
-        this.parentGroup.entries.splice(this.index, 1);
-
-        // Update the entry's treatment type if switching groups.
-        if (targetGroup !== this.parentGroup) {
-            this.activeTreatment = targetGroup.treatmentType;
-        }
+        entry.parentGroup.entries.splice(entry.index, 1);
 
         if (updateUI) {
             // Remove the entry's element and reinitialize it to manually create
             // a new one.
-            this.element.remove();
-            targetGroup.entries.push(new TailoredDomainListEntry(targetGroup, this.value));
+            entry.element.remove();
+            entry = new TailoredDomainListEntry({
+                domain: this.value.domain,
+                tailoringTemplateID: this.value.tailoringTemplateID,
+                treatment: targetGroup.treatment.id,
+            });
+            targetGroup.entries.push(entry);
         } else {
             // Insert this entry's object into the target group's entry array.
-            targetGroup.entries.splice(targetIndex, 0, this);
+            targetGroup.entries.splice(targetIndex, 0, entry);
+        }
+
+        // Update the entry's treatment type if switching groups.
+        if (targetGroup !== entry.parentGroup) {
+            entry.settings.treatment = targetGroup.treatment.id;
+            entry.treatmentSelect.value = targetGroup.treatment.id;
+            entry.element.dataset.activeTreatment = targetGroup.treatment.id;
         }
 
         syncTailoredDomainsToStorage();
@@ -340,15 +367,6 @@ class TailoredDomainGroup {
     constructor(treatment) {
         this.cacheData(treatment);
         this.bindEvents();
-
-        browser.storage.sync
-            .get(["tailoredDomains", "tailoringTemplates"])
-            .then(storageData => {
-                this.tailoringTemplates =
-                    storageData.tailoringTemplates ||
-                    addonData.defaultUserData.tailoringTemplates;
-                this.populate(storageData);
-            }, logError);
 
         entryGroupContainer.appendChild(this.element);
     }
@@ -418,29 +436,12 @@ class TailoredDomainGroup {
         this.addEntryButton.addEventListener('click', () => {
             this.disableNewEntries();
 
-            this.entries.push(new TailoredDomainListEntry(this, {
+            this.entries.push(new TailoredDomainListEntry({
                 domain: '',
                 tailoringTemplateID: '',
                 treatment: this.treatmentType,
             }, true));
         });
-    }
-
-    /**
-     * Populate the list with existing extension data or an empty entry.
-     * @param {object} storageData - Existing extension data passed by the browser.storage API.
-     */
-    populate(storageData) {
-        // Get all tailored domains for this group's treatment type.
-        const tailoredDomainsOfType = storageData.tailoredDomains
-            .filter(tailoredDomain => tailoredDomain.treatment === this.treatmentType);
-
-        // Initialize entry objects and UIs for each pre-existing entry.
-        tailoredDomainsOfType.forEach(tailoredDomainSettings =>
-            this.entries.push(
-                new TailoredDomainListEntry(this, tailoredDomainSettings)
-            )
-        );
     }
 
     /**
@@ -476,21 +477,13 @@ class TailoredDomainGroup {
     }
 }
 
-
-/**
- * Initialize and store each group of domain entries, keyed by treatment type.
- */
-addonData.treatmentTypes.forEach(treatment => {
-    tailoredDomainGroups[treatment.id] = new TailoredDomainGroup(treatment);
-});
-
 /**
  * Initialize domain list sorting by creating a new sortable list for each group
  * of domains based on their treatment type.
  */
-(function enableDomainListSorting() {
-    Object.entries(tailoredDomainGroups).forEach(
-        ([, tailoredDomainGroup]) => new Sortable(tailoredDomainGroup.entryList, {
+function enableDomainListSorting() {
+    tailoredDomainGroups.forEach(
+        tailoredDomainGroup => new Sortable(tailoredDomainGroup.entryList, {
             handle: ".js-sort-handle",
             filter: "[data-drag-disabled='true']",
             group: "tailoring-domains",
@@ -501,11 +494,57 @@ addonData.treatmentTypes.forEach(treatment => {
                 const newTreatment = event.to.closest('.js-entry-group').dataset.treatmentType;
 
                 // Identify the entry being moved.
-                const draggedItem = tailoredDomainGroups[oldTreatment].entries[event.oldIndex];
+                const draggedItem = tailoredDomainGroups.get(oldTreatment).entries[event.oldIndex];
 
                 // Move the entry from the old treatment group to the new one.
-                draggedItem.move(event.newIndex, tailoredDomainGroups[newTreatment]);
+                draggedItem.move(event.newIndex, tailoredDomainGroups.get(newTreatment));
             },
         })
     );
-})();
+};
+
+function initializeEntries(storageData) {
+    if (storageData.tailoredDomains.length) {
+        allTailoredDomains.push(...storageData.tailoredDomains);
+    } else {
+        allTailoredDomains.push(...addonData.defaultUserData.tailoredDomains);
+    }
+
+    allTailoredDomains.forEach(tailoredDomain => {
+        tailoredDomainGroups.get(tailoredDomain.treatment).entries.push(
+            new TailoredDomainListEntry(tailoredDomain)
+        );
+    });
+}
+
+function initializeGroups(storageData) {
+    if (storageData.tailoringTemplates.length) {
+        allTailoringTemplates.push(...storageData.tailoringTemplates);
+    } else {
+        allTailoringTemplates.push(...addonData.defaultUserData.tailoringTemplates);
+    }
+
+    allTailoringTemplates.forEach(tailoringTemplate => {
+        const tailoredDomainsOfType = storageData.tailoredDomains
+            .filter(tailoredDomain => tailoredDomain.treatment === tailoringTemplate.id);
+
+        tailoredDomainGroups.set(
+            tailoringTemplate.id,
+            new TailoredDomainGroup(tailoringTemplate, tailoredDomainsOfType)
+        );
+    });
+
+    enableDomainListSorting();
+
+    initializeEntries(storageData);
+}
+
+/**
+ * Initialize and store each group of domain entries, keyed by treatment type.
+ */
+browser.storage.sync
+    .get(["tailoredDomains", "tailoringTemplates"])
+    .then(storageData => {
+        initializeGroups(storageData);
+    }, logError);
+

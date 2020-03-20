@@ -56,7 +56,7 @@ main {
                 // .entry-group__header__icon--spotlight
                 &--#{$treatmentType} {
 
-                    #{$this-entry-group}[data-treatment-type=#{$treatmentType}] & {
+                    #{$this-entry-group}[data-treatment-type^=#{$treatmentType}] & {
                         display: block;
                     }
                 }

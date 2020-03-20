@@ -97,17 +97,18 @@ class TailorableSearch {
                 );
 
                 matchingResults.forEach(matchingResult => {
+                    const thisResult = matchingResult;
                     // If this treatment needs to be spotlit, create a new
                     // element and apply the appropriate tailoring template
                     // styles to it.
-                    if (tailoredDomain.treatment === "spotlight") {
+                    if (tailoredDomain.treatment.startsWith("spotlight")) {
                         const newTreatmentDiv = document.createElement("div");
-                        newTreatmentDiv.classList.add("spotlight__treatment");
+                        newTreatmentDiv.classList.add("treatment-panel");
 
                         const tailoringTemplate = storageData.tailoringTemplates.find(
                             template =>
                                 template.id ===
-                                tailoredDomain.tailoringTemplateID
+                                tailoredDomain.treatment
                         );
 
                         addonFunctions.applyTailoringTemplateStyles(
@@ -115,24 +116,24 @@ class TailorableSearch {
                             newTreatmentDiv
                         );
 
-                        const existingTreatmentDiv = matchingResult.querySelector(
-                            ".spotlight__treatment"
+                        const existingTreatmentDiv = thisResult.querySelector(
+                            ".treatment-panel"
                         );
 
                         if (existingTreatmentDiv) {
-                            matchingResult.replaceChild(
+                            thisResult.replaceChild(
                                 newTreatmentDiv,
                                 existingTreatmentDiv
                             );
                         } else {
-                            matchingResult.insertAdjacentElement(
+                            thisResult.insertAdjacentElement(
                                 "afterbegin",
                                 newTreatmentDiv
                             );
                         }
                     }
 
-                    matchingResult.classList.add(tailoredDomain.treatment);
+                    thisResult.dataset.tailoringTreatment = tailoredDomain.treatment;
                 });
             });
         };
