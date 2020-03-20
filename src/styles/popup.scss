@@ -78,6 +78,8 @@ main {
 
         // .entry-group__header__action
         &__action {
+            $this-action: &;
+
             align-items: center;
             display: flex;
             justify-content: center;
@@ -100,6 +102,28 @@ main {
                 }
             }
 
+            &[data-action-active="true"] {
+                background-color: var(--color-button);
+            }
+
+            &__icon {
+                transition: transform .5s;
+
+                #{$this-action}[data-click-action="toggleSettingsDrawer"][data-action-active="true"] & {
+                    transform: rotate(150deg);
+                }
+            }
+        }
+    }
+
+    // .entry-group__drawer
+    &__drawer {
+        background-color: var(--color-button);
+        display: none;
+        height: 70px;
+
+        &[data-is-open="true"] {
+            display: block;
         }
     }
 

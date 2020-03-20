@@ -393,6 +393,10 @@ class TailoredDomainGroup {
             .querySelector('.js-entry-list');
         this.addEntryButton = this.element
             .querySelector('[data-click-action="addEntry"]');
+        this.viewSettingsButton = this.element
+            .querySelector('[data-click-action="toggleSettingsDrawer"]');
+        this.drawer = this.element
+            .querySelector('.js-entry-group-drawer');
 
         // Initialize the array of entries for the group.
         this.entries = [];
@@ -421,6 +425,25 @@ class TailoredDomainGroup {
     }
 
     /**
+     * Gets whether this group's settings drawer is currently open.
+     *
+     * @returns {boolean} Whether the settings drawer is currently open.
+     */
+    get settingsDrawerIsOpen() {
+        return this.drawer.dataset.isOpen === 'true';
+    }
+
+    /**
+     * Updates this group's settings drawer's HTML to reflect its new state.
+     *
+     * @param {boolean} newDrawerState - The updated drawer state.
+     */
+    set settingsDrawerIsOpen(newDrawerState) {
+        this.drawer.dataset.isOpen = newDrawerState;
+        this.viewSettingsButton.dataset.actionActive = newDrawerState;
+    }
+
+    /**
      * The text title of this group's UI.
      *
      * @param {string} newTitle - The title to apply to this group.
@@ -442,6 +465,11 @@ class TailoredDomainGroup {
                 treatment: this.treatmentType,
             }, true));
         });
+
+        // Toggle this group's settings drawer.
+        this.viewSettingsButton.addEventListener(
+            'click', () => this.toggleSettingsDrawer()
+        );
     }
 
     /**
@@ -456,6 +484,24 @@ class TailoredDomainGroup {
      */
     enableNewEntries() {
         this.addEntryButton.removeAttribute("disabled");
+    }
+
+    /**
+     * Toggles this group's settings drawer open and closed.
+     *
+     * @param {boolean|null} shouldBeOpen - Whether to force the drawer to a particular state.
+     */
+    toggleSettingsDrawer(shouldBeOpen = null) {
+        // Set the drawer's new state, preferring the passed state but falling
+        // back to the opposite of its current state.
+        this.settingsDrawerIsOpen = shouldBeOpen !== null ?
+            shouldBeOpen :
+            !this.settingsDrawerIsOpen;
+
+        // Update the title text of the drawer's action button.
+        this.viewSettingsButton.title = this.settingsDrawerIsOpen ?
+            "Stop editing" :
+            "Edit this group";
     }
 
     /**
