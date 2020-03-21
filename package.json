@@ -58,10 +58,12 @@
         }
     },
     "lint-staged": {
-        "*.{js,json,scss}": [
-            "prettier --write",
-            "git add"
-        ],
+        "linters": {
+            "*.{js,json,scss}": [
+                "prettier --write",
+                "git add"
+            ]
+        },
         "ignore": [
             "**/*.min.js"
         ]
