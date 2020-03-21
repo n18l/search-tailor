@@ -1,7 +1,8 @@
+const addonData = require("./addonData");
+
 /**
  * Functions used by multiple scripts in the addon.
  */
-
 const addonFunctions = {
     /**
      * Apply the settings from a particular tailoring template to the
@@ -94,6 +95,88 @@ const addonFunctions = {
         }
 
         return [hue, saturation, lightness];
+    },
+
+    /**
+     * Logs an error.
+     *
+     * @param {*} error The error output to log.
+     */
+    logError(error) {
+        console.error(error);
+    },
+
+    /**
+     * Synchronize the list's current entries with the browser.storage API,
+     * then reinitialize the addon in any tabs affected by the extension.
+     */
+    syncTailoredDomainsToStorage() {
+        let allEntryValues = [];
+
+        Object.entries(addonData.local.tailoringGroups).forEach(
+            ([, tailoringGroup]) => {
+                allEntryValues = allEntryValues.concat(
+                    tailoringGroup.entryValues
+                );
+            }
+        );
+
+        const validTailoredDomains = allEntryValues.filter(
+            entryValues => entryValues.domain !== ""
+        );
+
+        browser.storage.sync
+            .set({ tailoredDomains: validTailoredDomains })
+            .then(null, addonFunctions.logError);
+    },
+
+    /**
+     * Retrieves the data of the tailoring template using the provided ID.
+     *
+     * @param {String} templateID The ID of the template to retrieve.
+     *
+     * @returns {Object|undefined} The requested tailoring template, or undefined if not found.
+     */
+    getTailoringTemplateByID(templateID) {
+        return addonData.local.tailoringTemplates.find(
+            template => template.id === templateID
+        );
+    },
+
+    /**
+     * Retrieves the addon's current user data using the browser storage API and
+     * saves a local working copy. If the requested data isn't found, it falls
+     * back to the addon's defined default values.
+     *
+     * @returns {Promise} A Promise resolving to the data saved as the local working copy.
+     */
+    getUserData() {
+        const requestedStorageData = ["tailoredDomains", "tailoringTemplates"];
+
+        const userDataPromise = new Promise((resolve, reject) => {
+            browser.storage.sync
+                .get(requestedStorageData)
+                .then(storageData => {
+                    requestedStorageData.forEach(dataType => {
+                        addonData.local[dataType] = [];
+
+                        if (
+                            storageData[dataType] &&
+                            storageData[dataType].length
+                        ) {
+                            addonData.local[dataType] = storageData[dataType];
+                        } else {
+                            addonData.local[dataType] =
+                                addonData.defaultUserData[dataType];
+                        }
+                    });
+
+                    resolve(addonData.local);
+                })
+                .catch(error => reject(error));
+        });
+
+        return userDataPromise;
     },
 };
 

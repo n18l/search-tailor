@@ -1,10 +1,6 @@
-const Sortable = require('sortablejs');
-const addonData = require('./addonData');
-const addonFunctions = require('./addonFunctions');
-
-function logError(error) {
-    console.error(error);
-}
+const Sortable = require("sortablejs");
+const addonData = require("./addonData");
+const addonFunctions = require("./addonFunctions");
 
 function isValidJson(json) {
     try {
@@ -98,7 +94,7 @@ class TailoredSearchOptionsPanel {
                         index
                     ].checked = this.currentSearchEngines[input.name].enabled;
                 });
-            }, logError);
+            }, addonFunctions.logError);
     }
 
     /**
@@ -125,7 +121,7 @@ class TailoredSearchOptionsPanel {
 
                 browser.storage.sync
                     .set({ searchEngines: this.currentSearchEngines })
-                    .then(null, logError);
+                    .then(null, addonFunctions.logError);
             });
         });
 
@@ -170,7 +166,7 @@ class TailoredSearchOptionsPanel {
             // Otherwise, update the current extension data with the valid JSON.
             browser.storage.sync
                 .set(JSON.parse(this.inputs.jsonImport.value))
-                .then(null, logError);
+                .then(null, addonFunctions.logError);
         });
     }
 }
@@ -472,7 +468,7 @@ class TailoringTemplateList {
                     storageData.tailoringTemplatePreviewColor;
                 this.element.style.backgroundColor =
                     storageData.tailoringTemplatePreviewColor;
-            }, logError);
+            }, addonFunctions.logError);
     }
 
     /**
@@ -589,7 +585,7 @@ class TailoringTemplateList {
                 tailoringTemplates: validTailoringTemplates,
                 tailoringTemplatePreviewColor: this.previewColorInput.value,
             })
-            .then(null, logError);
+            .then(null, addonFunctions.logError);
     }
 }
 

@@ -1,20 +1,29 @@
 /**
  * Configuration data needed by the addon at runtime.
  */
-
 const addonData = {
+    /**
+     * A working copy of the addon's loaded data.
+     */
+    local: {
+        /**
+         * A full list of all current TailoringGroup objects, keyed by the ID of
+         * the tailoring template they apply.
+         */
+        tailoringGroups: {},
+    },
     treatmentTypes: [
         {
-            id: 'screen',
-            label: 'Screen',
+            id: "screen",
+            label: "Screen",
         },
         {
-            id: 'suppress',
-            label: 'Suppress',
+            id: "suppress",
+            label: "Suppress",
         },
         {
-            id: 'spotlight:default',
-            label: 'Spotlight',
+            id: "spotlight:default",
+            label: "Spotlight",
         },
     ],
     searchEngines: [
@@ -89,7 +98,7 @@ const addonData = {
                 borderColor: "#007F00",
                 borderOpacity: ".35",
                 contentOpacity: "1",
-            }
+            },
         ],
         tailoringTemplatePreviewColor: "#FFFFFF",
         searchEngines: {

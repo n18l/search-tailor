@@ -1,9 +1,5 @@
-const addonData = require('./addonData');
-const addonFunctions = require('./addonFunctions');
-
-function logError(error) {
-    console.error(error);
-}
+const addonData = require("./addonData");
+const addonFunctions = require("./addonFunctions");
 
 /* Class representing a user's search that is eligible for tailoring. */
 class TailorableSearch {
@@ -106,9 +102,7 @@ class TailorableSearch {
                         newTreatmentDiv.classList.add("treatment-panel");
 
                         const tailoringTemplate = storageData.tailoringTemplates.find(
-                            template =>
-                                template.id ===
-                                tailoredDomain.treatment
+                            template => template.id === tailoredDomain.treatment
                         );
 
                         addonFunctions.applyTailoringTemplateStyles(
@@ -133,14 +127,15 @@ class TailorableSearch {
                         }
                     }
 
-                    thisResult.dataset.tailoringTreatment = tailoredDomain.treatment;
+                    thisResult.dataset.tailoringTreatment =
+                        tailoredDomain.treatment;
                 });
             });
         };
 
         browser.storage.sync
             .get(addonData.defaultUserData)
-            .then(applyTailoringTreatments, logError);
+            .then(applyTailoringTreatments, addonFunctions.logError);
     }
 
     /**
