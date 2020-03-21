@@ -124,7 +124,6 @@ class TailoredDomainGroup {
                 new TailoredDomainListEntry(
                     {
                         domain: "",
-                        tailoringTemplateID: "",
                         treatment: this.treatmentType,
                     },
                     true

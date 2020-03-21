@@ -14,7 +14,6 @@ class TailoredDomainListEntry {
     constructor(
         tailoredDomainSettings = {
             domain: "",
-            tailoringTemplateID: "",
             treatment: null,
         },
         focusInput = false
@@ -33,12 +32,6 @@ class TailoredDomainListEntry {
         }
 
         this.treatmentSelect.value = this.settings.treatment;
-
-        this.tailoringTemplateIDInput.value = addonFunctions.getTailoringTemplateByID(
-            tailoredDomainSettings.tailoringTemplateID
-        )
-            ? tailoredDomainSettings.tailoringTemplateID
-            : addonData.local.tailoringTemplates[0].id;
 
         addonFunctions.applyTailoringTemplateStyles(
             addonFunctions.getTailoringTemplateByID(this.treatmentSelect.value),
@@ -78,17 +71,9 @@ class TailoredDomainListEntry {
 
         // Input elements for this entry.
         this.domainInput = this.element.querySelector(".js-entry-domain-input");
-        this.tailoringTemplateIDInput = this.element.querySelector(
-            ".js-entry-tailoring-template-id-input"
-        );
         this.treatmentSelect = this.element.querySelector(
             ".js-entry-treatment-select"
         );
-
-        // Options from the treatment select input.
-        // this.treatmentOptions = Array.from(this.treatmentSelect.options).map(
-        //     option => option.value
-        // );
 
         // The drawer and list elements for tailoring template swatches.
         this.swatchDrawer = this.element.querySelector(".js-swatch-drawer");
@@ -147,14 +132,6 @@ class TailoredDomainListEntry {
             if (e.key === " ") e.preventDefault();
         });
 
-        this.tailoringTemplateIDInput.addEventListener("change", e => {
-            addonFunctions.applyTailoringTemplateStyles(
-                addonFunctions.getTailoringTemplateByID(e.target.value),
-                this.actionButtons.toggleSwatchDrawer
-            );
-            addonFunctions.syncTailoredDomainsToStorage();
-        });
-
         this.treatmentSelect.addEventListener("change", e => {
             addonFunctions.applyTailoringTemplateStyles(
                 addonFunctions.getTailoringTemplateByID(e.target.value),
@@ -181,14 +158,6 @@ class TailoredDomainListEntry {
         this.actionButtons.toggleSwatchDrawer.addEventListener("click", () =>
             this.toggleSwatchDrawer()
         );
-
-        this.actionButtons.selectTailoringTemplate.forEach(actionButton => {
-            actionButton.addEventListener("click", e => {
-                this.updateEntryTailoringTemplate(
-                    e.target.tailoringTemplate.id
-                );
-            });
-        });
     }
 
     get parentGroup() {
@@ -208,23 +177,8 @@ class TailoredDomainListEntry {
     get value() {
         return {
             domain: this.domainInput.value,
-            tailoringTemplateID: this.tailoringTemplateIDInput.value,
             treatment: this.treatmentSelect.value,
         };
-    }
-
-    /**
-     * Set the the entry's active tailoring treatment.
-     */
-    // set activeTreatment(newTreatment) {
-    //     this.treatmentSelect.value = newTreatment;
-    //     this.element.dataset.activeTreatment = newTreatment;
-    //     this.toggleSwatchDrawer(false);
-    // }
-
-    updateEntryTailoringTemplate(newTemplateID) {
-        this.tailoringTemplateIDInput.value = newTemplateID;
-        this.tailoringTemplateIDInput.dispatchEvent(new Event("change"));
     }
 
     populateSwatchDrawer() {
@@ -267,7 +221,6 @@ class TailoredDomainListEntry {
             entry.element.remove();
             entry = new TailoredDomainListEntry({
                 domain: this.value.domain,
-                tailoringTemplateID: this.value.tailoringTemplateID,
                 treatment: targetGroup.treatment.id,
             });
             targetGroup.entries.push(entry);
