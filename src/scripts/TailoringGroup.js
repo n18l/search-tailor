@@ -19,6 +19,10 @@ class TailoringGroup {
         this.bindEvents();
         this.enableEntrySorting();
 
+        if (this.treatment.label) {
+            this.labelInput.value = this.treatment.label;
+        }
+
         const entryGroupContainer = document.querySelector(
             ".js-entry-group-container"
         );
@@ -34,27 +38,27 @@ class TailoringGroup {
         // Save a reference to the data used to initialize the group.
         this.treatment = treatment;
 
-        this.elementTemplate = document.querySelector("template#entry-group");
-
         // Initialize the element representing this entry group.
+        this.elementTemplate = document.querySelector("template#entry-group");
         this.element = document
             .importNode(this.elementTemplate.content, true)
             .querySelector(".js-entry-group");
 
+        // Add this group's treatment ID to its HTML element for styling.
         this.element.dataset.treatmentId = treatment.id;
-
-        // Display this group's label, prepending "Spotlight" if applicable.
-        let entryGroupTitle = treatment.label;
-        if (treatment.id.startsWith("spotlight")) {
-            entryGroupTitle = `Spotlight: ${entryGroupTitle}`;
-        }
-        this.title = entryGroupTitle;
 
         // Save references to relevant child nodes of this group.
         this.entryList = this.element.querySelector(".js-entry-list");
+        this.titleElement = this.element.querySelector(".js-entry-group-title");
         this.settingsDrawer = this.element.querySelector(
             ".js-entry-group-settings-drawer"
         );
+        this.labelInput = this.element.querySelector(
+            ".js-treatment-label-input"
+        );
+
+        // Set this group's display title.
+        this.title = this.treatment.label;
 
         // Initialize the array of entries for the group.
         this.entries = [];
@@ -88,14 +92,19 @@ class TailoringGroup {
     }
 
     /**
-     * The text title of this group's UI.
+     * The text title to display for this group in the popup UI.
      *
      * @param {string} newTitle - The title to apply to this group.
      */
     set title(newTitle) {
-        this.element.querySelector(
-            ".js-entry-group-title"
-        ).textContent = newTitle;
+        let updatedTitle = newTitle;
+
+        // Prepend "Spotlight" to this group if applicable.
+        if (this.treatment.id.startsWith("spotlight")) {
+            updatedTitle = `Spotlight: ${updatedTitle}`;
+        }
+
+        this.titleElement.textContent = updatedTitle;
     }
 
     /**
@@ -134,6 +143,23 @@ class TailoringGroup {
         this.actionButtons.toggleSettingsDrawer.addEventListener("click", () =>
             this.toggleSettingsDrawer()
         );
+
+        // Update this group's title/treatment label on change.
+        this.labelInput.addEventListener("change", e => {
+            // Only proceed if this input's valud is valid.
+            if (!e.target.validity.valid) return;
+
+            // Update this group's label and title values.
+            this.treatment.label = e.target.value;
+            this.title = e.target.value;
+
+            // Update the working copy data's label value.
+            addonFunctions.getTailoringTreatmentByID(this.treatment.id).label =
+                e.target.value;
+
+            // Save the working copy data to storage.
+            addonFunctions.syncTailoringTreatmentsToStorage();
+        });
 
         // Initialize this group's background color picker.
         this.backgroundPicker = new ColorPicker({

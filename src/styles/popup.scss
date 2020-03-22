@@ -9,6 +9,7 @@
     --color-text-input: hsla(0, 0%, 100%, 1);
     --color-text-input-bg: hsla(0, 0%, 100%, 0.1);
     --color-text-input-effects: hsl(200, 100%, 50%);
+    --color-text-input-invalid: hsl(0, 75%, 60%);
 
     --color-background-icon-fill: hsla(0, 100%, 100%, 0.75);
     --color-border-icon-fill: hsla(0, 100%, 100%, 0.75);
@@ -75,8 +76,11 @@ main {
 
         // .entry-group__header__title
         &__title {
-            margin-left: 10px;
             font-size: 1.2rem;
+            margin: 0 6px 0 10px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         // .entry-group__header__action-container
@@ -158,6 +162,9 @@ main {
     }
 
     // .entry-group__label-input-effects
+    // The input effects element is used to provide performantly animated states
+    // by only transitioning properties that don't trigger repaints (i.e. scale,
+    // opacity, position, & rotation).
     &__label-input-effects {
         height: 100%;
         width: 100%;
@@ -166,13 +173,17 @@ main {
         overflow: hidden;
         pointer-events: none;
 
+        &::before,
         &::after {
+            bottom: 0;
             content: "";
             height: 2px;
-            width: 100%;
-            bottom: 0;
             left: 0;
             position: absolute;
+            width: 100%;
+        }
+
+        &::before {
             background-color: var(--color-text-input-effects);
             transform: scaleX(0);
             transition: transform 0.35s;
@@ -180,6 +191,16 @@ main {
             #{$this-entry-group}__label-input:focus + &,
             #{$this-entry-group}__label-input:active + & {
                 transform: scaleX(1);
+            }
+        }
+
+        &::after {
+            background-color: var(--color-text-input-invalid);
+            opacity: 0;
+            transition: opacity 0.35s;
+
+            #{$this-entry-group}__label-input:invalid + & {
+                opacity: 1;
             }
         }
     }
