@@ -18,22 +18,9 @@ const addonFunctions = {
     ) {
         const element = elementToStyle;
 
-        // Convert opacity values (which are stored as numbers between 0 and 1)
-        // into hex equivalents.
-        const backgroundOpacityHexString = Math.round(
-            255 * tailoringTreatment.backgroundOpacity
-        ).toString(16);
-        const borderOpacityHexString = Math.round(
-            255 * tailoringTreatment.borderOpacity
-        ).toString(16);
-
         // Style the supplied element with 8-character hex notation.
-        element.style.backgroundColor = `${
-            tailoringTreatment.backgroundColor
-        }${backgroundOpacityHexString}`;
-        element.style.borderColor = `${
-            tailoringTreatment.borderColor
-        }${borderOpacityHexString}`;
+        element.style.backgroundColor = tailoringTreatment.backgroundColor;
+        element.style.borderColor = tailoringTreatment.borderColor;
 
         if (applyTitle) {
             element.title = tailoringTreatment.label;
@@ -123,6 +110,17 @@ const addonFunctions = {
 
         browser.storage.sync
             .set({ tailoringEntries: validTailoringEntries })
+            .then(null, addonFunctions.logError);
+    },
+
+    /**
+     * Synchronize the current tailoring templates with the browser.storage API.
+     */
+    syncTailoringTreatmentsToStorage() {
+        browser.storage.sync
+            .set({
+                tailoringTreatments: addonData.local.tailoringTreatments,
+            })
             .then(null, addonFunctions.logError);
     },
 

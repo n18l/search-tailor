@@ -1,9 +1,19 @@
 @import "reset";
+@import "inputs";
 
 :root {
     --color-button: hsl(240, 3%, 37%);
     --color-button-highlight-1: hsl(240, 2%, 44%);
     --color-button-highlight-2: hsl(240, 2%, 49%);
+
+    --color-text-input: hsla(0, 0%, 100%, 1);
+    --color-text-input-bg: hsla(0, 0%, 100%, 0.1);
+    --color-text-input-effects: hsl(200, 100%, 50%);
+
+    --color-background-icon-fill: hsla(0, 100%, 100%, 0.75);
+    --color-border-icon-fill: hsla(0, 100%, 100%, 0.75);
+
+    --color-icon-fill: hsla(0, 100%, 100%, 0.75);
 }
 
 html,
@@ -105,6 +115,7 @@ main {
                 background-color: var(--color-button);
             }
 
+            // .entry-group__header__action__icon
             &__icon {
                 transition: transform 0.5s;
 
@@ -116,14 +127,120 @@ main {
         }
     }
 
-    // .entry-group__drawer
-    &__drawer {
+    // .entry-group__settings-drawer
+    &__settings-drawer {
         background-color: var(--color-button);
         display: none;
-        height: 70px;
+        height: 65px;
 
         &[data-is-open="true"] {
-            display: block;
+            display: flex;
+        }
+    }
+
+    // .entry-group__input-container
+    &__input-container {
+        background-color: var(--color-text-input-bg);
+        border-radius: 2px;
+        flex: 1 1 100%;
+        display: flex;
+        margin: 15px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    // .entry-group__label-input
+    &__label-input {
+        padding: 0 0 0 8px;
+        height: 100%;
+        width: 100%;
+        margin: auto;
+    }
+
+    // .entry-group__label-input-effects
+    &__label-input-effects {
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        border-radius: 2px;
+        overflow: hidden;
+        pointer-events: none;
+
+        &::after {
+            content: "";
+            height: 2px;
+            width: 100%;
+            bottom: 0;
+            left: 0;
+            position: absolute;
+            background-color: var(--color-text-input-effects);
+            transform: scaleX(0);
+            transition: transform 0.35s;
+
+            #{$this-entry-group}__label-input:focus + &,
+            #{$this-entry-group}__label-input:active + & {
+                transform: scaleX(1);
+            }
+        }
+    }
+
+    // .entry-group__action-container
+    &__action-container {
+        display: flex;
+        margin-left: auto;
+    }
+
+    // .entry-group__action
+    &__action {
+        --color-button-hover: hsla(240, 2%, 49%, 1);
+
+        $this-action: &;
+        width: 60px;
+        display: flex;
+        position: relative;
+
+        &:hover,
+        &:focus,
+        &:active {
+            background-color: var(--color-button-hover);
+        }
+
+        &::before {
+            content: "";
+            width: 1px;
+            height: 45px;
+            position: absolute;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            background-color: var(--color-button-hover);
+
+            #{$this-action}:hover + &,
+            #{$this-action}:focus + &,
+            #{$this-action}:active + & {
+                display: none;
+            }
+        }
+
+        // .entry-group__action__icon
+        &__icon {
+            margin: auto;
+
+            // .entry-group__action__icon__path-1
+            &__path-1 {
+                fill: var(--color-icon-fill);
+            }
+
+            // .entry-group__action__icon__path-2
+            &__path-2 {
+                [data-click-action="setBackgroundColor"] & {
+                    fill: var(--color-background-icon-fill);
+                }
+
+                [data-click-action="setBorderColor"] & {
+                    fill: var(--color-border-icon-fill);
+                }
+            }
         }
     }
 
@@ -166,7 +283,7 @@ main {
         }
     }
 
-    &__input-wrapper {
+    &__input-container {
         background-color: var(--color-button);
         border-radius: 2px;
         flex: 1 1 100%;

@@ -1,4 +1,5 @@
 const Sortable = require("sortablejs");
+const ColorPicker = require("vanilla-picker");
 const addonFunctions = require("./addonFunctions");
 const TailoringEntry = require("./TailoringEntry");
 
@@ -14,6 +15,7 @@ class TailoringGroup {
      */
     constructor(treatment) {
         this.cacheData(treatment);
+        this.defineActions();
         this.bindEvents();
         this.enableEntrySorting();
 
@@ -50,13 +52,9 @@ class TailoringGroup {
 
         // Save references to relevant child nodes of this group.
         this.entryList = this.element.querySelector(".js-entry-list");
-        this.addEntryButton = this.element.querySelector(
-            '[data-click-action="addEntry"]'
+        this.settingsDrawer = this.element.querySelector(
+            ".js-entry-group-settings-drawer"
         );
-        this.viewSettingsButton = this.element.querySelector(
-            '[data-click-action="toggleSettingsDrawer"]'
-        );
-        this.drawer = this.element.querySelector(".js-entry-group-drawer");
 
         // Initialize the array of entries for the group.
         this.entries = [];
@@ -76,7 +74,7 @@ class TailoringGroup {
      * @returns {boolean} Whether the settings drawer is currently open.
      */
     get settingsDrawerIsOpen() {
-        return this.drawer.dataset.isOpen === "true";
+        return this.settingsDrawer.dataset.isOpen === "true";
     }
 
     /**
@@ -85,8 +83,8 @@ class TailoringGroup {
      * @param {boolean} newDrawerState - The updated drawer state.
      */
     set settingsDrawerIsOpen(newDrawerState) {
-        this.drawer.dataset.isOpen = newDrawerState;
-        this.viewSettingsButton.dataset.actionActive = newDrawerState;
+        this.settingsDrawer.dataset.isOpen = newDrawerState;
+        this.actionButtons.toggleSettingsDrawer.dataset.actionActive = newDrawerState;
     }
 
     /**
@@ -101,10 +99,24 @@ class TailoringGroup {
     }
 
     /**
+     * Identify and store references to this group's action buttons.
+     */
+    defineActions() {
+        this.actionButtons = {};
+        const actionButtons = this.element.querySelectorAll(
+            "[data-click-action]"
+        );
+
+        actionButtons.forEach(actionButton => {
+            this.actionButtons[actionButton.dataset.clickAction] = actionButton;
+        });
+    }
+
+    /**
      * Attach event handlers.
      */
     bindEvents() {
-        this.addEntryButton.addEventListener("click", () => {
+        this.actionButtons.addEntry.addEventListener("click", () => {
             this.disableNewEntries();
 
             this.entries.push(
@@ -119,9 +131,59 @@ class TailoringGroup {
         });
 
         // Toggle this group's settings drawer.
-        this.viewSettingsButton.addEventListener("click", () =>
+        this.actionButtons.toggleSettingsDrawer.addEventListener("click", () =>
             this.toggleSettingsDrawer()
         );
+
+        // Initialize this group's background color picker.
+        this.backgroundPicker = new ColorPicker({
+            parent: this.actionButtons.setBackgroundColor,
+            color: this.treatment.backgroundColor,
+            popup: "left",
+            onChange: color => {
+                // Update the icon color to reference the new selection.
+                this.actionButtons.setBackgroundColor.style.setProperty(
+                    "--color-background-icon-fill",
+                    color.hslaString
+                );
+
+                // Update this group's color value.
+                this.treatment.backgroundColor = color.hslaString;
+
+                // Update the working copy data's color value.
+                addonFunctions.getTailoringTreatmentByID(
+                    this.treatment.id
+                ).backgroundColor = color.hslaString;
+
+                // Save the working copy data to storage.
+                addonFunctions.syncTailoringTreatmentsToStorage();
+            },
+        });
+
+        // Initialize this group's border color picker.
+        this.borderPicker = new ColorPicker({
+            parent: this.actionButtons.setBorderColor,
+            color: this.treatment.borderColor,
+            popup: "left",
+            onChange: color => {
+                // Update the icon color to reference the new selection.
+                this.actionButtons.setBorderColor.style.setProperty(
+                    "--color-border-icon-fill",
+                    color.hslaString
+                );
+
+                // Update this group's color value.
+                this.treatment.borderColor = color.hslaString;
+
+                // Update the working copy data's color value.
+                addonFunctions.getTailoringTreatmentByID(
+                    this.treatment.id
+                ).borderColor = color.hslaString;
+
+                // Save the working copy data to storage.
+                addonFunctions.syncTailoringTreatmentsToStorage();
+            },
+        });
     }
 
     /**
