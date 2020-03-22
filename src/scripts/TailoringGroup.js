@@ -35,6 +35,13 @@ class TailoringGroup {
             this.labelInput.value = this.treatment.label;
         }
 
+        // Remove the settings drawer and toggle button for treatment types that
+        // should not be user-editable.
+        if (["screen", "suppress"].includes(this.treatmentType)) {
+            this.actionButtons.toggleSettingsDrawer.remove();
+            this.settingsDrawer.remove();
+        }
+
         const entryGroupContainer = document.querySelector(
             ".js-entry-group-container"
         );
@@ -81,6 +88,15 @@ class TailoringGroup {
     }
 
     /**
+     * Gets the treatment type, which comprises the first part of the ID.
+     *
+     * @returns {String} This group's treatment type.
+     */
+    get treatmentType() {
+        return this.treatment.id.split(":")[0];
+    }
+
+    /**
      * Gets all of the list's current entries.
      * @returns {array} - An array of the current values of each list item.
      */
@@ -116,7 +132,7 @@ class TailoringGroup {
         let updatedTitle = newTitle;
 
         // Prepend "Spotlight" to this group if applicable.
-        if (this.treatment.id.startsWith("spotlight")) {
+        if (this.treatmentType === "spotlight") {
             updatedTitle = `Spotlight: ${updatedTitle}`;
         }
 
