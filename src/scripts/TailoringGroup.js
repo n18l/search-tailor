@@ -190,14 +190,14 @@ class TailoringGroup {
      * Prevent the addition of new entries by users.
      */
     disableNewEntries() {
-        this.addEntryButton.setAttribute("disabled", "");
+        this.actionButtons.addEntry.setAttribute("disabled", "");
     }
 
     /**
      * Allow the addition of new entries by users.
      */
     enableNewEntries() {
-        this.addEntryButton.removeAttribute("disabled");
+        this.actionButtons.addEntry.removeAttribute("disabled");
     }
 
     /**
