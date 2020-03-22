@@ -45,16 +45,16 @@ class TailorableSearch {
      */
     get tailoredResults() {
         return this.searchResultsContainer.querySelectorAll(
-            ".spotlight, .suppress, .screen"
+            "[data-tailoring-treatment]"
         );
     }
 
     /**
-     * Remove all treatment classes from the current search results.
+     * Remove all treatments from the current search results.
      */
     resetTailoring() {
         this.tailoredResults.forEach(tailoredResult =>
-            tailoredResult.classList.remove("spotlight", "suppress", "screen")
+            tailoredResult.removeAttribute("data-tailoring-treatment")
         );
     }
 
@@ -66,8 +66,9 @@ class TailorableSearch {
         this.resetTailoring();
 
         /**
-         * Apply the appropriate treatment class to each result that matches an
-         * entry from the user-defined list of tailored domains.
+         * Apply the appropriate treatment to each result that matches an entry
+         * from the user-defined list of tailored domains.
+         *
          * @param {object} storageData - Freshly retrieved data from the extension's synchronized storage.
          */
         const applyTailoringTreatments = storageData => {
