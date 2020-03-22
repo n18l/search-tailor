@@ -12,20 +12,7 @@ const addonData = {
          */
         tailoringGroups: [],
     },
-    treatmentTypes: [
-        {
-            id: "screen",
-            label: "Screen",
-        },
-        {
-            id: "suppress",
-            label: "Suppress",
-        },
-        {
-            id: "spotlight:default",
-            label: "Spotlight",
-        },
-    ],
+
     searchEngines: [
         {
             name: "Google",

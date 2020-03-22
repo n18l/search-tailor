@@ -55,7 +55,7 @@ main {
                 // .entry-group__header__icon--suppress
                 // .entry-group__header__icon--spotlight
                 &--#{$treatmentType} {
-                    #{$this-entry-group}[data-treatment-type^="#{$treatmentType}"]
+                    #{$this-entry-group}[data-treatment-id^="#{$treatmentType}"]
                         & {
                         display: block;
                     }

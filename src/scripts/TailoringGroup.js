@@ -39,7 +39,7 @@ class TailoringGroup {
             .importNode(this.elementTemplate.content, true)
             .querySelector(".js-entry-group");
 
-        this.treatmentType = treatment.id;
+        this.element.dataset.treatmentId = treatment.id;
 
         // Display this group's label, prepending "Spotlight" if applicable.
         let entryGroupTitle = treatment.label;
@@ -68,20 +68,6 @@ class TailoringGroup {
      */
     get entryValues() {
         return this.entries.map(entry => entry.value);
-    }
-
-    /**
-     * The ID of this group's current treatment, which ties this group's UI to
-     * its object via data-attribute.
-     *
-     * @param {string} newTreatmentType - The treatment type to apply to this group.
-     */
-    set treatmentType(newTreatmentType) {
-        this.element.dataset.treatmentType = newTreatmentType;
-    }
-
-    get treatmentType() {
-        return this.treatment.id;
     }
 
     /**
@@ -125,7 +111,7 @@ class TailoringGroup {
                 new TailoringEntry(
                     {
                         domain: "",
-                        treatment: this.treatmentType,
+                        treatment: this.treatment.id,
                     },
                     true
                 )
@@ -199,9 +185,9 @@ class TailoringGroup {
             onEnd(event) {
                 // Identify the treatment list being moved from and to.
                 const oldTreatment = event.from.closest(".js-entry-group")
-                    .dataset.treatmentType;
+                    .dataset.treatmentId;
                 const newTreatment = event.to.closest(".js-entry-group").dataset
-                    .treatmentType;
+                    .treatmentId;
 
                 // Identify the entry being moved.
                 const draggedItem = addonFunctions.getTailoringGroupByTreatmentID(
