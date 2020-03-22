@@ -7,12 +7,15 @@ const addonData = {
      */
     local: {
         /**
-         * A full list of all current TailoringGroup objects, keyed by the ID of
-         * the tailoring treatment they apply.
+         * A full list of all current TailoringGroup objects.
          */
         tailoringGroups: [],
     },
 
+    /**
+     * Search engine-specific data to guide the application of tailoring
+     * templates to search results pages.
+     */
     searchEngines: [
         {
             name: "Google",
@@ -56,6 +59,9 @@ const addonData = {
         },
     ],
 
+    /**
+     * The default user data to apply to users who have no preexisting settings.
+     */
     defaultUserData: {
         tailoringEntries: [],
         tailoringTreatments: [
@@ -78,7 +84,6 @@ const addonData = {
                 borderColor: "hsla(120,100%,25%,0.35)",
             },
         ],
-        tailoringTreatmentPreviewColor: "#FFFFFF",
         searchEngines: {
             Google: {
                 enabled: true,
