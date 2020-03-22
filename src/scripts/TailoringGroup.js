@@ -212,9 +212,10 @@ class TailoringGroup {
             shouldBeOpen !== null ? shouldBeOpen : !this.settingsDrawerIsOpen;
 
         // Update the title text of the drawer's action button.
-        this.viewSettingsButton.title = this.settingsDrawerIsOpen
-            ? "Stop editing"
-            : "Edit this group";
+        this.actionButtons.toggleSettingsDrawer.title = this
+            .settingsDrawerIsOpen
+            ? "Hide group settings"
+            : "View group settings";
     }
 
     /**
