@@ -48,10 +48,6 @@ html
     body
         div(class="loading-indicator")
 
-        template(id="swatch")
-            li(class="swatch-wrapper js-swatch-wrapper")
-                button(class="swatch js-swatch" data-click-action[]="selectTailoringTreatment")
-
         template(id="entry")
             li(class="entry js-entry" data-active-treatment="spotlight" data-drag-disabled="false")
                 div(class="entry__primary-ui")
@@ -63,8 +59,6 @@ html
                     div(class="entry__input-container")
                         input(class="entry__domain-input js-entry-domain-input" type="text" placeholder="domain")
                         div(class="entry__input-effects")
-                        div(class="entry__color-template-button")
-                            button(class="entry__color-template-button__swatch" title="Change Treatment" data-click-action="toggleSwatchDrawer")
 
                     select(class="entry__treatment-select js-entry-treatment-select")
 
@@ -72,9 +66,6 @@ html
                         button(class="entry__action" data-click-action="deleteEntry" title="Delete Entry")
                             svg(class="entry__action__icon entry__action__icon--delete-entry" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24")
                                 path(fill="hsla(0, 100%, 100%, .75)" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z")
-
-                div(class="entry__swatch-drawer js-swatch-drawer")
-                    ul(class="swatch-list js-swatch-list")
 
         template(id="entry-group")
             section(class="entry-group js-entry-group" data-treatment-id="")

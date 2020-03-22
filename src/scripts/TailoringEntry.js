@@ -20,7 +20,6 @@ class TailoringEntry {
     ) {
         this.cacheData(tailoringEntry);
         this.populateTreatmentSelect();
-        this.populateSwatchDrawer();
         this.defineActions();
         this.bindEvents();
 
@@ -32,13 +31,6 @@ class TailoringEntry {
         }
 
         this.treatmentSelect.value = this.settings.treatment;
-
-        addonFunctions.applyTailoringTreatmentToElement(
-            addonFunctions.getTailoringTreatmentByID(
-                this.treatmentSelect.value
-            ),
-            this.actionButtons.toggleSwatchDrawer
-        );
 
         this.parentGroup.entryList.appendChild(this.element);
 
@@ -64,7 +56,6 @@ class TailoringEntry {
         this.settings = tailoringEntry;
 
         this.elementTemplate = document.querySelector("template#entry");
-        this.swatchTemplate = document.querySelector("template#swatch");
 
         // This entry.
         this.element = document
@@ -76,10 +67,6 @@ class TailoringEntry {
         this.treatmentSelect = this.element.querySelector(
             ".js-entry-treatment-select"
         );
-
-        // The drawer and list elements for tailoring treatment swatches.
-        this.swatchDrawer = this.element.querySelector(".js-swatch-drawer");
-        this.swatchList = this.swatchDrawer.querySelector(".js-swatch-list");
     }
 
     /**
@@ -135,11 +122,6 @@ class TailoringEntry {
         });
 
         this.treatmentSelect.addEventListener("change", e => {
-            addonFunctions.applyTailoringTreatmentToElement(
-                addonFunctions.getTailoringTreatmentByID(e.target.value),
-                this.actionButtons.toggleSwatchDrawer
-            );
-
             this.element.dataset.activeTreatment = e.target.value;
 
             // Identify the newly selected treatment group and move this entry
@@ -156,10 +138,6 @@ class TailoringEntry {
 
         this.actionButtons.deleteEntry.addEventListener("click", () =>
             this.delete()
-        );
-
-        this.actionButtons.toggleSwatchDrawer.addEventListener("click", () =>
-            this.toggleSwatchDrawer()
         );
     }
 
@@ -184,26 +162,6 @@ class TailoringEntry {
             domain: this.domainInput.value,
             treatment: this.treatmentSelect.value,
         };
-    }
-
-    populateSwatchDrawer() {
-        addonData.local.tailoringTreatments.forEach(tailoringTreatment => {
-            const swatchWrapper = document
-                .importNode(this.swatchTemplate.content, true)
-                .querySelector(".js-swatch-wrapper");
-
-            const swatch = swatchWrapper.querySelector(".js-swatch");
-
-            swatch.tailoringTreatment = tailoringTreatment;
-
-            addonFunctions.applyTailoringTreatmentToElement(
-                addonFunctions.getTailoringTreatmentByID(tailoringTreatment.id),
-                swatch,
-                true
-            );
-
-            this.swatchList.appendChild(swatchWrapper);
-        });
     }
 
     /**
@@ -248,7 +206,6 @@ class TailoringEntry {
      * Remove the entry from its parent list.
      */
     delete() {
-        console.log(this.parentGroup.entries);
         this.parentGroup.entries.splice(this.index, 1);
         this.element.remove();
 
@@ -256,8 +213,6 @@ class TailoringEntry {
             () => this.parentGroup.enableNewEntries(),
             () => this.parentGroup.disableNewEntries()
         );
-
-        console.log(this.parentGroup.entries);
 
         addonFunctions.syncTailoringEntriesToStorage();
     }
@@ -270,21 +225,6 @@ class TailoringEntry {
         const validityRequirements = [this.domainInput.value !== ""];
 
         return !validityRequirements.includes(false);
-    }
-
-    toggleSwatchDrawer(shouldBeOpen = null) {
-        const swatchDrawerOpenClass = "entry__swatch-drawer--is-open";
-        const swatchDrawerIsOpen = this.swatchDrawer.classList.contains(
-            swatchDrawerOpenClass
-        );
-
-        this.swatchDrawer.classList.toggle(
-            swatchDrawerOpenClass,
-            shouldBeOpen !== null ? shouldBeOpen : !swatchDrawerIsOpen
-        );
-        this.actionButtons.toggleSwatchDrawer.title = swatchDrawerIsOpen
-            ? "Change Treatment"
-            : "Hide Treatments";
     }
 }
 
