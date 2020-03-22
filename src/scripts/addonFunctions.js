@@ -110,19 +110,19 @@ const addonFunctions = {
      * Synchronize the list's current entries with the browser.storage API,
      * then reinitialize the addon in any tabs affected by the extension.
      */
-    syncTailoredDomainsToStorage() {
+    syncTailoringEntriesToStorage() {
         let allEntryValues = [];
 
         addonData.local.tailoringGroups.forEach(tailoringGroup => {
             allEntryValues = allEntryValues.concat(tailoringGroup.entryValues);
         });
 
-        const validTailoredDomains = allEntryValues.filter(
+        const validTailoringEntries = allEntryValues.filter(
             entryValues => entryValues.domain !== ""
         );
 
         browser.storage.sync
-            .set({ tailoredDomains: validTailoredDomains })
+            .set({ tailoringEntries: validTailoringEntries })
             .then(null, addonFunctions.logError);
     },
 
@@ -160,7 +160,10 @@ const addonFunctions = {
      * @returns {Promise} A Promise resolving to the data saved as the local working copy.
      */
     getUserData() {
-        const requestedStorageData = ["tailoredDomains", "tailoringTreatments"];
+        const requestedStorageData = [
+            "tailoringEntries",
+            "tailoringTreatments",
+        ];
 
         const userDataPromise = new Promise((resolve, reject) => {
             browser.storage.sync

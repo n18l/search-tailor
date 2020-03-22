@@ -76,7 +76,8 @@ class TailoredSearchOptionsPanel {
         browser.storage.sync
             .get(addonData.defaultUserData)
             .then(storageData => {
-                // Create a local, formatted copy of the current Tailored Domain settings.
+                // Create a local, formatted copy of the current tailoring entry
+                // settings.
                 this.currentJSONExport = JSON.stringify(storageData, null, 4);
 
                 // Populate the JSON Export field and resize it so it can be scrolled cleanly.
@@ -149,7 +150,7 @@ class TailoredSearchOptionsPanel {
             this.inputs.jsonImport.value = "";
         });
 
-        // Update the active Tailored Domains with user-supplied data.
+        // Update the active tailoring entries with user-supplied data.
         this.actionButtons.importJSON.addEventListener("click", () => {
             // Reset any active validation messages.
             this.setInputValidation("jsonImport", "");
@@ -175,7 +176,7 @@ const tailoringTreatmentTemplate = document.querySelector(
     "template#tailoring-treatment"
 );
 
-/* Class representing an entry in the list of tailored domains. */
+/* Class representing an entry in the list of tailoring treatments. */
 class TailoringTreatment {
     /**
      * Initialize the list entry.
@@ -436,7 +437,7 @@ class TailoringTreatment {
     }
 }
 
-/** Class representing the interactive list of tailored domains. */
+/** Class representing the interactive list of tailoring treatments. */
 class TailoringTreatmentList {
     /**
      * Initialize the list UI.

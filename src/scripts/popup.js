@@ -24,10 +24,10 @@ const popup = {
      * adding it to the entry list of the Tailoring Group to which it belongs.
      */
     initializeEntries() {
-        addonData.local.tailoredDomains.forEach(tailoredDomain => {
+        addonData.local.tailoringEntries.forEach(tailoringEntry => {
             addonFunctions
-                .getTailoringGroupByTreatmentID(tailoredDomain.treatment)
-                .entries.push(new TailoringEntry(tailoredDomain));
+                .getTailoringGroupByTreatmentID(tailoringEntry.treatment)
+                .entries.push(new TailoringEntry(tailoringEntry));
         });
     },
 

@@ -3,7 +3,8 @@ const addonFunctions = require("./addonFunctions");
 const TailoringEntry = require("./TailoringEntry");
 
 /**
- * Class representing the interactive list of tailored domains.
+ * The interactive representation of tailoring template, grouping together all
+ * entries to which the template applies.
  */
 class TailoringGroup {
     /**
@@ -193,7 +194,7 @@ class TailoringGroup {
         return new Sortable(this.entryList, {
             handle: ".js-sort-handle",
             filter: "[data-drag-disabled='true']",
-            group: "tailoring-domains",
+            group: "tailoring-entries",
             animation: 150,
             onEnd(event) {
                 // Identify the treatment list being moved from and to.

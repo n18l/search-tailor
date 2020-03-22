@@ -2,30 +2,30 @@ const addonData = require("./addonData");
 const addonFunctions = require("./addonFunctions");
 
 /**
- * Class representing an entry in the list of tailored domains.
+ * The interactive representation of a tailoring entry.
  */
 class TailoringEntry {
     /**
      * Initialize the list entry.
-     * @param {object} parentTailoringGroup - The list object to add this entry to.
-     * @param {object} [tailoredDomainSettings] - An object containing the settings to use for this entry.
-     * @param {boolean} [focusInput] - Whether to focus this entry's domain input field on creation.
+     *
+     * @param {Object} [tailoringEntry] The tailoring settings to use for this entry.
+     * @param {boolean} [focusInput] Whether to focus this entry's domain input field on creation.
      */
     constructor(
-        tailoredDomainSettings = {
+        tailoringEntry = {
             domain: "",
             treatment: null,
         },
         focusInput = false
     ) {
-        this.cacheData(tailoredDomainSettings);
+        this.cacheData(tailoringEntry);
         this.populateTreatmentSelect();
         this.populateSwatchDrawer();
         this.defineActions();
         this.bindEvents();
 
-        if (tailoredDomainSettings.domain) {
-            this.domainInput.value = tailoredDomainSettings.domain;
+        if (tailoringEntry.domain) {
+            this.domainInput.value = tailoringEntry.domain;
             this.element.dataset.dragDisabled = false;
         } else {
             this.element.dataset.dragDisabled = true;
@@ -60,8 +60,8 @@ class TailoringEntry {
     /**
      * Cache selectors and other immutable data for this entry.
      */
-    cacheData(tailoredDomainSettings) {
-        this.settings = tailoredDomainSettings;
+    cacheData(tailoringEntry) {
+        this.settings = tailoringEntry;
 
         this.elementTemplate = document.querySelector("template#entry");
         this.swatchTemplate = document.querySelector("template#swatch");
@@ -120,7 +120,7 @@ class TailoringEntry {
         this.domainInput.addEventListener("change", () => {
             this.element.dataset.dragDisabled = this.domainInput.value === "";
 
-            addonFunctions.syncTailoredDomainsToStorage();
+            addonFunctions.syncTailoringEntriesToStorage();
         });
 
         this.domainInput.addEventListener("input", () =>
@@ -241,13 +241,14 @@ class TailoringEntry {
             entry.element.dataset.activeTreatment = targetGroup.treatment.id;
         }
 
-        addonFunctions.syncTailoredDomainsToStorage();
+        addonFunctions.syncTailoringEntriesToStorage();
     }
 
     /**
      * Remove the entry from its parent list.
      */
     delete() {
+        console.log(this.parentGroup.entries);
         this.parentGroup.entries.splice(this.index, 1);
         this.element.remove();
 
@@ -256,7 +257,9 @@ class TailoringEntry {
             () => this.parentGroup.disableNewEntries()
         );
 
-        addonFunctions.syncTailoredDomainsToStorage();
+        console.log(this.parentGroup.entries);
+
+        addonFunctions.syncTailoringEntriesToStorage();
     }
 
     /**

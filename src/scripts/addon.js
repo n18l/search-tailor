@@ -59,7 +59,7 @@ class TailorableSearch {
     }
 
     /**
-     * Get the current user-defined list of tailored domains, then apply fresh
+     * Get the current user-defined list of tailoring entries, then apply fresh
      * treatments to matching search results.
      */
     tailorResults() {
@@ -67,7 +67,7 @@ class TailorableSearch {
 
         /**
          * Apply the appropriate treatment to each result that matches an entry
-         * from the user-defined list of tailored domains.
+         * from the user-defined list of tailoring entries.
          *
          * @param {object} storageData - Freshly retrieved data from the extension's synchronized storage.
          */
@@ -82,11 +82,11 @@ class TailorableSearch {
             // Cache the current search results.
             const currentSearchResults = Array.from(this.searchResults);
 
-            // Filter the search results against each user-defined tailored
-            // domain, applying treatments to matching results.
-            storageData.tailoredDomains.forEach(tailoredDomain => {
+            // Filter the search results against each user-defined tailoring
+            // entry, applying treatments to matching results.
+            storageData.tailoringEntries.forEach(tailoringEntry => {
                 const matchingResults = currentSearchResults.filter(result =>
-                    RegExp(`.*://.*.?${tailoredDomain.domain}.*`).test(
+                    RegExp(`.*://.*.?${tailoringEntry.domain}.*`).test(
                         result.querySelector(
                             this.searchEngine.selectors.resultLink
                         )
@@ -98,13 +98,13 @@ class TailorableSearch {
                     // If this treatment needs to be spotlit, create a new
                     // element and apply the appropriate tailoring treatment
                     // styles to it.
-                    if (tailoredDomain.treatment.startsWith("spotlight")) {
+                    if (tailoringEntry.treatment.startsWith("spotlight")) {
                         const newTreatmentDiv = document.createElement("div");
                         newTreatmentDiv.classList.add("treatment-panel");
 
                         const tailoringTreatment = storageData.tailoringTreatments.find(
                             treatment =>
-                                treatment.id === tailoredDomain.treatment
+                                treatment.id === tailoringEntry.treatment
                         );
 
                         addonFunctions.applyTailoringTreatmentToElement(
@@ -130,7 +130,7 @@ class TailorableSearch {
                     }
 
                     thisResult.dataset.tailoringTreatment =
-                        tailoredDomain.treatment;
+                        tailoringEntry.treatment;
                 });
             });
         };
@@ -148,7 +148,7 @@ class TailorableSearch {
         // Disconnect any existing observers.
         if (this.searchObserver) this.searchObserver.disconnect();
 
-        // Create a new observer to tailor currently-matching domains on
+        // Create a new observer to tailor currently-matching entries on
         // mutation.
         this.searchObserver = new MutationObserver(() => this.tailorResults());
 
