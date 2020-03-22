@@ -8,7 +8,7 @@ const addonData = {
     local: {
         /**
          * A full list of all current TailoringGroup objects, keyed by the ID of
-         * the tailoring template they apply.
+         * the tailoring treatment they apply.
          */
         tailoringGroups: {},
     },
@@ -71,7 +71,7 @@ const addonData = {
 
     defaultUserData: {
         tailoredDomains: [],
-        tailoringTemplates: [
+        tailoringTreatments: [
             {
                 id: "screen",
                 label: "Screen",
@@ -100,7 +100,7 @@ const addonData = {
                 contentOpacity: "1",
             },
         ],
-        tailoringTemplatePreviewColor: "#FFFFFF",
+        tailoringTreatmentPreviewColor: "#FFFFFF",
         searchEngines: {
             Google: {
                 enabled: true,

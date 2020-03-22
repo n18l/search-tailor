@@ -171,99 +171,101 @@ class TailoredSearchOptionsPanel {
     }
 }
 
-const tailoringTemplateTemplate = document.querySelector(
-    "template#tailoring-template"
+const tailoringTreatmentTemplate = document.querySelector(
+    "template#tailoring-treatment"
 );
 
 /* Class representing an entry in the list of tailored domains. */
-class TailoringTemplate {
+class TailoringTreatment {
     /**
      * Initialize the list entry.
-     * @param {object} parentTailoringTemplateList - The list object to add this entry to.
-     * @param {string} [tailoringTemplateSettings] - An object containing the settings to use for this entry.
+     * @param {object} parentTailoringTreatmentList - The list object to add this entry to.
+     * @param {string} [tailoringTreatmentSettings] - An object containing the settings to use for this entry.
      */
     constructor(
-        parentTailoringTemplateList,
-        tailoringTemplateSettings = {
+        parentTailoringTreatmentList,
+        tailoringTreatmentSettings = {
             id: generateID(),
             label: "",
             backgroundColor:
-                addonData.defaultUserData.tailoringTemplates[0].backgroundColor,
+                addonData.defaultUserData.tailoringTreatments[0]
+                    .backgroundColor,
             backgroundOpacity:
-                addonData.defaultUserData.tailoringTemplates[0]
+                addonData.defaultUserData.tailoringTreatments[0]
                     .backgroundOpacity,
             borderColor:
-                addonData.defaultUserData.tailoringTemplates[0].borderColor,
+                addonData.defaultUserData.tailoringTreatments[0].borderColor,
             borderOpacity:
-                addonData.defaultUserData.tailoringTemplates[0].borderOpacity,
+                addonData.defaultUserData.tailoringTreatments[0].borderOpacity,
         }
     ) {
-        this.parentList = parentTailoringTemplateList;
+        this.parentList = parentTailoringTreatmentList;
         this.element = document
-            .importNode(tailoringTemplateTemplate.content, true)
-            .querySelector(".js-tailoring-template");
-        this.idInput = this.element.querySelector(".js-template-id-input");
+            .importNode(tailoringTreatmentTemplate.content, true)
+            .querySelector(".js-tailoring-treatment");
+        this.idInput = this.element.querySelector(".js-treatment-id-input");
         this.labelInput = this.element.querySelector(
-            ".js-template-label-input"
+            ".js-treatment-label-input"
         );
         this.backgroundColorInput = this.element.querySelector(
-            ".js-template-background-color-input"
+            ".js-treatment-background-color-input"
         );
         this.backgroundOpacityInput = this.element.querySelector(
-            ".js-template-background-opacity-input"
+            ".js-treatment-background-opacity-input"
         );
         this.borderColorInput = this.element.querySelector(
-            ".js-template-border-color-input"
+            ".js-treatment-border-color-input"
         );
         this.borderOpacityInput = this.element.querySelector(
-            ".js-template-border-opacity-input"
+            ".js-treatment-border-opacity-input"
         );
 
         this.defineActions();
         this.bindEvents();
 
-        if (tailoringTemplateSettings.id) {
-            this.idInput.value = tailoringTemplateSettings.id;
+        if (tailoringTreatmentSettings.id) {
+            this.idInput.value = tailoringTreatmentSettings.id;
         }
 
-        if (tailoringTemplateSettings.label) {
-            this.labelInput.value = tailoringTemplateSettings.label;
+        if (tailoringTreatmentSettings.label) {
+            this.labelInput.value = tailoringTreatmentSettings.label;
         }
 
-        if (tailoringTemplateSettings.backgroundColor) {
+        if (tailoringTreatmentSettings.backgroundColor) {
             this.backgroundColorInput.value =
-                tailoringTemplateSettings.backgroundColor;
+                tailoringTreatmentSettings.backgroundColor;
         }
 
-        if (tailoringTemplateSettings.backgroundOpacity) {
+        if (tailoringTreatmentSettings.backgroundOpacity) {
             this.backgroundOpacityInput.value =
-                tailoringTemplateSettings.backgroundOpacity;
+                tailoringTreatmentSettings.backgroundOpacity;
             this.backgroundColorInput.style.opacity =
-                tailoringTemplateSettings.backgroundOpacity;
+                tailoringTreatmentSettings.backgroundOpacity;
         }
 
-        if (tailoringTemplateSettings.borderColor) {
-            this.borderColorInput.value = tailoringTemplateSettings.borderColor;
+        if (tailoringTreatmentSettings.borderColor) {
+            this.borderColorInput.value =
+                tailoringTreatmentSettings.borderColor;
         }
 
-        if (tailoringTemplateSettings.borderOpacity) {
+        if (tailoringTreatmentSettings.borderOpacity) {
             this.borderOpacityInput.value =
-                tailoringTemplateSettings.borderOpacity;
+                tailoringTreatmentSettings.borderOpacity;
             this.borderColorInput.style.opacity =
-                tailoringTemplateSettings.borderOpacity;
+                tailoringTreatmentSettings.borderOpacity;
         }
 
         const newBackgroundColor = addonFunctions.hexToHSL(
-            tailoringTemplateSettings.backgroundColor,
+            tailoringTreatmentSettings.backgroundColor,
             true,
-            tailoringTemplateSettings.backgroundOpacity
+            tailoringTreatmentSettings.backgroundOpacity
         );
         this.element.style.backgroundColor = newBackgroundColor;
 
         const newBorderColor = addonFunctions.hexToHSL(
-            tailoringTemplateSettings.borderColor,
+            tailoringTreatmentSettings.borderColor,
             true,
-            tailoringTemplateSettings.borderOpacity
+            tailoringTreatmentSettings.borderOpacity
         );
         this.element.style.borderColor = newBorderColor;
 
@@ -374,7 +376,7 @@ class TailoringTemplate {
             this.element.style.borderColor = newBorderColor;
         });
 
-        this.actionButtons.deleteTemplate.addEventListener("click", () =>
+        this.actionButtons.deleteTreatment.addEventListener("click", () =>
             this.delete()
         );
     }
@@ -383,17 +385,17 @@ class TailoringTemplate {
      * Reset the entry to its default state.
      */
     reset() {
-        const defaultTailoringTemplate =
-            addonData.defaultUserData.tailoringTemplates[0];
+        const defaultTailoringTreatment =
+            addonData.defaultUserData.tailoringTreatments[0];
 
-        this.idInput.value = defaultTailoringTemplate.id;
-        this.labelInput.value = defaultTailoringTemplate.label;
+        this.idInput.value = defaultTailoringTreatment.id;
+        this.labelInput.value = defaultTailoringTreatment.label;
         this.backgroundColorInput.value =
-            defaultTailoringTemplate.backgroundColor;
+            defaultTailoringTreatment.backgroundColor;
         this.backgroundOpacityInput.value =
-            defaultTailoringTemplate.backgroundOpacity;
-        this.borderColorInput.value = defaultTailoringTemplate.borderColor;
-        this.borderOpacityInput.value = defaultTailoringTemplate.borderOpacity;
+            defaultTailoringTreatment.backgroundOpacity;
+        this.borderColorInput.value = defaultTailoringTreatment.borderColor;
+        this.borderOpacityInput.value = defaultTailoringTreatment.borderOpacity;
     }
 
     /**
@@ -435,7 +437,7 @@ class TailoringTemplate {
 }
 
 /** Class representing the interactive list of tailored domains. */
-class TailoringTemplateList {
+class TailoringTreatmentList {
     /**
      * Initialize the list UI.
      * @param {object} entryListElement - The HTML element representing the list.
@@ -444,30 +446,30 @@ class TailoringTemplateList {
         this.entries = [];
         this.element = entryListElement;
         this.previewColorInput = document.querySelector(
-            ".js-template-preview-color-input"
+            ".js-treatment-preview-color-input"
         );
         this.setPreviewColorButton = document.querySelector(
             '[data-click-action="setPreviewColor"]'
         );
-        this.addTemplateButton = document.querySelector(
-            '[data-click-action="addTemplate"]'
+        this.addTreatmentButton = document.querySelector(
+            '[data-click-action="addTreatment"]'
         );
 
         this.bindEvents();
 
         browser.storage.sync
             .get({
-                tailoringTemplates:
-                    addonData.defaultUserData.tailoringTemplates,
-                tailoringTemplatePreviewColor:
-                    addonData.defaultUserData.tailoringTemplatePreviewColor,
+                tailoringTreatments:
+                    addonData.defaultUserData.tailoringTreatments,
+                tailoringTreatmentPreviewColor:
+                    addonData.defaultUserData.tailoringTreatmentPreviewColor,
             })
             .then(storageData => {
-                this.populate(storageData.tailoringTemplates);
+                this.populate(storageData.tailoringTreatments);
                 this.previewColorInput.value =
-                    storageData.tailoringTemplatePreviewColor;
+                    storageData.tailoringTreatmentPreviewColor;
                 this.element.style.backgroundColor =
-                    storageData.tailoringTemplatePreviewColor;
+                    storageData.tailoringTreatmentPreviewColor;
             }, addonFunctions.logError);
     }
 
@@ -488,10 +490,10 @@ class TailoringTemplateList {
 
             if (
                 clickTarget &&
-                clickTarget.dataset.clickAction === "addTemplate"
+                clickTarget.dataset.clickAction === "addTreatment"
             ) {
                 this.disableNewEntries();
-                this.entries.push(new TailoringTemplate(this));
+                this.entries.push(new TailoringTreatment(this));
             }
 
             if (
@@ -515,15 +517,15 @@ class TailoringTemplateList {
      * Populate the list with existing extension data or an empty entry.
      * @param {object} storageData - Existing extension data passed by the browser.storage API.
      */
-    populate(tailoringTemplates) {
-        if (!tailoringTemplates || tailoringTemplates.length === 0) {
+    populate(tailoringTreatments) {
+        if (!tailoringTreatments || tailoringTreatments.length === 0) {
             this.disableNewEntries();
-            this.entries.push(new TailoringTemplate(this));
+            this.entries.push(new TailoringTreatment(this));
         }
 
-        tailoringTemplates.forEach(tailoringTemplateSettings =>
+        tailoringTreatments.forEach(tailoringTreatmentSettings =>
             this.entries.push(
-                new TailoringTemplate(this, tailoringTemplateSettings)
+                new TailoringTreatment(this, tailoringTreatmentSettings)
             )
         );
     }
@@ -532,14 +534,14 @@ class TailoringTemplateList {
      * Prevent the addition of new entries by users.
      */
     disableNewEntries() {
-        this.addTemplateButton.setAttribute("disabled", "");
+        this.addTreatmentButton.setAttribute("disabled", "");
     }
 
     /**
      * Allow the addition of new entries by users.
      */
     enableNewEntries() {
-        this.addTemplateButton.removeAttribute("disabled");
+        this.addTreatmentButton.removeAttribute("disabled");
     }
 
     /**
@@ -576,14 +578,14 @@ class TailoringTemplateList {
      * then reinitialize the addon in any tabs affected by the extension.
      */
     syncToStorage() {
-        const validTailoringTemplates = this.entryValues.filter(
+        const validTailoringTreatments = this.entryValues.filter(
             entryValueSet => entryValueSet.domain !== ""
         );
 
         browser.storage.sync
             .set({
-                tailoringTemplates: validTailoringTemplates,
-                tailoringTemplatePreviewColor: this.previewColorInput.value,
+                tailoringTreatments: validTailoringTreatments,
+                tailoringTreatmentPreviewColor: this.previewColorInput.value,
             })
             .then(null, addonFunctions.logError);
     }
@@ -592,25 +594,25 @@ class TailoringTemplateList {
 const optionsPanelElement = document.querySelector(
     "#search-tailor-options-panel"
 );
-const tailoringTemplateListElement = document.querySelector(
-    ".tailoring-template-list"
+const tailoringTreatmentListElement = document.querySelector(
+    ".tailoring-treatment-list"
 );
 
 const currentOptionsPanel = (function initOptionsPanel() {
     return new TailoredSearchOptionsPanel(optionsPanelElement);
 })();
 
-const currentTailoringTemplateList = (function initTailoringTemplatesList() {
-    return new TailoringTemplateList(tailoringTemplateListElement);
+const currentTailoringTreatmentList = (function initTailoringTreatmentsList() {
+    return new TailoringTreatmentList(tailoringTreatmentListElement);
 })();
 
-(function enableTailoringTemplatesListSorting() {
-    return new Sortable(tailoringTemplateListElement, {
+(function enableTailoringTreatmentsListSorting() {
+    return new Sortable(tailoringTreatmentListElement, {
         handle: ".js-sort-handle",
         animation: 150,
         forceFallback: true,
         onUpdate(event) {
-            currentTailoringTemplateList.reorderEntry(
+            currentTailoringTreatmentList.reorderEntry(
                 event.oldIndex,
                 event.newIndex
             );

@@ -33,8 +33,10 @@ class TailoredDomainListEntry {
 
         this.treatmentSelect.value = this.settings.treatment;
 
-        addonFunctions.applyTailoringTemplateStyles(
-            addonFunctions.getTailoringTemplateByID(this.treatmentSelect.value),
+        addonFunctions.applyTailoringTreatmentToElement(
+            addonFunctions.getTailoringTreatmentByID(
+                this.treatmentSelect.value
+            ),
             this.actionButtons.toggleSwatchDrawer
         );
 
@@ -46,10 +48,10 @@ class TailoredDomainListEntry {
     }
 
     populateTreatmentSelect() {
-        addonData.local.tailoringTemplates.forEach(template => {
+        addonData.local.tailoringTreatments.forEach(treatment => {
             const optionElement = document.createElement("option");
-            optionElement.setAttribute("value", template.id);
-            optionElement.textContent = template.label;
+            optionElement.setAttribute("value", treatment.id);
+            optionElement.textContent = treatment.label;
 
             this.treatmentSelect.appendChild(optionElement);
         });
@@ -75,7 +77,7 @@ class TailoredDomainListEntry {
             ".js-entry-treatment-select"
         );
 
-        // The drawer and list elements for tailoring template swatches.
+        // The drawer and list elements for tailoring treatment swatches.
         this.swatchDrawer = this.element.querySelector(".js-swatch-drawer");
         this.swatchList = this.swatchDrawer.querySelector(".js-swatch-list");
     }
@@ -133,8 +135,8 @@ class TailoredDomainListEntry {
         });
 
         this.treatmentSelect.addEventListener("change", e => {
-            addonFunctions.applyTailoringTemplateStyles(
-                addonFunctions.getTailoringTemplateByID(e.target.value),
+            addonFunctions.applyTailoringTreatmentToElement(
+                addonFunctions.getTailoringTreatmentByID(e.target.value),
                 this.actionButtons.toggleSwatchDrawer
             );
 
@@ -182,17 +184,17 @@ class TailoredDomainListEntry {
     }
 
     populateSwatchDrawer() {
-        addonData.local.tailoringTemplates.forEach(tailoringTemplate => {
+        addonData.local.tailoringTreatments.forEach(tailoringTreatment => {
             const swatchWrapper = document
                 .importNode(this.swatchTemplate.content, true)
                 .querySelector(".js-swatch-wrapper");
 
             const swatch = swatchWrapper.querySelector(".js-swatch");
 
-            swatch.tailoringTemplate = tailoringTemplate;
+            swatch.tailoringTreatment = tailoringTreatment;
 
-            addonFunctions.applyTailoringTemplateStyles(
-                addonFunctions.getTailoringTemplateByID(tailoringTemplate.id),
+            addonFunctions.applyTailoringTreatmentToElement(
+                addonFunctions.getTailoringTreatmentByID(tailoringTreatment.id),
                 swatch,
                 true
             );
@@ -275,8 +277,8 @@ class TailoredDomainListEntry {
             shouldBeOpen !== null ? shouldBeOpen : !swatchDrawerIsOpen
         );
         this.actionButtons.toggleSwatchDrawer.title = swatchDrawerIsOpen
-            ? "Change Template"
-            : "Hide Templates";
+            ? "Change Treatment"
+            : "Hide Treatments";
     }
 }
 

@@ -4,15 +4,17 @@ const TailoredDomainGroup = require("./TailoringGroup");
 const TailoredDomainListEntry = require("./TailoringEntry");
 
 /**
- * Creates a Tailoring Group for each existing template in the user data, adding
+ * Creates a Tailoring Group for each existing treatment in the user data, adding
  * it to the current working list of all Tailoring Groups.
  */
 function initializeGroups() {
-    addonData.local.tailoringTemplates.forEach(tailoringTemplate => {
+    addonData.local.tailoringTreatments.forEach(tailoringTreatment => {
         addonData.local.tailoringGroups[
-            tailoringTemplate.id
-        ] = new TailoredDomainGroup(tailoringTemplate);
+            tailoringTreatment.id
+        ] = new TailoredDomainGroup(tailoringTreatment);
     });
+
+    console.log(addonData.local.tailoringGroups);
 }
 
 /**

@@ -95,18 +95,19 @@ class TailorableSearch {
                 matchingResults.forEach(matchingResult => {
                     const thisResult = matchingResult;
                     // If this treatment needs to be spotlit, create a new
-                    // element and apply the appropriate tailoring template
+                    // element and apply the appropriate tailoring treatment
                     // styles to it.
                     if (tailoredDomain.treatment.startsWith("spotlight")) {
                         const newTreatmentDiv = document.createElement("div");
                         newTreatmentDiv.classList.add("treatment-panel");
 
-                        const tailoringTemplate = storageData.tailoringTemplates.find(
-                            template => template.id === tailoredDomain.treatment
+                        const tailoringTreatment = storageData.tailoringTreatment.find(
+                            treatment =>
+                                treatment.id === tailoredDomain.treatment
                         );
 
-                        addonFunctions.applyTailoringTemplateStyles(
-                            tailoringTemplate,
+                        addonFunctions.applyTailoringTreatmentToElement(
+                            tailoringTreatment,
                             newTreatmentDiv
                         );
 

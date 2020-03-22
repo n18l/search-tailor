@@ -50,14 +50,13 @@ main {
         &__icon {
             display: none;
 
-            @each $treatmentType in ('screen', 'suppress', 'spotlight') {
-
+            @each $treatmentType in ("screen", "suppress", "spotlight") {
                 // .entry-group__header__icon--screen
                 // .entry-group__header__icon--suppress
                 // .entry-group__header__icon--spotlight
                 &--#{$treatmentType} {
-
-                    #{$this-entry-group}[data-treatment-type^=#{$treatmentType}] & {
+                    #{$this-entry-group}[data-treatment-type^="#{$treatmentType}"]
+                        & {
                         display: block;
                     }
                 }
@@ -92,7 +91,6 @@ main {
             }
 
             &:not([disabled]) {
-
                 &:hover,
                 &:focus {
                     background-color: hsla(0, 0%, 100%, 0.2);
@@ -108,9 +106,10 @@ main {
             }
 
             &__icon {
-                transition: transform .5s;
+                transition: transform 0.5s;
 
-                #{$this-action}[data-click-action="toggleSettingsDrawer"][data-action-active="true"] & {
+                #{$this-action}[data-click-action="toggleSettingsDrawer"][data-action-active="true"]
+                    & {
                     transform: rotate(150deg);
                 }
             }
@@ -134,19 +133,17 @@ main {
         margin: 0;
 
         &:empty {
-
             &::after {
                 align-items: center;
                 content: "Add new or drag existing entries here to apply this treatment.";
                 display: flex;
                 font-size: 1.2rem;
                 height: 65px;
-                opacity: .7;
+                opacity: 0.7;
                 padding: 0 100px;
                 text-align: center;
             }
         }
-
     }
 }
 
@@ -213,7 +210,7 @@ main {
         }
     }
 
-    &__color-template-button {
+    &__color-treatment-button {
         display: flex;
 
         #{$thisEntry}[data-active-treatment="suppress"] &,

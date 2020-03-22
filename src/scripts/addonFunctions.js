@@ -5,14 +5,14 @@ const addonData = require("./addonData");
  */
 const addonFunctions = {
     /**
-     * Apply the settings from a particular tailoring template to the
+     * Apply the settings from a particular tailoring treatment to the
      * appropriate attributes of an HTML element.
-     * @param {object} tailoringTemplate - The tailoring template to apply styles from.
-     * @param {object} elementToStyle - The HTML element to apply the template's properties to.
-     * @param {bool} applyTitle - Whether or not to also apply the template's label as the element's title attribute.
+     * @param {object} tailoringTreatment - The tailoring treatment to apply styles from.
+     * @param {object} elementToStyle - The HTML element to apply the treatment's properties to.
+     * @param {bool} applyTitle - Whether or not to also apply the treatment's label as the element's title attribute.
      */
-    applyTailoringTemplateStyles(
-        tailoringTemplate,
+    applyTailoringTreatmentToElement(
+        tailoringTreatment,
         elementToStyle,
         applyTitle = false
     ) {
@@ -21,22 +21,22 @@ const addonFunctions = {
         // Convert opacity values (which are stored as numbers between 0 and 1)
         // into hex equivalents.
         const backgroundOpacityHexString = Math.round(
-            255 * tailoringTemplate.backgroundOpacity
+            255 * tailoringTreatment.backgroundOpacity
         ).toString(16);
         const borderOpacityHexString = Math.round(
-            255 * tailoringTemplate.borderOpacity
+            255 * tailoringTreatment.borderOpacity
         ).toString(16);
 
         // Style the supplied element with 8-character hex notation.
         element.style.backgroundColor = `${
-            tailoringTemplate.backgroundColor
+            tailoringTreatment.backgroundColor
         }${backgroundOpacityHexString}`;
         element.style.borderColor = `${
-            tailoringTemplate.borderColor
+            tailoringTreatment.borderColor
         }${borderOpacityHexString}`;
 
         if (applyTitle) {
-            element.title = tailoringTemplate.label;
+            element.title = tailoringTreatment.label;
         }
     },
 
@@ -131,15 +131,15 @@ const addonFunctions = {
     },
 
     /**
-     * Retrieves the data of the tailoring template using the provided ID.
+     * Retrieves the data of the tailoring treatment using the provided ID.
      *
-     * @param {String} templateID The ID of the template to retrieve.
+     * @param {String} treatmentID The ID of the treatment to retrieve.
      *
-     * @returns {Object|undefined} The requested tailoring template, or undefined if not found.
+     * @returns {Object|undefined} The requested tailoring treatment, or undefined if not found.
      */
-    getTailoringTemplateByID(templateID) {
-        return addonData.local.tailoringTemplates.find(
-            template => template.id === templateID
+    getTailoringTreatmentByID(treatmentID) {
+        return addonData.local.tailoringTreatments.find(
+            treatment => treatment.id === treatmentID
         );
     },
 
@@ -151,7 +151,7 @@ const addonFunctions = {
      * @returns {Promise} A Promise resolving to the data saved as the local working copy.
      */
     getUserData() {
-        const requestedStorageData = ["tailoredDomains", "tailoringTemplates"];
+        const requestedStorageData = ["tailoredDomains", "tailoringTreatments"];
 
         const userDataPromise = new Promise((resolve, reject) => {
             browser.storage.sync
