@@ -1,5 +1,6 @@
 const Sortable = require("sortablejs");
 const ColorPicker = require("vanilla-picker");
+const addonData = require("./addonData");
 const addonFunctions = require("./addonFunctions");
 const TailoringEntry = require("./TailoringEntry");
 
@@ -13,8 +14,19 @@ class TailoringGroup {
      *
      * @param {Object} treatment - The treatment data to use to initialize this group.
      */
-    constructor(treatment) {
-        this.cacheData(treatment);
+    constructor(treatment = addonData.defaultTreatmentSettings) {
+        this.treatment = treatment;
+
+        // Identify if this is a new group, and if so, save it back to storage
+        // with the default settings.
+        this.isNew = !treatment.id;
+        if (this.isNew) {
+            this.treatment.id = addonFunctions.generateTailoringTreatmentID();
+            addonData.local.tailoringTreatments.push(this.treatment);
+            addonFunctions.syncTailoringTreatmentsToStorage();
+        }
+
+        this.cacheData();
         this.defineActions();
         this.bindEvents();
         this.enableEntrySorting();
@@ -27,17 +39,21 @@ class TailoringGroup {
             ".js-entry-group-container"
         );
         entryGroupContainer.appendChild(this.element);
+
+        // If this is a new group, open the settings drawer and pre-select the
+        // default group label for easy editing.
+        if (this.isNew) {
+            this.toggleSettingsDrawer(true);
+            this.labelInput.focus({ preventScroll: true });
+            this.labelInput.select();
+            this.element.scrollIntoView();
+        }
     }
 
     /**
      * Caches immutable data for future access.
-     *
-     * @param {Object} treatment - The treatment data to use to initialize this group.
      */
-    cacheData(treatment) {
-        // Save a reference to the data used to initialize the group.
-        this.treatment = treatment;
-
+    cacheData() {
         // Initialize the element representing this entry group.
         this.elementTemplate = document.querySelector("template#entry-group");
         this.element = document
@@ -45,7 +61,7 @@ class TailoringGroup {
             .querySelector(".js-entry-group");
 
         // Add this group's treatment ID to its HTML element for styling.
-        this.element.dataset.treatmentId = treatment.id;
+        this.element.dataset.treatmentId = this.treatment.id;
 
         // Save references to relevant child nodes of this group.
         this.entryList = this.element.querySelector(".js-entry-list");

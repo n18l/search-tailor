@@ -125,6 +125,22 @@ const addonFunctions = {
     },
 
     /**
+     * Generates a new unique tailoring treatment ID.
+     *
+     * @param {String} treatmentType The type of treatment, which is prepended to the ID.
+     * @param {Number} maxRandomInt The multiplication factor to apply to the random ID generation.
+     */
+    generateTailoringTreatmentID(
+        treatmentType = "spotlight",
+        maxRandomInt = 100000
+    ) {
+        const currentTimestamp = Date.now();
+        const randomInt = Math.floor(Math.random() * Math.floor(maxRandomInt));
+
+        return `${treatmentType}:${currentTimestamp}-${randomInt}`;
+    },
+
+    /**
      * Retrieves the data of the tailoring treatment using the provided ID.
      *
      * @param {String} treatmentID The ID of the treatment to retrieve.

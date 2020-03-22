@@ -32,11 +32,28 @@ const popup = {
     },
 
     /**
+     * Attaches event handlers.
+     */
+    bindEvents() {
+        // Get the action bar and individual action buttons.
+        const actionBar = document.querySelector(".js-action-bar");
+        const addTreatmentButton = actionBar.querySelector(
+            '[data-click-action="addTreatment"]'
+        );
+
+        // Add new entry groups.
+        addTreatmentButton.addEventListener("click", () => {
+            addonData.local.tailoringGroups.push(new TailoringGroup());
+        });
+    },
+
+    /**
      * Initializes the addon's popup UI.
      */
     initialize() {
         this.initializeGroups();
         this.initializeEntries();
+        this.bindEvents();
     },
 };
 

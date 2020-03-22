@@ -60,6 +60,16 @@ const addonData = {
     ],
 
     /**
+     * The tailoring treatment settings to apply when creating a new group.
+     */
+    defaultTreatmentSettings: {
+        id: null,
+        label: "New Treatment",
+        backgroundColor: "hsla(120,75%,35%,0.25)",
+        borderColor: "hsla(120,100%,25%,0.35)",
+    },
+
+    /**
      * The default user data to apply to users who have no preexisting settings.
      */
     defaultUserData: {

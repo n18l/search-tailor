@@ -425,6 +425,29 @@ main {
     }
 }
 
+.action-bar {
+    flex: 0 0 40px;
+    margin-top: auto;
+    display: flex;
+    background-color: var(--color-button);
+
+    // .action-bar__action
+    &__action {
+        border: 0;
+        border-top: 1px solid var(--color-button-highlight-1);
+        color: hsl(0, 0%, 100%);
+        cursor: pointer;
+        flex: 1 1 auto;
+
+        &:hover,
+        &:focus,
+        &:active {
+            background-color: var(--color-button-highlight-1);
+            border-color: var(--color-button-highlight-2);
+        }
+    }
+}
+
 .hidden {
     display: none;
 }
