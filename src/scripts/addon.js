@@ -101,7 +101,7 @@ class TailorableSearch {
                         const newTreatmentDiv = document.createElement("div");
                         newTreatmentDiv.classList.add("treatment-panel");
 
-                        const tailoringTreatment = storageData.tailoringTreatment.find(
+                        const tailoringTreatment = storageData.tailoringTreatments.find(
                             treatment =>
                                 treatment.id === tailoredDomain.treatment
                         );
