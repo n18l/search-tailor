@@ -1,11 +1,11 @@
 const Sortable = require("sortablejs");
 const addonData = require("./addonData");
-const TailoredDomainListEntry = require("./TailoringEntry");
+const TailoringEntry = require("./TailoringEntry");
 
 /**
  * Class representing the interactive list of tailored domains.
  */
-class TailoredDomainGroup {
+class TailoringGroup {
     /**
      * Initialize the entry group's data object and corresponding UI.
      *
@@ -121,7 +121,7 @@ class TailoredDomainGroup {
             this.disableNewEntries();
 
             this.entries.push(
-                new TailoredDomainListEntry(
+                new TailoringEntry(
                     {
                         domain: "",
                         treatment: this.treatmentType,
@@ -218,4 +218,4 @@ class TailoredDomainGroup {
     }
 }
 
-module.exports = TailoredDomainGroup;
+module.exports = TailoringGroup;

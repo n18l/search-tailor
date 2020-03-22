@@ -4,10 +4,10 @@ const addonFunctions = require("./addonFunctions");
 /**
  * Class representing an entry in the list of tailored domains.
  */
-class TailoredDomainListEntry {
+class TailoringEntry {
     /**
      * Initialize the list entry.
-     * @param {object} parentTailoredDomainGroup - The list object to add this entry to.
+     * @param {object} parentTailoringGroup - The list object to add this entry to.
      * @param {object} [tailoredDomainSettings] - An object containing the settings to use for this entry.
      * @param {boolean} [focusInput] - Whether to focus this entry's domain input field on creation.
      */
@@ -221,7 +221,7 @@ class TailoredDomainListEntry {
             // Remove the entry's element and reinitialize it to manually create
             // a new one.
             entry.element.remove();
-            entry = new TailoredDomainListEntry({
+            entry = new TailoringEntry({
                 domain: this.value.domain,
                 treatment: targetGroup.treatment.id,
             });
@@ -282,4 +282,4 @@ class TailoredDomainListEntry {
     }
 }
 
-module.exports = TailoredDomainListEntry;
+module.exports = TailoringEntry;
