@@ -144,8 +144,9 @@ class TailoringEntry {
 
             // Identify the newly selected treatment group and move this entry
             // to that group, updating the UI to match.
-            const newTreatmentGroup =
-                addonData.local.tailoringGroups[e.target.value];
+            const newTreatmentGroup = addonFunctions.getTailoringGroupByTreatmentID(
+                e.target.value
+            );
             this.move(
                 newTreatmentGroup.entries.length,
                 newTreatmentGroup,
@@ -163,7 +164,9 @@ class TailoringEntry {
     }
 
     get parentGroup() {
-        return addonData.local.tailoringGroups[this.settings.treatment];
+        return addonFunctions.getTailoringGroupByTreatmentID(
+            this.settings.treatment
+        );
     }
 
     /**

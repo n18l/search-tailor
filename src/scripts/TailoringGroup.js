@@ -1,5 +1,5 @@
 const Sortable = require("sortablejs");
-const addonData = require("./addonData");
+const addonFunctions = require("./addonFunctions");
 const TailoringEntry = require("./TailoringEntry");
 
 /**
@@ -203,15 +203,14 @@ class TailoringGroup {
                     .treatmentType;
 
                 // Identify the entry being moved.
-                const draggedItem =
-                    addonData.local.tailoringGroups[oldTreatment].entries[
-                        event.oldIndex
-                    ];
+                const draggedItem = addonFunctions.getTailoringGroupByTreatmentID(
+                    oldTreatment
+                ).entries[event.oldIndex];
 
                 // Move the entry from the old treatment group to the new one.
                 draggedItem.move(
                     event.newIndex,
-                    addonData.local.tailoringGroups[newTreatment]
+                    addonFunctions.getTailoringGroupByTreatmentID(newTreatment)
                 );
             },
         });

@@ -113,13 +113,9 @@ const addonFunctions = {
     syncTailoredDomainsToStorage() {
         let allEntryValues = [];
 
-        Object.entries(addonData.local.tailoringGroups).forEach(
-            ([, tailoringGroup]) => {
-                allEntryValues = allEntryValues.concat(
-                    tailoringGroup.entryValues
-                );
-            }
-        );
+        addonData.local.tailoringGroups.forEach(tailoringGroup => {
+            allEntryValues = allEntryValues.concat(tailoringGroup.entryValues);
+        });
 
         const validTailoredDomains = allEntryValues.filter(
             entryValues => entryValues.domain !== ""
@@ -140,6 +136,19 @@ const addonFunctions = {
     getTailoringTreatmentByID(treatmentID) {
         return addonData.local.tailoringTreatments.find(
             treatment => treatment.id === treatmentID
+        );
+    },
+
+    /**
+     * Retrieves the TailoringGroup object with the provided treatment ID.
+     *
+     * @param {String} treatmentID The treatment ID to search against
+     *
+     * @returns {TailoringGroup} The TailoringGroup with the matching treatment ID, or undefined if none.
+     */
+    getTailoringGroupByTreatmentID(treatmentID) {
+        return addonData.local.tailoringGroups.find(
+            tailoringGroup => tailoringGroup.treatment.id === treatmentID
         );
     },
 

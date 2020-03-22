@@ -4,17 +4,15 @@ const TailoringGroup = require("./TailoringGroup");
 const TailoringEntry = require("./TailoringEntry");
 
 /**
- * Creates a Tailoring Group for each existing treatment in the user data, adding
- * it to the current working list of all Tailoring Groups.
+ * Creates a Tailoring Group for each existing treatment in the user data,
+ * adding it to the current working list of all Tailoring Groups.
  */
 function initializeGroups() {
     addonData.local.tailoringTreatments.forEach(tailoringTreatment => {
-        addonData.local.tailoringGroups[
-            tailoringTreatment.id
-        ] = new TailoringGroup(tailoringTreatment);
+        addonData.local.tailoringGroups.push(
+            new TailoringGroup(tailoringTreatment)
+        );
     });
-
-    console.log(addonData.local.tailoringGroups);
 }
 
 /**
@@ -23,9 +21,9 @@ function initializeGroups() {
  */
 function initializeEntries() {
     addonData.local.tailoredDomains.forEach(tailoredDomain => {
-        addonData.local.tailoringGroups[tailoredDomain.treatment].entries.push(
-            new TailoringEntry(tailoredDomain)
-        );
+        addonFunctions
+            .getTailoringGroupByTreatmentID(tailoredDomain.treatment)
+            .entries.push(new TailoringEntry(tailoredDomain));
     });
 }
 

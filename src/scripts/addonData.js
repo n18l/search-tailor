@@ -10,7 +10,7 @@ const addonData = {
          * A full list of all current TailoringGroup objects, keyed by the ID of
          * the tailoring treatment they apply.
          */
-        tailoringGroups: {},
+        tailoringGroups: [],
     },
     treatmentTypes: [
         {
