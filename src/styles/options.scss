@@ -1,0 +1,376 @@
+@import "reset";
+@import "inputs";
+
+#search-tailor-options-panel {
+    margin: 10px;
+}
+
+.toggle-switch {
+    $this-switch: &;
+    --switch-padding-px: 4px;
+    --switch-margin-px: 0px;
+    --switch-height-px: 30px;
+    --switch-width-px: 44px;
+    --track-color-off: hsl(0, 0%, 90%);
+    --track-color-on: hsla(210, 100%, 50%, 0.2);
+    --track-height-px: 24px;
+    --track-radius-px: 12px;
+    --nub-height-px: 16px;
+    --nub-width-px: 20px;
+    --nub-radius-px: 10px;
+    --nub-color-off: hsl(0, 0%, 60%);
+    --nub-color-on: hsl(210, 100%, 50%);
+    --nub-color-focus: hsl(0, 0%, 100%);
+    --nub-travel-distance: calc(
+        var(--switch-width-px) / 2 - var(--nub-width-px) / 2 -
+            var(--switch-padding-px)
+    );
+
+    cursor: pointer;
+    display: inline-flex;
+    height: var(--switch-height-px);
+    margin: 0 var(--switch-margin-px);
+    position: relative;
+    width: var(--switch-width-px);
+
+    &__track {
+        bottom: 0;
+        background-color: var(--track-color-off);
+        border-radius: var(--track-radius-px);
+        display: flex;
+        height: var(--track-height-px);
+        justify-content: center;
+        left: 0;
+        margin: auto;
+        padding: var(--switch-padding-px);
+        position: absolute;
+        right: 0;
+        top: 0;
+        transition: background-color 0.15s;
+        width: var(--switch-width-px);
+
+        input[type="checkbox"]:checked + #{$this-switch} & {
+            background-color: var(--track-color-on);
+        }
+    }
+
+    &__nub {
+        bottom: 0;
+        background-color: var(--nub-color-off);
+        border-radius: var(--nub-radius-px);
+        box-shadow: inset 0 0 0 2px var(--nub-color-off);
+        height: var(--nub-height-px);
+        left: 0;
+        margin: auto;
+        pointer-events: none;
+        position: absolute;
+        right: 0;
+        top: 0;
+        transform: translateX(calc(var(--nub-travel-distance) * -1));
+        transition: transform 0.15s, background-color 0.15s;
+        width: var(--nub-width-px);
+
+        input[type="checkbox"]:checked + #{$this-switch} & {
+            background-color: var(--nub-color-on);
+            box-shadow: inset 0 0 0 2px var(--nub-color-on);
+            transform: translateX(var(--nub-travel-distance));
+        }
+
+        input[type="checkbox"]:focus + #{$this-switch} & {
+            background-color: var(--nub-color-focus);
+        }
+    }
+}
+
+.search-tailor-option {
+    &:not(:first-child) {
+        margin-top: 10px;
+    }
+
+    // &__label {
+    //
+    // }
+
+    &__input-wrapper {
+        margin-top: 5px;
+        position: relative;
+
+        &--toggle {
+            display: flex;
+            align-items: center;
+        }
+
+        &--raw-json {
+            resize: vertical;
+            min-height: 200px;
+            height: 200px;
+            overflow: scroll;
+            background-color: hsl(0, 0%, 15%);
+            border-radius: 4px;
+            border-bottom-right-radius: 2px;
+        }
+
+        &[data-validation-message] {
+            $this-validation-wrapper: &;
+
+            &::after {
+                content: attr(data-validation-message);
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                height: 32px;
+                padding: 8px 12px;
+                background-color: hsl(0, 100%, 50%, 0.35);
+                color: hsl(0, 100%, 100%);
+                opacity: 0;
+                transition: opacity 0.25s;
+
+                @at-root #{$this-validation-wrapper}:not([data-validation-message=""])::after {
+                    opacity: 1;
+                }
+            }
+        }
+    }
+
+    &__input {
+        &--toggle {
+            height: 100%;
+            left: 0;
+            margin: 0;
+            opacity: 0;
+            position: absolute;
+            top: 0;
+            width: 100%;
+
+            &__label {
+                margin-left: 10px;
+            }
+        }
+
+        &--raw-json {
+            resize: none;
+            width: 100%;
+            border: 0;
+            background-color: transparent;
+            color: hsl(0, 0%, 90%);
+            margin: 0;
+            padding: 10px;
+            min-height: 100%;
+            position: relative;
+        }
+    }
+
+    &__action-container {
+        margin-top: 10px;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    &__action {
+        all: unset;
+        border: 1px solid hsl(0, 0%, 88%);
+        border-radius: 4px;
+        cursor: pointer;
+        color: hsl(0, 0%, 30%);
+        font-size: 1.2rem;
+        font-weight: 600;
+        letter-spacing: 0.05rem;
+        padding: 8px 14px;
+        text-transform: uppercase;
+
+        &:hover {
+            background-color: hsl(0, 0%, 88%);
+        }
+
+        &:focus {
+            border-color: hsl(200, 100%, 75%);
+        }
+
+        &:active {
+            background-color: hsl(0, 0%, 75%);
+            border-color: hsl(0, 0%, 75%);
+        }
+
+        &::-moz-focus-inner {
+            border: 0;
+        }
+
+        & + & {
+            margin-left: 6px;
+        }
+
+        &[disabled] {
+            background-color: hsl(0, 0%, 88%);
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+    }
+}
+
+.tailoring-template-list {
+    border-radius: 8px;
+    list-style: none;
+    margin: 0;
+    padding: 10px;
+}
+
+.tailoring-template {
+    --icon-color-1: hsla(0, 0%, 100%, 0.75);
+    --icon-color-2: hsla(0, 0%, 100%, 0.25);
+    --icon-color-3: hsla(0, 0%, 100%, 0.1);
+    background-color: hsl(240, 3%, 30%);
+    border: 1px solid hsl(240, 3%, 30%);
+    border-radius: 4px;
+    display: flex;
+    overflow: hidden;
+
+    &__icon {
+        &__primary {
+            fill: var(--icon-color-1);
+        }
+
+        &__secondary {
+            fill: var(--icon-color-2);
+        }
+    }
+
+    & + & {
+        margin-top: 10px;
+    }
+
+    &__sort-handle {
+        align-items: center;
+        cursor: move;
+        display: flex;
+        margin-right: 2px;
+
+        &__icon {
+        }
+    }
+
+    &__input-container {
+        flex: 1;
+
+        @media screen and (min-width: 400px) {
+            align-items: center;
+            display: flex;
+        }
+    }
+
+    &__input-group {
+        flex: 1;
+        margin: 15px 15px 15px 0;
+    }
+
+    // &__id-input {}
+
+    &__label-input-container {
+        background-color: var(--icon-color-3);
+    }
+
+    // &__label-input {}
+
+    &__color-opacity-input-container {
+        display: flex;
+        height: 44px;
+    }
+
+    &__color-input-container {
+        display: flex;
+        height: 44px;
+    }
+
+    &__full-color-inputs {
+        display: flex;
+        height: 44px;
+
+        &__color {
+            display: flex;
+            height: 100%;
+            padding: 0;
+            width: 44px;
+
+            &:hover,
+            &:focus,
+            &:active {
+                background-color: hsla(0, 0%, 100%, 0.1);
+            }
+
+            svg {
+                margin: auto;
+            }
+        }
+
+        &__opacity {
+            flex: 1;
+            margin: 0;
+            margin-left: 15px;
+
+            &::-moz-range-thumb {
+                background-color: var(--icon-color-1);
+                border: 0;
+                cursor: pointer;
+                height: 24px;
+                width: 6px;
+            }
+
+            &::-moz-range-track {
+                background-color: var(--icon-color-2);
+                height: 2px;
+            }
+        }
+    }
+
+    &__color-input {
+        cursor: crosshair;
+        height: 100%;
+        padding: 0;
+        width: 44px;
+
+        &:hover {
+            background-color: hsl(240, 3%, 37%);
+        }
+
+        &::-moz-color-swatch {
+            display: none;
+        }
+    }
+
+    &__opacity-input {
+        flex: 1;
+        margin: 0;
+        margin-left: 15px;
+    }
+
+    &__action-container {
+        display: flex;
+    }
+
+    &__action {
+        display: flex;
+        position: relative;
+        width: 60px;
+
+        &:hover,
+        &:focus,
+        &:active {
+            background-color: hsl(240, 3%, 37%);
+        }
+
+        &::before {
+            background-color: hsl(240, 3%, 37%);
+            content: "";
+            height: calc(100% - 20px);
+            left: 0;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 1px;
+        }
+
+        &__icon {
+            margin: auto;
+        }
+    }
+}

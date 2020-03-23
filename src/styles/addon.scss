@@ -1,132 +1,153 @@
 /* Google */
 
-.rc.suppress {
-    opacity: .5;
-}
+.rc {
+    &.suppress {
+        opacity: 0.5;
+    }
 
-.rc.spotlight {
-    position: relative;
-}
+    &.screen {
+        display: none;
+    }
 
-.rc.spotlight::before {
-    content: '';
-    top: -10px;
-    left: -20px;
-    width: calc(100% + 38px);
-    height: calc(100% + 20px);
-    border-radius: 8px;
-    border: 1px solid hsla(120, 100%, 25%, 0.35);
-    background-color: hsla(135, 80%, 50%, 0.25);
-    position: absolute;
-    z-index: -1;
+    &.spotlight {
+        position: relative;
+
+        .spotlight__treatment {
+            top: -10px;
+            left: -20px;
+            width: calc(100% + 38px);
+            height: calc(100% + 20px);
+            border-radius: 8px;
+            border: 1px solid transparent;
+            background-color: transparent;
+            position: absolute;
+            z-index: -1;
+        }
+    }
 }
 
 /* DuckDuckGo */
 
-.result.suppress {
-    opacity: .5;
-}
+.result {
+    &.suppress {
+        opacity: 0.5;
+    }
 
-.result.spotlight {
-    position: relative;
-}
+    &.screen {
+        display: none;
+    }
 
-.result.spotlight::before {
-    content: '';
-    top: -1px;
-    left: -1px;
-    width: 100%;
-    height: 100%;
-    border-radius: 4px;
-    border: 1px solid hsla(120, 100%, 25%, 0.35);
-    background-color: hsla(135, 80%, 50%, 0.25);
-    position: absolute;
-    z-index: 1;
-}
+    &.spotlight {
+        position: relative;
 
-.result.spotlight .result__body {
-    position: relative;
-    z-index: 2;
+        .spotlight__treatment {
+            top: -1px;
+            left: -1px;
+            width: 100%;
+            height: 100%;
+            border-radius: 4px;
+            border: 1px solid transparent;
+            background-color: transparent;
+            position: absolute;
+            z-index: 1;
+        }
+
+        .result__body {
+            position: relative;
+            z-index: 2;
+        }
+    }
 }
 
 /* Bing */
 
-.b_algo.suppress {
-    opacity: .5;
-}
+.b_algo {
+    &.suppress {
+        opacity: 0.5;
+    }
 
-.b_algo.spotlight {
-    position: relative;
-}
+    &.screen {
+        display: none;
+    }
 
-.b_algo.spotlight::before {
-    content: '';
-    top: -1px;
-    left: -1px;
-    width: 100%;
-    height: 100%;
-    border-radius: 4px;
-    border: 1px solid hsla(120, 100%, 25%, 0.35);
-    background-color: hsla(135, 80%, 50%, 0.25);
-    position: absolute;
-    z-index: 1;
-}
+    &.spotlight {
+        position: relative;
 
-.b_algo.spotlight h2,
-.b_algo.spotlight .b_caption {
-    position: relative;
-    z-index: 2;
-}
+        .spotlight__treatment {
+            top: -1px;
+            left: -1px;
+            width: 100%;
+            height: 100%;
+            border-radius: 4px;
+            border: 1px solid transparent;
+            background-color: transparent;
+            position: absolute;
+            z-index: 1;
+        }
 
-.b_algo.spotlight + .b_algo.spotlight {
-    margin-top: 10px !important;
+        h2,
+        [class^="b_"] {
+            position: relative;
+            z-index: 2;
+        }
+
+        & + & {
+            margin-top: 10px !important;
+        }
+    }
 }
 
 /* Yahoo */
 
-.algo.suppress {
-    opacity: .5;
-}
+.algo {
+    &.suppress {
+        opacity: 0.5;
+    }
 
-.algo.spotlight {
-    position: relative;
-}
+    &.screen {
+        display: none;
+    }
 
-.algo > div {
-    position: relative;
-    z-index: 2;
-}
+    &.spotlight {
+        $thisSpotlight: &;
+        position: relative;
 
-.algo.spotlight::before {
-    content: '';
-    top: -10px;
-    left: -10px;
-    width: calc(100% + 20px);
-    height: calc(100% + 20px);
-    border-radius: 4px;
-    border: 1px solid hsla(120, 100%, 25%, 0.35);
-    background-color: hsla(135, 80%, 50%, 0.25);
-    position: absolute;
-    z-index: 1;
-}
+        @at-root li.first & {
+            padding-top: 10px !important;
+        }
 
-.algo.spotlight + .algo.spotlight {
-    margin-top: 10px !important;
-}
+        @at-root li.last & {
+            padding-bottom: 10px !important;
+        }
 
-li.first .spotlight {
-    padding-top: 10px !important;
-}
+        .spotlight__treatment {
+            top: -10px;
+            left: -10px;
+            width: calc(100% + 20px);
+            height: calc(100% + 20px);
+            border-radius: 4px;
+            border: 1px solid transparent;
+            background-color: transparent;
+            position: absolute;
+            z-index: 1;
 
-li.first .spotlight::before {
-    top: 0;
-    height: calc(100% + 10px);
-}
+            @at-root li.first & {
+                top: 0;
+                height: calc(100% + 10px);
+            }
 
-li.last .spotlight {
-    padding-bottom: 10px !important;
-}
+            @at-root li.last & {
+                height: calc(100% + 8px);
+            }
+        }
 
-li.last .spotlight::before {
-    height: calc(100% + 8px);
+        & + & {
+            margin-top: 10px !important;
+        }
+    }
+
+    > div {
+        position: relative;
+        z-index: 2;
+    }
 }
