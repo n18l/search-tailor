@@ -1,34 +1,288 @@
 @import "reset";
+@import "inputs";
 
 :root {
     --color-button: hsl(240, 3%, 37%);
     --color-button-highlight-1: hsl(240, 2%, 44%);
     --color-button-highlight-2: hsl(240, 2%, 49%);
+
+    --color-text-input: hsla(0, 0%, 100%, 1);
+    --color-text-input-bg: hsla(0, 0%, 100%, 0.1);
+    --color-text-input-effects: hsl(200, 100%, 50%);
+    --color-text-input-invalid: hsl(0, 75%, 60%);
+
+    --color-background-icon-fill: hsla(0, 100%, 100%, 0.75);
+    --color-border-icon-fill: hsla(0, 100%, 100%, 0.75);
+
+    --color-icon-fill: hsla(0, 100%, 100%, 0.75);
 }
 
 html,
 body {
     background-color: hsl(240, 3%, 30%);
     border-radius: 2px;
+    font-family: sans-serif;
+    font-size: 10px;
     overflow: hidden;
 }
 
-body {
-    width: 370px;
-}
-
 main {
+    color: hsl(0, 0%, 100%);
     display: flex;
     flex-direction: column;
     height: 100%;
-    color: hsl(0, 0%, 100%);
+    position: relative;
 }
 
-.entry-list {
-    padding: 0;
-    margin: 0;
-    overflow: scroll;
+.entry-group-container {
     max-height: 400px;
+    overflow: scroll;
+    padding-top: 5px;
+    position: relative;
+    z-index: 1;
+}
+
+.entry-group {
+    $this-entry-group: &;
+
+    background-color: hsl(240, 3%, 30%);
+
+    // .entry-group__header
+    &__header {
+        $header-height: 40px;
+
+        align-items: center;
+        background-color: hsl(240, 2%, 23%);
+        display: flex;
+        height: $header-height;
+        padding-left: 10px;
+
+        // .entry-group__header__icon
+        &__icon {
+            display: none;
+
+            @each $treatmentType in ("screen", "suppress", "spotlight") {
+                // .entry-group__header__icon--screen
+                // .entry-group__header__icon--suppress
+                // .entry-group__header__icon--spotlight
+                &--#{$treatmentType} {
+                    #{$this-entry-group}[data-treatment-id^="#{$treatmentType}"]
+                        & {
+                        display: block;
+                    }
+                }
+            }
+        }
+
+        // .entry-group__header__title
+        &__title {
+            font-size: 1.2rem;
+            margin: 0 6px 0 10px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        // .entry-group__header__action-container
+        &__action-container {
+            display: flex;
+            height: 100%;
+            margin-left: auto;
+        }
+
+        // .entry-group__header__action
+        &__action {
+            $this-action: &;
+
+            align-items: center;
+            display: flex;
+            justify-content: center;
+            width: $header-height;
+
+            &[disabled] {
+                cursor: not-allowed;
+                opacity: 0.5;
+            }
+
+            &:not([disabled]) {
+                &:hover,
+                &:focus {
+                    background-color: hsla(0, 0%, 100%, 0.2);
+                }
+
+                &:active {
+                    background-color: hsla(0, 0%, 100%, 0.4);
+                }
+            }
+
+            &[data-action-active="true"] {
+                background-color: var(--color-button);
+            }
+
+            // .entry-group__header__action__icon
+            &__icon {
+                transition: transform 0.5s;
+
+                #{$this-action}[data-click-action="toggleSettingsDrawer"][data-action-active="true"]
+                    & {
+                    transform: rotate(150deg);
+                }
+            }
+        }
+    }
+
+    // .entry-group__settings-drawer
+    &__settings-drawer {
+        background-color: var(--color-button);
+        display: none;
+        height: 65px;
+
+        &[data-is-open="true"] {
+            display: flex;
+        }
+    }
+
+    // .entry-group__input-container
+    &__input-container {
+        background-color: var(--color-text-input-bg);
+        border-radius: 2px;
+        flex: 1 1 100%;
+        display: flex;
+        margin: 15px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    // .entry-group__label-input
+    &__label-input {
+        padding: 0 0 0 8px;
+        height: 100%;
+        width: 100%;
+        margin: auto;
+    }
+
+    // .entry-group__label-input-effects
+    // The input effects element is used to provide performantly animated states
+    // by only transitioning properties that don't trigger repaints (i.e. scale,
+    // opacity, position, & rotation).
+    &__label-input-effects {
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        border-radius: 2px;
+        overflow: hidden;
+        pointer-events: none;
+
+        &::before,
+        &::after {
+            bottom: 0;
+            content: "";
+            height: 2px;
+            left: 0;
+            position: absolute;
+            width: 100%;
+        }
+
+        &::before {
+            background-color: var(--color-text-input-effects);
+            transform: scaleX(0);
+            transition: transform 0.35s;
+
+            #{$this-entry-group}__label-input:focus + &,
+            #{$this-entry-group}__label-input:active + & {
+                transform: scaleX(1);
+            }
+        }
+
+        &::after {
+            background-color: var(--color-text-input-invalid);
+            opacity: 0;
+            transition: opacity 0.35s;
+
+            #{$this-entry-group}__label-input:invalid + & {
+                opacity: 1;
+            }
+        }
+    }
+
+    // .entry-group__action-container
+    &__action-container {
+        display: flex;
+        margin-left: auto;
+    }
+
+    // .entry-group__action
+    &__action {
+        --color-button-hover: hsla(240, 2%, 49%, 1);
+
+        $this-action: &;
+        width: 60px;
+        display: flex;
+        position: relative;
+
+        &:hover,
+        &:focus,
+        &:active {
+            background-color: var(--color-button-hover);
+        }
+
+        &::before {
+            content: "";
+            width: 1px;
+            height: 45px;
+            position: absolute;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            background-color: var(--color-button-hover);
+
+            #{$this-action}:hover + &,
+            #{$this-action}:focus + &,
+            #{$this-action}:active + & {
+                display: none;
+            }
+        }
+
+        // .entry-group__action__icon
+        &__icon {
+            margin: auto;
+
+            // .entry-group__action__icon__path-1
+            &__path-1 {
+                fill: var(--color-icon-fill);
+            }
+
+            // .entry-group__action__icon__path-2
+            &__path-2 {
+                [data-click-action="setBackgroundColor"] & {
+                    fill: var(--color-background-icon-fill);
+                }
+
+                [data-click-action="setBorderColor"] & {
+                    fill: var(--color-border-icon-fill);
+                }
+            }
+        }
+    }
+
+    // .entry-group__list
+    &__list {
+        padding: 0;
+        margin: 0;
+
+        &:empty {
+            &::after {
+                align-items: center;
+                content: "Add new or drag existing entries here to apply this treatment.";
+                display: flex;
+                font-size: 1.2rem;
+                height: 65px;
+                opacity: 0.7;
+                padding: 0 100px;
+                text-align: center;
+            }
+        }
+    }
 }
 
 .entry {
@@ -50,7 +304,7 @@ main {
         }
     }
 
-    &__input-wrapper {
+    &__input-container {
         background-color: var(--color-button);
         border-radius: 2px;
         flex: 1 1 100%;
@@ -94,21 +348,12 @@ main {
         }
     }
 
-    &__color-template-button {
+    &__color-treatment-button {
         display: flex;
 
         #{$thisEntry}[data-active-treatment="suppress"] &,
         #{$thisEntry}[data-active-treatment="screen"] & {
             display: none;
-        }
-
-        &__swatch {
-            width: 18px;
-            height: 18px;
-            margin: auto 6px;
-            background-color: hsla(0, 0%, 90%, 0.25);
-            border: 1px solid hsla(0, 0%, 48%, 0.35);
-            border-radius: 9px;
         }
     }
 
@@ -175,65 +420,30 @@ main {
         }
     }
 
-    &__swatch-drawer {
-        background-color: var(--color-button);
-        height: 0;
-        overflow: hidden;
-
-        &--is-open {
-            height: auto;
-        }
-    }
-
     & + & {
         border-top: 1px solid var(--color-button);
     }
 }
 
-.swatch-list {
-    list-style: none;
-    padding: 5px;
-    display: flex;
-    flex-wrap: wrap;
-
-    .swatch-wrapper {
-        flex: 0 1 30px;
-        height: 30px;
-        display: flex;
-    }
-
-    .swatch {
-        height: 18px;
-        width: 18px;
-        border: 1px solid white;
-        border-radius: 50%;
-        margin: auto;
-    }
-}
-
-.button-bar {
+.action-bar {
     flex: 0 0 40px;
     margin-top: auto;
     display: flex;
     background-color: var(--color-button);
 
-    button {
-        cursor: not-allowed;
-        flex: 1 1 auto;
+    // .action-bar__action
+    &__action {
         border: 0;
-        color: hsla(0, 0%, 100%, 0.5);
         border-top: 1px solid var(--color-button-highlight-1);
+        color: hsl(0, 0%, 100%);
+        cursor: pointer;
+        flex: 1 1 auto;
 
-        &:not([disabled]) {
-            cursor: pointer;
-            color: hsl(0, 0%, 100%);
-
-            &:hover,
-            &:focus,
-            &:active {
-                background-color: var(--color-button-highlight-1);
-                border-color: var(--color-button-highlight-2);
-            }
+        &:hover,
+        &:focus,
+        &:active {
+            background-color: var(--color-button-highlight-1);
+            border-color: var(--color-button-highlight-2);
         }
     }
 }

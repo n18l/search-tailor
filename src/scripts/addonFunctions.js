@@ -1,43 +1,29 @@
-/* eslint-disable no-unused-vars */
+const addonData = require("./addonData");
 
 /**
  * Functions used by multiple scripts in the addon.
  */
-
 const addonFunctions = {
     /**
-     * Apply the settings from a particular tailoring template to the
+     * Apply the settings from a particular tailoring treatment to the
      * appropriate attributes of an HTML element.
-     * @param {object} tailoringTemplate - The tailoring template to apply styles from.
-     * @param {object} elementToStyle - The HTML element to apply the template's properties to.
-     * @param {bool} applyTitle - Whether or not to also apply the template's label as the element's title attribute.
+     * @param {object} tailoringTreatment - The tailoring treatment to apply styles from.
+     * @param {object} elementToStyle - The HTML element to apply the treatment's properties to.
+     * @param {bool} applyTitle - Whether or not to also apply the treatment's label as the element's title attribute.
      */
-    applyTailoringTemplateStyles(
-        tailoringTemplate,
+    applyTailoringTreatmentToElement(
+        tailoringTreatment,
         elementToStyle,
         applyTitle = false
     ) {
         const element = elementToStyle;
 
-        // Convert opacity values (which are stored as numbers between 0 and 1)
-        // into hex equivalents.
-        const backgroundOpacityHexString = Math.round(
-            255 * tailoringTemplate.backgroundOpacity
-        ).toString(16);
-        const borderOpacityHexString = Math.round(
-            255 * tailoringTemplate.borderOpacity
-        ).toString(16);
-
         // Style the supplied element with 8-character hex notation.
-        element.style.backgroundColor = `${
-            tailoringTemplate.backgroundColor
-        }${backgroundOpacityHexString}`;
-        element.style.borderColor = `${
-            tailoringTemplate.borderColor
-        }${borderOpacityHexString}`;
+        element.style.backgroundColor = tailoringTreatment.backgroundColor;
+        element.style.borderColor = tailoringTreatment.borderColor;
 
         if (applyTitle) {
-            element.title = tailoringTemplate.label;
+            element.title = tailoringTreatment.label;
         }
     },
 
@@ -96,6 +82,127 @@ const addonFunctions = {
         }
 
         return [hue, saturation, lightness];
+    },
+
+    /**
+     * Logs an error.
+     *
+     * @param {*} error The error output to log.
+     */
+    logError(error) {
+        console.error(error);
+    },
+
+    /**
+     * Synchronize the list's current entries with the browser.storage API,
+     * then reinitialize the addon in any tabs affected by the extension.
+     */
+    syncTailoringEntriesToStorage() {
+        let allEntryValues = [];
+
+        addonData.local.tailoringGroups.forEach(tailoringGroup => {
+            allEntryValues = allEntryValues.concat(tailoringGroup.entryValues);
+        });
+
+        const validTailoringEntries = allEntryValues.filter(
+            entryValues => entryValues.domain !== ""
+        );
+
+        browser.storage.sync
+            .set({ tailoringEntries: validTailoringEntries })
+            .then(null, addonFunctions.logError);
+    },
+
+    /**
+     * Synchronize the current tailoring templates with the browser.storage API.
+     */
+    syncTailoringTreatmentsToStorage() {
+        browser.storage.sync
+            .set({
+                tailoringTreatments: addonData.local.tailoringTreatments,
+            })
+            .then(null, addonFunctions.logError);
+    },
+
+    /**
+     * Generates a new unique tailoring treatment ID.
+     *
+     * @param {String} treatmentType The type of treatment, which is prepended to the ID.
+     * @param {Number} maxRandomInt The multiplication factor to apply to the random ID generation.
+     */
+    generateTailoringTreatmentID(
+        treatmentType = "spotlight",
+        maxRandomInt = 100000
+    ) {
+        const currentTimestamp = Date.now();
+        const randomInt = Math.floor(Math.random() * Math.floor(maxRandomInt));
+
+        return `${treatmentType}:${currentTimestamp}-${randomInt}`;
+    },
+
+    /**
+     * Retrieves the data of the tailoring treatment using the provided ID.
+     *
+     * @param {String} treatmentID The ID of the treatment to retrieve.
+     *
+     * @returns {Object|undefined} The requested tailoring treatment, or undefined if not found.
+     */
+    getTailoringTreatmentByID(treatmentID) {
+        return addonData.local.tailoringTreatments.find(
+            treatment => treatment.id === treatmentID
+        );
+    },
+
+    /**
+     * Retrieves the TailoringGroup object with the provided treatment ID.
+     *
+     * @param {String} treatmentID The treatment ID to search against
+     *
+     * @returns {TailoringGroup} The TailoringGroup with the matching treatment ID, or undefined if none.
+     */
+    getTailoringGroupByTreatmentID(treatmentID) {
+        return addonData.local.tailoringGroups.find(
+            tailoringGroup => tailoringGroup.treatment.id === treatmentID
+        );
+    },
+
+    /**
+     * Retrieves the addon's current user data using the browser storage API and
+     * saves a local working copy. If the requested data isn't found, it falls
+     * back to the addon's defined default values.
+     *
+     * @returns {Promise} A Promise resolving to the data saved as the local working copy.
+     */
+    getUserData() {
+        const requestedStorageData = [
+            "tailoringEntries",
+            "tailoringTreatments",
+        ];
+
+        const userDataPromise = new Promise((resolve, reject) => {
+            browser.storage.sync
+                .get(requestedStorageData)
+                .then(storageData => {
+                    requestedStorageData.forEach(dataType => {
+                        addonData.local[dataType] = [];
+
+                        if (
+                            storageData[dataType] &&
+                            storageData[dataType].length
+                        ) {
+                            addonData.local[dataType] = storageData[dataType];
+                        } else {
+                            addonData.local[dataType] =
+                                addonData.defaultUserData[dataType];
+                        }
+                    });
+
+                    resolve(addonData.local);
+                })
+                .catch(error => reject(error));
+        });
+
+        return userDataPromise;
     },
 };
 

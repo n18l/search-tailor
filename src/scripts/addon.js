@@ -1,9 +1,5 @@
-const addonData = require('./addonData');
-const addonFunctions = require('./addonFunctions');
-
-function logError(error) {
-    console.error(error);
-}
+const addonData = require("./addonData");
+const addonFunctions = require("./addonFunctions");
 
 /* Class representing a user's search that is eligible for tailoring. */
 class TailorableSearch {
@@ -49,29 +45,30 @@ class TailorableSearch {
      */
     get tailoredResults() {
         return this.searchResultsContainer.querySelectorAll(
-            ".spotlight, .suppress, .screen"
+            "[data-tailoring-treatment]"
         );
     }
 
     /**
-     * Remove all treatment classes from the current search results.
+     * Remove all treatments from the current search results.
      */
     resetTailoring() {
         this.tailoredResults.forEach(tailoredResult =>
-            tailoredResult.classList.remove("spotlight", "suppress", "screen")
+            tailoredResult.removeAttribute("data-tailoring-treatment")
         );
     }
 
     /**
-     * Get the current user-defined list of tailored domains, then apply fresh
+     * Get the current user-defined list of tailoring entries, then apply fresh
      * treatments to matching search results.
      */
     tailorResults() {
         this.resetTailoring();
 
         /**
-         * Apply the appropriate treatment class to each result that matches an
-         * entry from the user-defined list of tailored domains.
+         * Apply the appropriate treatment to each result that matches an entry
+         * from the user-defined list of tailoring entries.
+         *
          * @param {object} storageData - Freshly retrieved data from the extension's synchronized storage.
          */
         const applyTailoringTreatments = storageData => {
@@ -85,11 +82,11 @@ class TailorableSearch {
             // Cache the current search results.
             const currentSearchResults = Array.from(this.searchResults);
 
-            // Filter the search results against each user-defined tailored
-            // domain, applying treatments to matching results.
-            storageData.tailoredDomains.forEach(tailoredDomain => {
+            // Filter the search results against each user-defined tailoring
+            // entry, applying treatments to matching results.
+            storageData.tailoringEntries.forEach(tailoringEntry => {
                 const matchingResults = currentSearchResults.filter(result =>
-                    RegExp(`.*://.*.?${tailoredDomain.domain}.*`).test(
+                    RegExp(`.*://.*.?${tailoringEntry.domain}.*`).test(
                         result.querySelector(
                             this.searchEngine.selectors.resultLink
                         )
@@ -97,49 +94,50 @@ class TailorableSearch {
                 );
 
                 matchingResults.forEach(matchingResult => {
+                    const thisResult = matchingResult;
                     // If this treatment needs to be spotlit, create a new
-                    // element and apply the appropriate tailoring template
+                    // element and apply the appropriate tailoring treatment
                     // styles to it.
-                    if (tailoredDomain.treatment === "spotlight") {
+                    if (tailoringEntry.treatment.startsWith("spotlight")) {
                         const newTreatmentDiv = document.createElement("div");
-                        newTreatmentDiv.classList.add("spotlight__treatment");
+                        newTreatmentDiv.classList.add("treatment-panel");
 
-                        const tailoringTemplate = storageData.tailoringTemplates.find(
-                            template =>
-                                template.id ===
-                                tailoredDomain.tailoringTemplateID
+                        const tailoringTreatment = storageData.tailoringTreatments.find(
+                            treatment =>
+                                treatment.id === tailoringEntry.treatment
                         );
 
-                        addonFunctions.applyTailoringTemplateStyles(
-                            tailoringTemplate,
+                        addonFunctions.applyTailoringTreatmentToElement(
+                            tailoringTreatment,
                             newTreatmentDiv
                         );
 
-                        const existingTreatmentDiv = matchingResult.querySelector(
-                            ".spotlight__treatment"
+                        const existingTreatmentDiv = thisResult.querySelector(
+                            ".treatment-panel"
                         );
 
                         if (existingTreatmentDiv) {
-                            matchingResult.replaceChild(
+                            thisResult.replaceChild(
                                 newTreatmentDiv,
                                 existingTreatmentDiv
                             );
                         } else {
-                            matchingResult.insertAdjacentElement(
+                            thisResult.insertAdjacentElement(
                                 "afterbegin",
                                 newTreatmentDiv
                             );
                         }
                     }
 
-                    matchingResult.classList.add(tailoredDomain.treatment);
+                    thisResult.dataset.tailoringTreatment =
+                        tailoringEntry.treatment;
                 });
             });
         };
 
         browser.storage.sync
             .get(addonData.defaultUserData)
-            .then(applyTailoringTreatments, logError);
+            .then(applyTailoringTreatments, addonFunctions.logError);
     }
 
     /**
@@ -150,7 +148,7 @@ class TailorableSearch {
         // Disconnect any existing observers.
         if (this.searchObserver) this.searchObserver.disconnect();
 
-        // Create a new observer to tailor currently-matching domains on
+        // Create a new observer to tailor currently-matching entries on
         // mutation.
         this.searchObserver = new MutationObserver(() => this.tailorResults());
 

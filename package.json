@@ -8,8 +8,8 @@
     "scripts": {
         "build:manifest": "cp src/manifest.json dist/",
         "watch:manifest": "chokidar \"src/manifest.json\" -c \"npm run build:manifest\" --initial",
-        "build:html": "pug src/markup --out dist/markup",
-        "watch:html": "chokidar \"src/markup/*.pug\" -c \"pug {path} --out dist/markup\" --initial",
+        "build:html": "pug -O src/scripts/addonData.js src/markup --out dist/markup",
+        "watch:html": "chokidar \"src/markup/*.pug\" -c \"pug -O src/scripts/addonData.js {path} --out dist/markup\" --initial",
         "build:css": "sass --update src/styles:dist/styles --style compressed",
         "watch:css": "sass --watch src/styles:dist/styles --style compressed",
         "lint:js": "eslint src/scripts/*.js; exit 0",
@@ -18,7 +18,7 @@
         "bundle:js:options": "browserify src/scripts/options.js > dist/scripts/options.js",
         "bundle:js": "run-p bundle:js:*",
         "build:js": "run-s lint:js bundle:js",
-        "watch:js": "chokidar \"src/scripts/*.js\" -c \"npm run build:js\" --initial",
+        "watch:js": "chokidar \"src/scripts/*.js\" -c \"npm run build:js; if [[ '{path}' == 'src/scripts/addonData.js' ]]; then npm run build:html; fi;\" --initial",
         "build:assets": "cp -r src/assets dist",
         "watch:assets": "chokidar \"src/assets\" -c \"npm run build:assets\" --initial",
         "clean": "rimraf dist && mkdir -p dist/{assets,markup,scripts,styles}",
@@ -29,7 +29,7 @@
     "script-documentation": {
         "build:manifest": "Directly copies the manifest file to the dist/ folder.",
         "watch:manifest": "Watches the manifest file, running build:manifest on change.",
-        "build:html": "Compiles .pug files to .html files.",
+        "build:html": "Compiles .pug files to .html files, passing src/scripts/addonData.js for template data.",
         "watch:html": "Watches .pug files, recompiling specific files on change.",
         "build:css": "Compiles .scss files to .css files.",
         "watch:css": "Watches .scss files, recompiling all such files on change.",
@@ -39,7 +39,7 @@
         "bundle:js:options": "Bundles the options script and its requirements into a single dist/ file.",
         "bundle:js": "Performs all bundling tasks in parallel.",
         "build:js": "Lints and then bundles all .js files.",
-        "watch:js": "Watches .js files, rebuilding all such files on change.",
+        "watch:js": "Watches .js files, rebuilding all such files on change. Conditionally rebuilds .pug files if src/scripts/addonData.js changes.",
         "build:assets": "Directly copies all src assets to dist assets.",
         "watch:assets": "Watches assets, rebuilding all such files on change.",
         "clean": "Removes and recreates the dist folder and its subfolders.",
@@ -58,10 +58,12 @@
         }
     },
     "lint-staged": {
-        "*.{js,json,scss}": [
-            "prettier --write",
-            "git add"
-        ],
+        "linters": {
+            "*.{js,json,scss}": [
+                "prettier --write",
+                "git add"
+            ]
+        },
         "ignore": [
             "**/*.min.js"
         ]
@@ -120,6 +122,7 @@
         "sass": "^1.26.2"
     },
     "dependencies": {
-        "sortablejs": "^1.10.2"
+        "sortablejs": "^1.10.2",
+        "vanilla-picker": "^2.10.1"
     }
 }
