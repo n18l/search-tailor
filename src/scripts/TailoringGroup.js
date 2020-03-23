@@ -14,12 +14,15 @@ class TailoringGroup {
      *
      * @param {Object} treatment - The treatment data to use to initialize this group.
      */
-    constructor(treatment = addonData.defaultTreatmentSettings) {
-        this.treatment = treatment;
+    constructor(treatment = null) {
+        // Save a reference to the original treatment, or create a new one from
+        // the default settings.
+        this.treatment =
+            treatment || Object.assign({}, addonData.defaultTreatmentSettings);
 
         // Identify if this is a new group, and if so, save it back to storage
         // with the default settings.
-        this.isNew = !treatment.id;
+        this.isNew = !this.treatment.id;
         if (this.isNew) {
             this.treatment.id = addonFunctions.generateTailoringTreatmentID();
             addonData.local.tailoringTreatments.push(this.treatment);
@@ -111,6 +114,20 @@ class TailoringGroup {
      */
     get settingsDrawerIsOpen() {
         return this.settingsDrawer.dataset.isOpen === "true";
+    }
+
+    /**
+     * Gets the position of this group among all current groups.
+     */
+    get index() {
+        return addonData.local.tailoringGroups.indexOf(this);
+    }
+
+    /**
+     * Gets the position of this group among all current groups.
+     */
+    get treatmentIndex() {
+        return addonData.local.tailoringTreatments.indexOf(this.treatment);
     }
 
     /**
@@ -242,6 +259,11 @@ class TailoringGroup {
                 addonFunctions.syncTailoringTreatmentsToStorage();
             },
         });
+
+        // Toggle this group's settings drawer.
+        this.actionButtons.deleteGroup.addEventListener("click", () =>
+            this.delete()
+        );
     }
 
     /**
@@ -256,6 +278,30 @@ class TailoringGroup {
      */
     enableNewEntries() {
         this.actionButtons.addEntry.removeAttribute("disabled");
+    }
+
+    /**
+     * Deletes all of this group's entries.
+     */
+    deleteAllEntries() {
+        this.entries = [];
+        addonFunctions.syncTailoringEntriesToStorage();
+    }
+
+    /**
+     * Deletes this group entirely.
+     */
+    delete() {
+        this.deleteAllEntries();
+
+        // Remove both this group's object and the treatment it references.
+        addonData.local.tailoringGroups.splice(this.index, 1);
+        addonData.local.tailoringTreatments.splice(this.treatmentIndex, 1);
+
+        // Delete the element from the popup.
+        this.element.remove();
+
+        addonFunctions.syncTailoringTreatmentsToStorage();
     }
 
     /**
