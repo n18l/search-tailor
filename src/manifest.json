@@ -14,13 +14,26 @@
     },
 
     "icons": {
-        "48": "assets/icons/black.svg",
-        "96": "assets/icons/black.svg"
+        "48": "assets/icons/icon.svg",
+        "96": "assets/icons/icon.svg"
     },
 
     "browser_action": {
-        "default_icon": "assets/icons/search-light.svg",
-        "default_popup": "markup/popup.html"
+        "default_popup": "markup/popup.html",
+
+        "default_icon": "assets/icons/icon-dark.svg",
+        "theme_icons": [
+            {
+                "light": "assets/icons/icon-light.svg",
+                "dark": "assets/icons/icon-dark.svg",
+                "size": 16
+            },
+            {
+                "light": "assets/icons/icon-light.svg",
+                "dark": "assets/icons/icon-dark.svg",
+                "size": 32
+            }
+        ]
     },
 
     "permissions": ["theme", "storage", "tabs"],
