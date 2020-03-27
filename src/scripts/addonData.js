@@ -21,11 +21,12 @@ const addonData = {
             name: "Google",
             matchPattern: ".*://.*.?google.com/search.*",
             selectors: {
-                resultContainer: ".srg",
+                resultContainer: "#search",
                 result: ".rc",
                 resultLink: ".r > a",
             },
             observe: false,
+            styleViaAttribute: false,
         },
         {
             name: "DuckDuckGo",
@@ -36,6 +37,7 @@ const addonData = {
                 resultLink: ".result__a",
             },
             observe: true,
+            styleViaAttribute: false,
         },
         {
             name: "Bing",
@@ -46,6 +48,7 @@ const addonData = {
                 resultLink: ".b_algo h2 a",
             },
             observe: false,
+            styleViaAttribute: true,
         },
         {
             name: "Yahoo!",
@@ -56,6 +59,7 @@ const addonData = {
                 resultLink: ".algo .ac-algo",
             },
             observe: false,
+            styleViaAttribute: false,
         },
     ],
 
