@@ -100,7 +100,16 @@ class TailorableSearch {
                     // styles to it.
                     if (tailoringEntry.treatment.startsWith("spotlight")) {
                         const newTreatmentDiv = document.createElement("div");
-                        newTreatmentDiv.classList.add("treatment-panel");
+
+                        // Some search engines apparently observe DOM mutations
+                        // and block the insertion of elements with classes into
+                        // search results (coughBINGcough). In such cases, add a
+                        // data attribute to style against instead.
+                        if (this.searchEngine.styleViaAttribute) {
+                            newTreatmentDiv.dataset.treatmentPanel = "";
+                        } else {
+                            newTreatmentDiv.classList.add("treatment-panel");
+                        }
 
                         const tailoringTreatment = storageData.tailoringTreatments.find(
                             treatment =>
@@ -113,7 +122,7 @@ class TailorableSearch {
                         );
 
                         const existingTreatmentDiv = thisResult.querySelector(
-                            ".treatment-panel"
+                            ".treatment-panel, [data-treatment-panel]"
                         );
 
                         if (existingTreatmentDiv) {
