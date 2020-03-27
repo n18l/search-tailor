@@ -4,12 +4,12 @@
     "name": "Search Tailor",
     "version": "1.0",
     "author": "Nick Brombal",
-    "homepage_url": "https://nickbrombal.codes/",
+    "homepage_url": "https://github.com/nbrombal/search-tailor",
     "description": "Tailor your search results.",
 
     "browser_specific_settings": {
         "gecko": {
-            "id": "nick@brombal.com"
+            "id": "searchtailor@nbrombal.com"
         }
     },
 
