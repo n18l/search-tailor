@@ -21,7 +21,7 @@ const addonData = {
             name: "Google",
             matchPattern: ".*://.*.?google.com/search.*",
             selectors: {
-                resultContainer: ".srg",
+                resultContainer: "#search",
                 result: ".rc",
                 resultLink: ".r > a",
             },
