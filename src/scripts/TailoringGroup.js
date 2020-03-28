@@ -83,6 +83,21 @@ class TailoringGroup {
             ".js-treatment-label-input"
         );
 
+        // Save references to elements related to the background and border
+        // color-picking modals.
+        this.pickerElements = {
+            backgroundModal: this.element.querySelector(
+                ".js-background-picker-modal"
+            ),
+            backgroundScrim: this.element.querySelector(
+                ".js-background-picker-scrim"
+            ),
+            background: this.element.querySelector(".js-background-picker"),
+            borderModal: this.element.querySelector(".js-border-picker-modal"),
+            borderScrim: this.element.querySelector(".js-border-picker-scrim"),
+            border: this.element.querySelector(".js-border-picker"),
+        };
+
         // Set this group's display title.
         this.title = this.treatment.label;
 
@@ -212,12 +227,12 @@ class TailoringGroup {
 
         // Initialize this group's background color picker.
         this.backgroundPicker = new ColorPicker({
-            parent: this.actionButtons.setBackgroundColor,
             color: this.treatment.backgroundColor,
-            popup: "left",
+            parent: this.pickerElements.background,
+            popup: false,
             onChange: color => {
                 // Update the icon color to reference the new selection.
-                this.actionButtons.setBackgroundColor.style.setProperty(
+                this.actionButtons.openBackgroundColorModal.style.setProperty(
                     "--color-background-icon-fill",
                     color.hslaString
                 );
@@ -233,16 +248,36 @@ class TailoringGroup {
                 // Save the working copy data to storage.
                 addonFunctions.syncTailoringTreatmentsToStorage();
             },
+            onDone: () => {
+                this.pickerElements.backgroundModal.dataset.isVisible = false;
+            },
         });
+
+        // Open this group's background color picker modal on click.
+        this.actionButtons.openBackgroundColorModal.addEventListener(
+            "click",
+            () => {
+                this.pickerElements.backgroundModal.dataset.isVisible = true;
+            }
+        );
+
+        // Close this group's background color picker modal when clicking the
+        // modal's scrim.
+        this.actionButtons.closeBackgroundColorModal.addEventListener(
+            "click",
+            () => {
+                this.pickerElements.backgroundModal.dataset.isVisible = false;
+            }
+        );
 
         // Initialize this group's border color picker.
         this.borderPicker = new ColorPicker({
-            parent: this.actionButtons.setBorderColor,
             color: this.treatment.borderColor,
-            popup: "left",
+            parent: this.pickerElements.border,
+            popup: false,
             onChange: color => {
                 // Update the icon color to reference the new selection.
-                this.actionButtons.setBorderColor.style.setProperty(
+                this.actionButtons.openBorderColorModal.style.setProperty(
                     "--color-border-icon-fill",
                     color.hslaString
                 );
@@ -258,7 +293,27 @@ class TailoringGroup {
                 // Save the working copy data to storage.
                 addonFunctions.syncTailoringTreatmentsToStorage();
             },
+            onDone: () => {
+                this.pickerElements.borderModal.dataset.isVisible = false;
+            },
         });
+
+        // Open this group's border color picker modal on click.
+        this.actionButtons.openBorderColorModal.addEventListener(
+            "click",
+            () => {
+                this.pickerElements.borderModal.dataset.isVisible = true;
+            }
+        );
+
+        // Close this group's border color picker modal when clicking the
+        // modal's scrim.
+        this.actionButtons.closeBorderColorModal.addEventListener(
+            "click",
+            () => {
+                this.pickerElements.borderModal.dataset.isVisible = false;
+            }
+        );
 
         // Toggle this group's settings drawer.
         this.actionButtons.deleteGroup.addEventListener("click", () =>
