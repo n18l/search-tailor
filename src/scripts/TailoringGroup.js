@@ -32,6 +32,7 @@ class TailoringGroup {
         this.cacheData();
         this.defineActions();
         this.bindEvents();
+        this.initializeColorPickers();
         this.enableEntrySorting();
 
         if (this.treatment.label) {
@@ -83,11 +84,88 @@ class TailoringGroup {
             ".js-treatment-label-input"
         );
 
+        // Save references to elements related to the background and border
+        // color-picking modals.
+        this.pickerElements = {
+            backgroundModal: this.element.querySelector(
+                ".js-background-picker-modal"
+            ),
+            backgroundScrim: this.element.querySelector(
+                ".js-background-picker-scrim"
+            ),
+            background: this.element.querySelector(".js-background-picker"),
+            borderModal: this.element.querySelector(".js-border-picker-modal"),
+            borderScrim: this.element.querySelector(".js-border-picker-scrim"),
+            border: this.element.querySelector(".js-border-picker"),
+        };
+
         // Set this group's display title.
         this.title = this.treatment.label;
 
         // Initialize the array of entries for the group.
         this.entries = [];
+    }
+
+    /**
+     * Initializes and saves references to the color picker inputs for this
+     * group's background and border colors.
+     */
+    initializeColorPickers() {
+        // Initialize this group's background color picker.
+        this.backgroundPicker = new ColorPicker({
+            color: this.treatment.backgroundColor,
+            parent: this.pickerElements.background,
+            popup: false,
+            onChange: color => {
+                // Update the icon color to reference the new selection.
+                this.actionButtons.showBackgroundColorModal.style.setProperty(
+                    "--color-background-icon-fill",
+                    color.hslaString
+                );
+
+                // Update this group's color value.
+                this.treatment.backgroundColor = color.hslaString;
+
+                // Update the working copy data's color value.
+                addonFunctions.getTailoringTreatmentByID(
+                    this.treatment.id
+                ).backgroundColor = color.hslaString;
+
+                // Save the working copy data to storage.
+                addonFunctions.syncTailoringTreatmentsToStorage();
+            },
+            onDone: () => {
+                this.backgroundColorModalIsVisible = false;
+            },
+        });
+
+        // Initialize this group's border color picker.
+        this.borderPicker = new ColorPicker({
+            color: this.treatment.borderColor,
+            parent: this.pickerElements.border,
+            popup: false,
+            onChange: color => {
+                // Update the icon color to reference the new selection.
+                this.actionButtons.showBorderColorModal.style.setProperty(
+                    "--color-border-icon-fill",
+                    color.hslaString
+                );
+
+                // Update this group's color value.
+                this.treatment.borderColor = color.hslaString;
+
+                // Update the working copy data's color value.
+                addonFunctions.getTailoringTreatmentByID(
+                    this.treatment.id
+                ).borderColor = color.hslaString;
+
+                // Save the working copy data to storage.
+                addonFunctions.syncTailoringTreatmentsToStorage();
+            },
+            onDone: () => {
+                this.borderColorModalIsVisible = false;
+            },
+        });
     }
 
     /**
@@ -138,6 +216,24 @@ class TailoringGroup {
     set settingsDrawerIsOpen(newDrawerState) {
         this.settingsDrawer.dataset.isOpen = newDrawerState;
         this.actionButtons.toggleSettingsDrawer.dataset.actionActive = newDrawerState;
+    }
+
+    /**
+     * Updates this group's border color modal's HTML to reflect its new state.
+     *
+     * @param {boolean} newModalState - The updated modal state.
+     */
+    set backgroundColorModalIsVisible(newModalState) {
+        this.pickerElements.backgroundModal.dataset.isVisible = newModalState;
+    }
+
+    /**
+     * Updates this group's border color modal's HTML to reflect its new state.
+     *
+     * @param {boolean} newModalState - The updated modal state.
+     */
+    set borderColorModalIsVisible(newModalState) {
+        this.pickerElements.borderModal.dataset.isVisible = newModalState;
     }
 
     /**
@@ -210,55 +306,39 @@ class TailoringGroup {
             addonFunctions.syncTailoringTreatmentsToStorage();
         });
 
-        // Initialize this group's background color picker.
-        this.backgroundPicker = new ColorPicker({
-            parent: this.actionButtons.setBackgroundColor,
-            color: this.treatment.backgroundColor,
-            popup: "left",
-            onChange: color => {
-                // Update the icon color to reference the new selection.
-                this.actionButtons.setBackgroundColor.style.setProperty(
-                    "--color-background-icon-fill",
-                    color.hslaString
-                );
+        // Show this group's background color picker modal on click.
+        this.actionButtons.showBackgroundColorModal.addEventListener(
+            "click",
+            () => {
+                this.backgroundColorModalIsVisible = true;
+            }
+        );
 
-                // Update this group's color value.
-                this.treatment.backgroundColor = color.hslaString;
+        // Hide this group's background color picker modal when clicking the
+        // modal's scrim.
+        this.actionButtons.hideBackgroundColorModal.addEventListener(
+            "click",
+            () => {
+                this.backgroundColorModalIsVisible = false;
+            }
+        );
 
-                // Update the working copy data's color value.
-                addonFunctions.getTailoringTreatmentByID(
-                    this.treatment.id
-                ).backgroundColor = color.hslaString;
+        // Show this group's border color picker modal on click.
+        this.actionButtons.showBorderColorModal.addEventListener(
+            "click",
+            () => {
+                this.borderColorModalIsVisible = true;
+            }
+        );
 
-                // Save the working copy data to storage.
-                addonFunctions.syncTailoringTreatmentsToStorage();
-            },
-        });
-
-        // Initialize this group's border color picker.
-        this.borderPicker = new ColorPicker({
-            parent: this.actionButtons.setBorderColor,
-            color: this.treatment.borderColor,
-            popup: "left",
-            onChange: color => {
-                // Update the icon color to reference the new selection.
-                this.actionButtons.setBorderColor.style.setProperty(
-                    "--color-border-icon-fill",
-                    color.hslaString
-                );
-
-                // Update this group's color value.
-                this.treatment.borderColor = color.hslaString;
-
-                // Update the working copy data's color value.
-                addonFunctions.getTailoringTreatmentByID(
-                    this.treatment.id
-                ).borderColor = color.hslaString;
-
-                // Save the working copy data to storage.
-                addonFunctions.syncTailoringTreatmentsToStorage();
-            },
-        });
+        // Close this group's border color picker modal when clicking the
+        // modal's scrim.
+        this.actionButtons.hideBorderColorModal.addEventListener(
+            "click",
+            () => {
+                this.borderColorModalIsVisible = false;
+            }
+        );
 
         // Toggle this group's settings drawer.
         this.actionButtons.deleteGroup.addEventListener("click", () =>
