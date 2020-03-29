@@ -5,7 +5,7 @@
     "version": "1.0",
     "author": "Nick Brombal",
     "homepage_url": "https://github.com/nbrombal/search-tailor",
-    "description": "Tailor your search results.",
+    "description": "Hides & highlights your search results so you can find what you need with style.",
 
     "browser_specific_settings": {
         "gecko": {
