@@ -160,7 +160,7 @@ class TailoringEntry {
     get value() {
         return {
             domain: this.domainInput.value,
-            treatment: this.treatmentSelect.value,
+            treatment: this.settings.treatment,
         };
     }
 
