@@ -20,33 +20,27 @@ class TailoringEntry {
      * @param {Object} [tailoringEntry] The settings object to base this interface on.
      * @param {boolean} [focusInput]    Whether to focus this entry's domain input field on creation.
      */
-    constructor(
-        tailoringEntry = {
-            id: null,
+    constructor(tailoringEntry = null, focusInput = false) {
+        // Save a reference to the settings this entry is based on, or create
+        // a default settings object is none are provided.
+        this.settings = tailoringEntry || {
+            id: addonFunctions.generateTailoringEntryID(),
             domains: [],
-            treatment: null,
-        },
-        focusInput = false
-    ) {
-        // Save a reference to the settings this entry is based on.
-        this.settings = tailoringEntry;
+            treatment: addonData.defaultTreatment,
+        };
 
         this.cacheData();
         this.defineActions();
         this.enableTokenField();
         this.bindEvents();
 
-        // Add this entry's current domains to the domain input field.
-        if (this.settings.domains.length > 0) {
-            this.domainInput.value = this.settings.domains.join("|");
-        }
-
         // Add this entry's UI to the container element.
-        qs(".js-entry-container").appendChild(this.element);
+        this.container.appendChild(this.element);
 
         // Focus this entry's domain input if desired.
         if (focusInput) {
-            this.domainInput.focus();
+            this.tokenFieldInput.focus({ preventScroll: true });
+            this.element.scrollIntoView({ behavior: "smooth" });
         }
     }
 
@@ -54,13 +48,19 @@ class TailoringEntry {
      * Caches immutable data for this entry.
      */
     cacheData() {
+        // The HTML template to base this entry's UI on.
         this.elementTemplate = qs("template#tailoring-entry");
 
+        // A copy of the template's contents to add to the DOM.
         this.element = qs(
             ".js-entry",
             document.importNode(this.elementTemplate.content, true)
         );
 
+        // The container this entry will be inserted into.
+        this.container = qs(".js-entry-container");
+
+        // The input field for the domains this entry applies to.
         this.domainInput = qs(".js-entry-domain-input", this.element);
     }
 

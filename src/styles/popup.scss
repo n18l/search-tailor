@@ -2,6 +2,9 @@
 @import "inputs";
 
 :root {
+    --color-entry-container: hsla(240, 3%, 25%, 1);
+    --color-entry: hsla(240, 3%, 30%, 1);
+
     --color-button: hsl(240, 3%, 37%);
     --color-button-highlight-1: hsl(240, 2%, 44%);
     --color-button-highlight-2: hsl(240, 2%, 49%);
@@ -25,7 +28,7 @@
 
 html,
 body {
-    background-color: hsl(240, 3%, 30%);
+    background-color: var(--color-entry);
     border-radius: 2px;
     font-family: sans-serif;
     font-size: 10px;
@@ -36,7 +39,8 @@ main {
     color: hsl(0, 0%, 100%);
     display: flex;
     flex-direction: column;
-    height: 100%;
+    height: 100vh;
+    padding-top: 5px;
     position: relative;
 }
 
@@ -322,8 +326,20 @@ main {
     }
 }
 
+.entry-container {
+    background-color: var(--color-entry-container);
+    flex: 1 1 auto;
+    max-height: 400px;
+    overflow: scroll;
+    position: relative;
+    z-index: 1;
+}
+
 .entry {
     $thisEntry: &;
+
+    background-color: var(--color-entry);
+    border-top: 1px solid var(--color-button);
     display: flex;
     flex-direction: column;
 
@@ -454,10 +470,6 @@ main {
             }
         }
     }
-
-    & + & {
-        border-top: 1px solid var(--color-button);
-    }
 }
 
 /**
@@ -539,10 +551,9 @@ main {
 }
 
 .action-bar {
-    flex: 0 0 40px;
-    margin-top: auto;
-    display: flex;
     background-color: var(--color-button);
+    display: flex;
+    flex: 0 0 40px;
 
     // .action-bar__action
     &__action {

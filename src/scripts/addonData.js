@@ -79,12 +79,21 @@ const addonData = {
     },
 
     /**
+     * The tailoring treatment settings to apply when creating a new group.
+     */
+    defaultTreatment: {
+        backgroundColor: "hsla(120,75%,35%,0.25)",
+        borderColor: "hsla(120,100%,25%,0.35)",
+        opacity: 1,
+    },
+
+    /**
      * The default user data to apply to users who have no preexisting settings.
      */
     defaultUserData: {
         tailoringEntries: [
             {
-                id: "1577836800-00001",
+                id: "1577836800000-00001",
                 domains: ["css-tricks.com", "stackoverflow.com"],
                 treatment: {
                     backgroundColor: "hsla(120,75%,35%,0.25)",
@@ -93,7 +102,7 @@ const addonData = {
                 },
             },
             {
-                id: "1577836800-00002",
+                id: "1577836800000-00002",
                 domains: ["w3schools.com"],
                 treatment: {
                     backgroundColor: "hsla(240,75%,35%,0.25)",
@@ -102,7 +111,7 @@ const addonData = {
                 },
             },
             {
-                id: "1577836800-00003",
+                id: "1577836800000-00003",
                 domains: ["geeksforgeeks"],
                 treatment: {
                     backgroundColor: "hsla(240,75%,35%,0.25)",

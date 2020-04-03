@@ -34,8 +34,8 @@ const popup = {
     // },
 
     /**
-     * Creates a Tailoring Entry for each existing entry in the user data,
-     * adding it to the entry list of the Tailoring Group to which it belongs.
+     * Initializes a Tailoring Entry UI for each existing entry setting object
+     * in the user data, adding it to the popup.
      */
     initializeTailoringEntries() {
         addonData.runtime.tailoringEntryObjects = addonData.runtime.tailoringEntries.map(
@@ -46,18 +46,20 @@ const popup = {
     /**
      * Attaches event handlers.
      */
-    // bindEvents() {
-    //     // Get the action bar and individual action buttons.
-    //     const actionBar = document.querySelector(".js-action-bar");
-    //     const addTreatmentButton = actionBar.querySelector(
-    //         '[data-click-action="addTreatment"]'
-    //     );
+    bindEvents() {
+        // Get the action bar and individual action buttons.
+        const actionBar = document.querySelector(".js-action-bar");
+        const addEntryButton = actionBar.querySelector(
+            '[data-click-action="addEntry"]'
+        );
 
-    //     // Add new entry groups.
-    //     addTreatmentButton.addEventListener("click", () => {
-    //         addonData.local.tailoringGroups.push(new TailoringGroup());
-    //     });
-    // },
+        // Add a new Tailoring Entry.
+        addEntryButton.addEventListener("click", () => {
+            addonData.runtime.tailoringEntryObjects.push(
+                new TailoringEntry(null, true)
+            );
+        });
+    },
 
     /**
      * Enables drag & drop sorting of Tailoring Entries within this popup UI.
@@ -94,7 +96,8 @@ const popup = {
         // this.initializeEntries();
         this.initializeTailoringEntries();
         this.enableEntrySorting();
-        // this.bindEvents();
+        this.bindEvents();
+
         document.querySelector("body").dataset.isLoading = false;
     },
 };

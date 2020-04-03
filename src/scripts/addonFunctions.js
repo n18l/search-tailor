@@ -147,6 +147,18 @@ const addonFunctions = {
     },
 
     /**
+     * Generates a new unique tailoring entry ID.
+     *
+     * @param {Number} maxRandomInt The multiplication factor to apply to the random ID generation.
+     */
+    generateTailoringEntryID(maxRandomInt = 100000) {
+        const currentTimestamp = Date.now();
+        const randomInt = Math.floor(Math.random() * Math.floor(maxRandomInt));
+
+        return `${currentTimestamp}-${randomInt}`;
+    },
+
+    /**
      * Retrieves the data of the tailoring treatment using the provided ID.
      *
      * @param {String} treatmentID The ID of the treatment to retrieve.
