@@ -85,8 +85,14 @@ class TailorableSearch {
             // Filter the search results against each user-defined tailoring
             // entry, applying treatments to matching results.
             storageData.tailoringEntries.forEach(tailoringEntry => {
+                // Combine all of this entry's listed domains into a single,
+                // RegEx compatible string.
+                const entryDomains = tailoringEntry.domains.join("|");
+
+                // Create an array of all current search results that match this
+                // entry.
                 const matchingResults = currentSearchResults.filter(result =>
-                    RegExp(`.*://.*.?${tailoringEntry.domain}.*`).test(
+                    RegExp(`.*://.*.?${entryDomains}.*`).test(
                         result.querySelector(
                             this.searchEngine.selectors.resultLink
                         )
@@ -95,51 +101,51 @@ class TailorableSearch {
 
                 matchingResults.forEach(matchingResult => {
                     const thisResult = matchingResult;
-                    // If this treatment needs to be spotlit, create a new
-                    // element and apply the appropriate tailoring treatment
-                    // styles to it.
-                    if (tailoringEntry.treatment.startsWith("spotlight")) {
-                        const newTreatmentDiv = document.createElement("div");
 
-                        // Some search engines apparently observe DOM mutations
-                        // and block the insertion of elements with classes into
-                        // search results (coughBINGcough). In such cases, add a
-                        // data attribute to style against instead.
-                        if (this.searchEngine.styleViaAttribute) {
-                            newTreatmentDiv.dataset.treatmentPanel = "";
-                        } else {
-                            newTreatmentDiv.classList.add("treatment-panel");
-                        }
-
-                        const tailoringTreatment = storageData.tailoringTreatments.find(
-                            treatment =>
-                                treatment.id === tailoringEntry.treatment
-                        );
-
-                        addonFunctions.applyTailoringTreatmentToElement(
-                            tailoringTreatment,
-                            newTreatmentDiv
-                        );
-
-                        const existingTreatmentDiv = thisResult.querySelector(
-                            ".treatment-panel, [data-treatment-panel]"
-                        );
-
-                        if (existingTreatmentDiv) {
-                            thisResult.replaceChild(
-                                newTreatmentDiv,
-                                existingTreatmentDiv
-                            );
-                        } else {
-                            thisResult.insertAdjacentElement(
-                                "afterbegin",
-                                newTreatmentDiv
-                            );
-                        }
+                    // If this entry's treatment is set to an opacity of 0,
+                    // screen it completely.
+                    if (tailoringEntry.treatment.opacity === 0) {
+                        thisResult.dataset.tailoringTreatment = "screen";
+                        return;
                     }
 
-                    thisResult.dataset.tailoringTreatment =
-                        tailoringEntry.treatment;
+                    thisResult.dataset.tailoringTreatment = "spotlight";
+
+                    // Apply this entry's opacity setting inline.
+                    thisResult.style.opacity = tailoringEntry.treatment.opacity;
+
+                    const newTreatmentDiv = document.createElement("div");
+
+                    // Some search engines apparently observe DOM mutations
+                    // and block the insertion of elements with classes into
+                    // search results (cough-BING-cough). In such cases, add a
+                    // data attribute to style against instead.
+                    if (this.searchEngine.styleViaAttribute) {
+                        newTreatmentDiv.dataset.treatmentPanel = "";
+                    } else {
+                        newTreatmentDiv.classList.add("treatment-panel");
+                    }
+
+                    addonFunctions.applyTailoringTreatmentToElement(
+                        tailoringEntry.treatment,
+                        newTreatmentDiv
+                    );
+
+                    const existingTreatmentDiv = thisResult.querySelector(
+                        ".treatment-panel, [data-treatment-panel]"
+                    );
+
+                    if (existingTreatmentDiv) {
+                        thisResult.replaceChild(
+                            newTreatmentDiv,
+                            existingTreatmentDiv
+                        );
+                    } else {
+                        thisResult.insertAdjacentElement(
+                            "afterbegin",
+                            newTreatmentDiv
+                        );
+                    }
                 });
             });
         };

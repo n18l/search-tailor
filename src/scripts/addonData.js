@@ -77,25 +77,33 @@ const addonData = {
      * The default user data to apply to users who have no preexisting settings.
      */
     defaultUserData: {
-        tailoringEntries: [],
-        tailoringTreatments: [
+        tailoringEntries: [
             {
-                id: "screen",
-                label: "Screen",
-                backgroundColor: "hsla(0,0%,0%,0)",
-                borderColor: "hsla(0,0%,0%,0)",
+                id: "1577836800-00001",
+                domains: ["css-tricks.com", "stackoverflow.com"],
+                treatment: {
+                    backgroundColor: "hsla(120,75%,35%,0.25)",
+                    borderColor: "hsla(120,100%,25%,0.35)",
+                    opacity: 1,
+                },
             },
             {
-                id: "suppress",
-                label: "Suppress",
-                backgroundColor: "hsla(0,0%,0%,0)",
-                borderColor: "hsla(0,0%,0%,0)",
+                id: "1577836800-00002",
+                domains: ["w3schools.com"],
+                treatment: {
+                    backgroundColor: "hsla(240,75%,35%,0.25)",
+                    borderColor: "hsla(240,100%,25%,0.35)",
+                    opacity: 0.5,
+                },
             },
             {
-                id: "spotlight:default",
-                label: "Favorites",
-                backgroundColor: "hsla(120,75%,35%,0.25)",
-                borderColor: "hsla(120,100%,25%,0.35)",
+                id: "1577836800-00003",
+                domains: ["geeksforgeeks"],
+                treatment: {
+                    backgroundColor: "hsla(240,75%,35%,0.25)",
+                    borderColor: "hsla(240,100%,25%,0.35)",
+                    opacity: 0,
+                },
             },
         ],
         searchEngines: {

@@ -9,22 +9,13 @@ const addonFunctions = {
      * appropriate attributes of an HTML element.
      * @param {object} tailoringTreatment - The tailoring treatment to apply styles from.
      * @param {object} elementToStyle - The HTML element to apply the treatment's properties to.
-     * @param {bool} applyTitle - Whether or not to also apply the treatment's label as the element's title attribute.
      */
-    applyTailoringTreatmentToElement(
-        tailoringTreatment,
-        elementToStyle,
-        applyTitle = false
-    ) {
+    applyTailoringTreatmentToElement(tailoringTreatment, elementToStyle) {
         const element = elementToStyle;
 
         // Style the supplied element with 8-character hex notation.
         element.style.backgroundColor = tailoringTreatment.backgroundColor;
         element.style.borderColor = tailoringTreatment.borderColor;
-
-        if (applyTitle) {
-            element.title = tailoringTreatment.label;
-        }
     },
 
     /**

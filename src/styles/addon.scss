@@ -1,10 +1,6 @@
 /* Google */
 
 .rc {
-    &[data-tailoring-treatment="suppress"] {
-        opacity: 0.5;
-    }
-
     &[data-tailoring-treatment="screen"] {
         display: none;
     }
