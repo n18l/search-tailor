@@ -478,6 +478,8 @@ main {
  * @see https://github.com/KaneCohen/tokenfield
  */
 .tokenfield {
+    --token-item-spacing: 5px;
+
     // .tokenfield-set
     &-set {
         ul {
@@ -490,7 +492,6 @@ main {
         &-item {
             --token-border-width: 2px;
             --token-border-radius: 3px;
-            --token-item-margin: 5px;
 
             align-items: center;
             border: var(--token-border-width) solid
@@ -501,8 +502,8 @@ main {
             float: left;
             font-size: 1.2rem;
             height: 24px;
-            margin: var(--token-item-margin) 0 0 var(--token-item-margin);
-            max-width: calc(100% - var(--token-item-margin) * 2);
+            margin: var(--token-item-spacing) 0 0 var(--token-item-spacing);
+            max-width: calc(100% - var(--token-item-spacing) * 2);
 
             &.focused {
                 background-color: var(--color-domain-token-active);
@@ -545,8 +546,8 @@ main {
     &-input {
         float: left;
         font-size: 1.2rem;
-        min-height: 34px;
-        padding: 6px;
+        min-height: calc(24px + var(--token-item-spacing) * 2);
+        padding: var(--token-item-spacing);
     }
 }
 
