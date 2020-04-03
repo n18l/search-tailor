@@ -1,7 +1,7 @@
 const addonData = require("./addonData");
 const addonFunctions = require("./addonFunctions");
 const TailoringGroup = require("./TailoringGroup");
-const TailoringEntry = require("./TailoringEntry");
+const TailoringEntryV1 = require("./TailoringEntryV1");
 
 /**
  * Namespace for popup-related properties & methods.
@@ -27,7 +27,7 @@ const popup = {
         addonData.local.tailoringEntries.forEach(tailoringEntry => {
             addonFunctions
                 .getTailoringGroupByTreatmentID(tailoringEntry.treatment)
-                .entries.push(new TailoringEntry(tailoringEntry));
+                .entries.push(new TailoringEntryV1(tailoringEntry));
         });
     },
 

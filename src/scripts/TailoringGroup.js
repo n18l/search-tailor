@@ -2,7 +2,7 @@ const Sortable = require("sortablejs");
 const ColorPicker = require("vanilla-picker");
 const addonData = require("./addonData");
 const addonFunctions = require("./addonFunctions");
-const TailoringEntry = require("./TailoringEntry");
+const TailoringEntryV1 = require("./TailoringEntryV1");
 
 /**
  * The interactive representation of tailoring template, grouping together all
@@ -274,7 +274,7 @@ class TailoringGroup {
             this.disableNewEntries();
 
             this.entries.push(
-                new TailoringEntry(
+                new TailoringEntryV1(
                     {
                         domain: "",
                         treatment: this.treatment.id,

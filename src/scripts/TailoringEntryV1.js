@@ -4,7 +4,7 @@ const addonFunctions = require("./addonFunctions");
 /**
  * The interactive representation of a tailoring entry.
  */
-class TailoringEntry {
+class TailoringEntryV1 {
     /**
      * Initialize the list entry.
      *
@@ -182,7 +182,7 @@ class TailoringEntry {
             // Remove the entry's element and reinitialize it to manually create
             // a new one.
             entry.element.remove();
-            entry = new TailoringEntry({
+            entry = new TailoringEntryV1({
                 domain: this.value.domain,
                 treatment: targetGroup.treatment.id,
             });
@@ -228,4 +228,4 @@ class TailoringEntry {
     }
 }
 
-module.exports = TailoringEntry;
+module.exports = TailoringEntryV1;
