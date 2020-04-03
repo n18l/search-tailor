@@ -62,6 +62,9 @@ class TailoringEntry {
 
         // The input field for the domains this entry applies to.
         this.domainInput = qs(".js-entry-domain-input", this.element);
+
+        // The drawer containing settings for this entry.
+        this.settingsDrawer = qs(".js-entry-settings-drawer", this.element);
     }
 
     /**
@@ -118,28 +121,75 @@ class TailoringEntry {
             if (e.key === " ") e.preventDefault();
         });
 
-        // Delete entries on click.
+        // Open and close this entry's settings drawer.
+        this.actionButtons.toggleSettingsDrawer.addEventListener("click", () =>
+            this.toggleSettingsDrawer()
+        );
+
+        // Scroll this entry's settings drawer into view when it opens.
+        this.settingsDrawer.addEventListener("transitionend", () => {
+            if (!this.settingsDrawerIsOpen) {
+                return;
+            }
+
+            this.settingsDrawer.scrollIntoView({
+                behavior: "smooth",
+                block: "nearest",
+            });
+        });
+
+        // Delete this entry on click.
         this.actionButtons.deleteEntry.addEventListener("click", () =>
             this.delete()
         );
     }
 
     /**
-     * Retrieves the index of this entry among all current entries.
+     * The index of this entry among all current entries.
      */
     get index() {
         return addonData.runtime.tailoringEntries.indexOf(this);
     }
 
     /**
-     * Removes this entry from the popup UI and deletes its settings object from
-     * storage.
+     * The current state of this entry's settings drawer.
+     */
+    get settingsDrawerIsOpen() {
+        return this.settingsDrawer.dataset.isOpen === "true";
+    }
+
+    set settingsDrawerIsOpen(newDrawerState) {
+        this.settingsDrawer.dataset.isOpen = newDrawerState;
+        this.actionButtons.toggleSettingsDrawer.dataset.actionActive = newDrawerState;
+    }
+
+    /**
+     * Toggles the open state of this entry's settings drawer.
+     *
+     * @param {boolean|null} shouldBeOpen - Whether to force the drawer to its open state.
+     */
+    toggleSettingsDrawer(shouldBeOpen = null) {
+        // Set the drawer's new state, preferring the passed state but falling
+        // back to the opposite of its current state.
+        this.settingsDrawerIsOpen =
+            shouldBeOpen !== null ? shouldBeOpen : !this.settingsDrawerIsOpen;
+
+        // Update the title text of the drawer's action button.
+        this.actionButtons.toggleSettingsDrawer.title = this
+            .settingsDrawerIsOpen
+            ? "Hide settings"
+            : "Show settings";
+    }
+
+    /**
+     * Removes this entry's UI from the popup interface, deletes its runtime
+     * data, and saves the updated data to storage.
      */
     delete() {
+        this.element.remove();
+
         addonData.runtime.tailoringEntries.splice(this.index, 1);
         addonData.runtime.tailoringEntryObjects.splice(this.index, 1);
-
-        this.element.remove();
 
         addonFunctions.saveTailoringEntries();
     }

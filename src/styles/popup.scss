@@ -19,6 +19,10 @@
 
     --color-icon-fill: hsla(0, 100%, 100%, 0.75);
 
+    --color-icon-fill-settings: hsl(240, 0%, 85%);
+
+    --color-faded-highlight: hsla(0, 0%, 100%, 0.25);
+
     --color-domain-token-active: hsla(215, 65%, 50%, 0.5);
     --color-domain-token-border: hsla(0, 0%, 70%, 1);
     --color-domain-token-text: hsla(0, 0%, 100%, 1);
@@ -344,12 +348,13 @@ main {
     flex-direction: column;
 
     &__primary-ui {
+        align-items: center;
         display: flex;
     }
 
     &__sort-handle {
-        align-self: center;
         cursor: move;
+        flex: 0 0 auto;
 
         &__icon {
             display: block;
@@ -360,8 +365,7 @@ main {
         background-color: var(--color-button);
         border-radius: 2px;
         flex: 1 1 100%;
-        margin: 15px;
-        margin-left: 2px;
+        margin: 15px 0 15px 2px;
         position: relative;
         overflow: hidden;
     }
@@ -399,18 +403,52 @@ main {
         }
     }
 
-    &__color-treatment-button {
-        display: flex;
+    &__settings-toggle {
+        $settings-toggle: &;
 
-        #{$thisEntry}[data-active-treatment="suppress"] &,
-        #{$thisEntry}[data-active-treatment="screen"] & {
-            display: none;
+        border-radius: 50%;
+        flex: 0 0 auto;
+        margin: 0 4px;
+        padding: 2px;
+
+        &:hover {
+            background-color: var(--color-faded-highlight);
+        }
+
+        &[data-action-active="true"] {
+            background-color: var(--color-icon-fill-settings);
+        }
+
+        &__icon {
+            display: block;
+            transition: transform 0.35s;
+
+            #{$settings-toggle}[data-action-active="true"] & {
+                transform: rotate(150deg);
+            }
+
+            &__path-1 {
+                fill: var(--color-icon-fill-settings);
+
+                #{$settings-toggle}[data-action-active="true"] & {
+                    fill: var(--color-entry);
+                }
+            }
         }
     }
 
-    &__action-container {
+    &__settings-drawer {
+        align-items: center;
+        background-color: var(--color-button);
         display: flex;
-        margin-left: auto;
+        height: 0;
+        justify-content: flex-end;
+        overflow: hidden;
+        transition: height 0.35s;
+
+        &[data-is-open="true"] {
+            height: 48px;
+        }
     }
 
     &__action {
