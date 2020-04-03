@@ -136,6 +136,7 @@ class TailoringEntry {
      */
     delete() {
         addonData.runtime.tailoringEntries.splice(this.index, 1);
+        addonData.runtime.tailoringEntryObjects.splice(this.index, 1);
 
         this.element.remove();
 
