@@ -12,6 +12,11 @@ const addonData = {
         tailoringGroups: [],
     },
 
+    runtime: {
+        tailoringEntries: [],
+        tailoringEntryObjects: [],
+    },
+
     /**
      * Search engine-specific data to guide the application of tailoring
      * templates to search results pages.

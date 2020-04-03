@@ -105,6 +105,19 @@ const addonFunctions = {
     },
 
     /**
+     * Save the current tailoring entries to the browser.storage API.
+     */
+    saveTailoringEntries() {
+        const validTailoringEntries = addonData.runtime.tailoringEntries.filter(
+            entryValues => entryValues.domains.length > 0
+        );
+
+        browser.storage.sync
+            .set({ tailoringEntries: validTailoringEntries })
+            .then(null, addonFunctions.logError);
+    },
+
+    /**
      * Synchronize the current tailoring templates with the browser.storage API.
      */
     syncTailoringTreatmentsToStorage() {
@@ -165,30 +178,27 @@ const addonFunctions = {
      * @returns {Promise} A Promise resolving to the data saved as the local working copy.
      */
     getUserData() {
-        const requestedStorageData = [
-            "tailoringEntries",
-            "tailoringTreatments",
-        ];
+        const requestedStorageData = ["tailoringEntries"];
 
         const userDataPromise = new Promise((resolve, reject) => {
             browser.storage.sync
                 .get(requestedStorageData)
                 .then(storageData => {
                     requestedStorageData.forEach(dataType => {
-                        addonData.local[dataType] = [];
+                        addonData.runtime[dataType] = [];
 
                         if (
                             storageData[dataType] &&
                             storageData[dataType].length
                         ) {
-                            addonData.local[dataType] = storageData[dataType];
+                            addonData.runtime[dataType] = storageData[dataType];
                         } else {
-                            addonData.local[dataType] =
+                            addonData.runtime[dataType] =
                                 addonData.defaultUserData[dataType];
                         }
                     });
 
-                    resolve(addonData.local);
+                    resolve(addonData.runtime);
                 })
                 .catch(error => reject(error));
         });

@@ -48,6 +48,24 @@ html
     body
         div(class="loading-indicator")
 
+        template(id="tailoring-entry")
+            li(class="entry js-entry" data-active-treatment="spotlight" data-drag-disabled="false")
+                div(class="entry__primary-ui")
+                    div(class="entry__sort-handle js-sort-handle")
+                        svg(class="entry__sort-handle__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24")
+                            path(fill="none" d="M0 0h24v24H0V0z")
+                            path(fill="hsla(0, 100%, 100%, .25)" d="M11 18c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2zm-2-8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm6 4c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z")
+
+                    div(class="entry__input-container")
+                        input(class="entry__domain-input js-entry-domain-input" type="text" placeholder="domains" required)
+                        div(class="entry__input-effects")
+
+                    div(class="entry__action-container")
+                        button(class="entry__action" data-click-action="deleteEntry" title="Delete Entry")
+                            svg(class="entry__action__icon entry__action__icon--delete-entry" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24")
+                                path(fill="hsla(0, 100%, 100%, .75)" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z")
+
+
         template(id="entry")
             li(class="entry js-entry" data-active-treatment="spotlight" data-drag-disabled="false")
                 div(class="entry__primary-ui")
@@ -127,6 +145,8 @@ html
 
         main(id="popup-content")
             div(class="entry-group-container js-entry-group-container")
+
+            div(class="entry-container js-entry-container")
 
             div(class="action-bar js-action-bar")
                 button(class="action-bar__action" data-click-action="addTreatment") Add New Treatment

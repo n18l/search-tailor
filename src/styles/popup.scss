@@ -323,7 +323,7 @@ main {
 
     &__primary-ui {
         display: flex;
-        height: 65px;
+        min-height: 65px;
     }
 
     &__sort-handle {
@@ -339,7 +339,6 @@ main {
         background-color: var(--color-button);
         border-radius: 2px;
         flex: 1 1 100%;
-        display: flex;
         margin: 15px;
         margin-left: 2px;
         position: relative;
@@ -453,6 +452,24 @@ main {
 
     & + & {
         border-top: 1px solid var(--color-button);
+    }
+}
+
+.tokenfield {
+    &-set {
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        &-item {
+            float: left;
+        }
+    }
+
+    &-input {
+        float: left;
     }
 }
 
