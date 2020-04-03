@@ -81,48 +81,43 @@ class TailoringEntry {
     }
 
     /**
+     * Initializes a token field to act as the input for this entry's domains.
      *
+     * @see https://github.com/KaneCohen/tokenfield
      */
     enableTokenField() {
+        // Initialize a new TokenField on the domain input field.
         this.tokenField = new TokenField({
             el: this.domainInput,
             setItems: this.settings.domains.map(d => ({ id: d, name: d })),
         });
 
-        this.tokenField.on("change", () => {
-            const domainArray = this.tokenField.getItems().map(i => i.name);
-
-            this.settings.domains = domainArray;
-
-            addonFunctions.saveTailoringEntries();
-        });
+        // Save a reference to the TokenField's actual text input element.
+        this.tokenFieldInput = qs(".tokenfield-input", this.element);
     }
 
     /**
      * Attaches event handlers.
      */
     bindEvents() {
-        // Save all entries when the domain input changes to a valid value, or
-        // disable dragging when it changes to an invalid one.
-        // this.domainInput.addEventListener("change", e => {
-        //     if (e.target.validity.valid) {
-        //         addonFunctions.saveTailoringEntries();
-        //     } else {
-        //         this.element.dataset.dragDisabled = true;
-        //     }
-        // });
+        // Save all entries when the domain tokens change. Note that this uses
+        // the NodeJS Event API as implemented by the TokenField library.
+        // @see https://nodejs.org/api/events.html#events_emitter_on_eventname_listener
+        this.tokenField.on("change", () => {
+            // Get the raw TokenField values as an array of strings and apply it
+            // to this entry's settings object.
+            const domainArray = this.tokenField.getItems().map(i => i.name);
+            this.settings.domains = domainArray;
 
-        // Check the validity of the domain input on change, issuing an
-        // 'invalid' event when not passing constraints.
-        // this.domainInput.addEventListener('input', e => {
-        //     e.target.checkValidity();
-        // });
+            addonFunctions.saveTailoringEntries();
+        });
 
-        // Disallow spaces within the domain input.
-        this.domainInput.addEventListener("keypress", e => {
+        // Disallow spaces within the TokenField's input.
+        this.tokenFieldInput.addEventListener("keypress", e => {
             if (e.key === " ") e.preventDefault();
         });
 
+        // Delete entries on click.
         this.actionButtons.deleteEntry.addEventListener("click", () =>
             this.delete()
         );
