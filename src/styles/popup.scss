@@ -7,7 +7,7 @@
     --color-button-highlight-2: hsl(240, 2%, 49%);
 
     --color-text-input: hsla(0, 0%, 100%, 1);
-    --color-text-input-bg: hsla(0, 0%, 100%, 0.1);
+    --color-text-input-bg: hsla(0, 0%, 40%, 1);
     --color-text-input-effects: hsl(200, 100%, 50%);
     --color-text-input-invalid: hsl(0, 75%, 60%);
 
@@ -15,6 +15,12 @@
     --color-border-icon-fill: hsla(0, 100%, 100%, 0.75);
 
     --color-icon-fill: hsla(0, 100%, 100%, 0.75);
+
+    --color-domain-token-active: hsla(215, 65%, 50%, 0.5);
+    --color-domain-token-border: hsla(0, 0%, 70%, 1);
+    --color-domain-token-text: hsla(0, 0%, 100%, 1);
+    --color-domain-token-remove-active: hsla(0, 45%, 60%, 1);
+    --color-domain-token-remove-text: hsla(0, 0%, 100%, 1);
 }
 
 html,
@@ -323,7 +329,6 @@ main {
 
     &__primary-ui {
         display: flex;
-        min-height: 65px;
     }
 
     &__sort-handle {
@@ -455,7 +460,13 @@ main {
     }
 }
 
+/**
+ * Styles for the Token Field provided by the TokenField library.
+ *
+ * @see https://github.com/KaneCohen/tokenfield
+ */
 .tokenfield {
+    // .tokenfield-set
     &-set {
         ul {
             list-style-type: none;
@@ -463,13 +474,67 @@ main {
             padding: 0;
         }
 
+        // .tokenfield-set-item
         &-item {
+            --token-border-width: 2px;
+            --token-border-radius: 3px;
+            --token-item-margin: 5px;
+
+            align-items: center;
+            border: var(--token-border-width) solid
+                var(--color-domain-token-border);
+            border-radius: var(--token-border-radius);
+            color: var(--color-domain-token-text);
+            display: flex;
             float: left;
+            font-size: 1.2rem;
+            height: 24px;
+            margin: var(--token-item-margin) 0 0 var(--token-item-margin);
+            max-width: calc(100% - var(--token-item-margin) * 2);
+
+            &.focused {
+                background-color: var(--color-domain-token-active);
+            }
+
+            .item-label {
+                cursor: pointer;
+                overflow: hidden;
+                padding: 0 8px;
+                text-overflow: ellipsis;
+            }
+
+            .item-remove {
+                align-items: center;
+                background-color: var(--color-domain-token-border);
+                border-radius: 0 var(--token-border-radius)
+                    var(--token-border-radius) 0;
+                color: hsla(0, 0%, 40%, 1);
+                display: flex;
+                flex: 0 0 auto;
+                font-size: 1.6rem;
+                font-weight: 300;
+                height: calc(100% + var(--token-border-width) * 2);
+                justify-content: center;
+                margin-right: calc(var(--token-border-width) * -1);
+                text-decoration: none;
+                width: 20px;
+
+                &:hover,
+                &:active,
+                &:focus {
+                    background-color: var(--color-domain-token-remove-active);
+                    color: var(--color-domain-token-remove-text);
+                }
+            }
         }
     }
 
+    // .tokenfield-input
     &-input {
         float: left;
+        font-size: 1.2rem;
+        min-height: 34px;
+        padding: 6px;
     }
 }
 
