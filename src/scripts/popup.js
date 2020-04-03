@@ -95,6 +95,7 @@ const popup = {
         this.initializeTailoringEntries();
         this.enableEntrySorting();
         // this.bindEvents();
+        document.querySelector("body").dataset.isLoading = false;
     },
 };
 

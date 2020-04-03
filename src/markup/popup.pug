@@ -29,6 +29,7 @@ html
                 top: calc(50% - var(--loading-indicator-size) / 2);
                 width: var(--loading-indicator-size);
                 z-index: 0;
+                transition: opacity 0.5s;
             }
 
             .loading-indicator::after {
@@ -41,11 +42,15 @@ html
                 margin-top: 0px;
             }
 
+            body[data-is-loading="false"] .loading-indicator {
+                opacity: 0;
+            }
+
             @keyframes rotate {
                 to { transform: rotate(360deg); }
             }
 
-    body
+    body(data-is-loading="true")
         div(class="loading-indicator")
 
         template(id="tailoring-entry")
