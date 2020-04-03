@@ -89,6 +89,11 @@ class TailorableSearch {
                 // RegEx compatible string.
                 const entryDomains = tailoringEntry.domains.join("|");
 
+                // Only proceed if there are entry domains to match against.
+                if (!entryDomains) {
+                    return;
+                }
+
                 // Create an array of all current search results that match this
                 // entry.
                 const matchingResults = currentSearchResults.filter(result =>

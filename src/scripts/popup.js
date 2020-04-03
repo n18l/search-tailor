@@ -65,7 +65,6 @@ const popup = {
     enableEntrySorting() {
         return new Sortable(document.querySelector(".js-entry-container"), {
             handle: ".js-sort-handle",
-            filter: "[data-drag-disabled='true']",
             animation: 150,
             onUpdate(event) {
                 // Remove the entry from it's old position in the object array,

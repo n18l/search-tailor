@@ -41,9 +41,6 @@ class TailoringEntry {
             this.domainInput.value = this.settings.domains.join("|");
         }
 
-        // Set this entry's draggability based on whether it has any domains.
-        this.element.dataset.dragDisabled = !this.settings.domains.length > 0;
-
         // Add this entry's UI to the container element.
         qs(".js-entry-container").appendChild(this.element);
 
@@ -107,13 +104,13 @@ class TailoringEntry {
     bindEvents() {
         // Save all entries when the domain input changes to a valid value, or
         // disable dragging when it changes to an invalid one.
-        this.domainInput.addEventListener("change", e => {
-            if (e.target.validity.valid) {
-                addonFunctions.saveTailoringEntries();
-            } else {
-                this.element.dataset.dragDisabled = true;
-            }
-        });
+        // this.domainInput.addEventListener("change", e => {
+        //     if (e.target.validity.valid) {
+        //         addonFunctions.saveTailoringEntries();
+        //     } else {
+        //         this.element.dataset.dragDisabled = true;
+        //     }
+        // });
 
         // Check the validity of the domain input on change, issuing an
         // 'invalid' event when not passing constraints.
