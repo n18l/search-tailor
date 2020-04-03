@@ -137,6 +137,13 @@ class TailoredSearchOptionsPanel {
             this.actionButtons.copyJSON.focus();
         });
 
+        // Reset extension data to the default values.
+        this.actionButtons.resetData.addEventListener("click", () => {
+            browser.storage.sync
+                .set(JSON.parse(JSON.stringify(addonData.defaultUserData)))
+                .then(null, addonFunctions.logError);
+        });
+
         // Clear the contents of the JSON Import textarea.
         this.actionButtons.clearJSON.addEventListener("click", () => {
             this.inputs.jsonImport.value = "";
