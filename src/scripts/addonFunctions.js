@@ -105,15 +105,17 @@ const addonFunctions = {
     },
 
     /**
-     * Save the current tailoring entries to the browser.storage API.
+     * Save the current tailoring entries via the browser storage API.
      */
     saveTailoringEntries() {
-        const validTailoringEntries = addonData.runtime.tailoringEntries.filter(
-            entryValues => entryValues.domains.length > 0
+        // Get the settings of all existing entry objects. This is largely to
+        // make sure we get them in the order represented in the popup UI.
+        const entrySettings = addonData.runtime.tailoringEntryObjects.map(
+            entryObject => entryObject.settings
         );
 
         browser.storage.sync
-            .set({ tailoringEntries: validTailoringEntries })
+            .set({ tailoringEntries: entrySettings })
             .then(null, addonFunctions.logError);
     },
 

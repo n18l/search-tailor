@@ -81,6 +81,8 @@ const popup = {
                     0,
                     movedEntry
                 );
+
+                addonFunctions.saveTailoringEntries();
             },
         });
     },
