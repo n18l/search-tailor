@@ -51,9 +51,9 @@ const popup = {
      * Initializes the addon's popup UI.
      */
     initialize() {
-        this.initializeGroups();
-        this.initializeEntries();
-        this.bindEvents();
+        // this.initializeGroups();
+        // this.initializeEntries();
+        // this.bindEvents();
     },
 };
 
