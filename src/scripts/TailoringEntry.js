@@ -112,8 +112,9 @@ class TailoringEntry {
             addonFunctions.saveTailoringEntries();
         });
 
-        // Disallow spaces within the TokenField's input.
-        this.tokenFieldInput.addEventListener("keypress", e => {
+        // Respond to keyboard events in the TokenField.
+        this.tokenFieldInput.addEventListener("keydown", e => {
+            // Disallow spaces within the TokenField's input.
             if (e.key === " ") e.preventDefault();
         });
 
