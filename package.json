@@ -21,7 +21,7 @@
         "watch:js": "chokidar \"src/scripts/*.js\" -c \"npm run build:js; if [[ '{path}' == 'src/scripts/addonData.js' ]]; then npm run build:html; fi;\" --initial",
         "build:assets": "cp -r src/assets dist",
         "watch:assets": "chokidar \"src/assets\" -c \"npm run build:assets\" --initial",
-        "clean": "rimraf dist && mkdir -p dist/{assets,markup,scripts,styles}",
+        "clean": "rimraf dist/** && mkdir -p dist/{assets,markup,scripts,styles}",
         "build": "run-s clean build:*",
         "watch": "npm-run-all build -p watch:*",
         "reinstall": "rimraf node_modules && npm cache verify && npm install"
