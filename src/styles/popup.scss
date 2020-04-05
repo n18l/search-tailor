@@ -14,14 +14,12 @@
     --color-text-input-effects: hsl(200, 100%, 50%);
     --color-text-input-invalid: hsl(0, 75%, 60%);
 
-    --color-background-icon-fill: hsla(0, 100%, 100%, 0.75);
-    --color-border-icon-fill: hsla(0, 100%, 100%, 0.75);
+    --color-icon-fill: hsl(240, 0%, 85%);
+    --color-icon-fill-background-picker: var(--color-icon-fill);
+    --color-icon-fill-border-picker: var(--color-icon-fill);
 
-    --color-icon-fill: hsla(0, 100%, 100%, 0.75);
-
-    --color-icon-fill-settings: hsl(240, 0%, 85%);
-
-    --color-faded-highlight: hsla(0, 0%, 100%, 0.25);
+    --color-action-highlight: hsla(0, 0%, 100%, 0.25);
+    --color-action-highlight-warning: hsla(0, 55%, 60%, 0.75);
 
     --color-domain-token-active: hsla(215, 65%, 50%, 0.5);
     --color-domain-token-border: hsla(0, 0%, 70%, 1);
@@ -269,11 +267,11 @@ main {
             // .entry-group__action__icon__path-2
             &__path-2 {
                 [data-click-action="showBackgroundColorModal"] & {
-                    fill: var(--color-background-icon-fill);
+                    fill: var(--color-icon-fill-background-picker);
                 }
 
                 [data-click-action="showBorderColorModal"] & {
-                    fill: var(--color-border-icon-fill);
+                    fill: var(--color-icon-fill-border-picker);
                 }
             }
         }
@@ -403,6 +401,7 @@ main {
         }
     }
 
+    // .entry__settings-toggle
     &__settings-toggle {
         $settings-toggle: &;
 
@@ -410,15 +409,36 @@ main {
         flex: 0 0 auto;
         margin: 0 4px;
         padding: 2px;
+        position: relative;
 
-        &:hover {
-            background-color: var(--color-faded-highlight);
+        &::before {
+            background-color: var(--color-action-highlight);
+            border-radius: 50%;
+            content: "";
+            height: 100%;
+            left: 50%;
+            opacity: 0;
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.35s;
+            width: 100%;
+            z-index: 0;
+
+            @at-root {
+                #{$settings-toggle}:hover::before,
+                #{$settings-toggle}:focus::before,
+                #{$settings-toggle}:active::before {
+                    opacity: 1;
+                }
+            }
         }
 
         &[data-action-active="true"] {
-            background-color: var(--color-icon-fill-settings);
+            background-color: var(--color-icon-fill);
         }
 
+        // .entry__settings-toggle__icon
         &__icon {
             display: block;
             transition: transform 0.35s;
@@ -427,8 +447,9 @@ main {
                 transform: rotate(150deg);
             }
 
+            // .entry__settings-toggle__icon__path-1
             &__path-1 {
-                fill: var(--color-icon-fill-settings);
+                fill: var(--color-icon-fill);
 
                 #{$settings-toggle}[data-action-active="true"] & {
                     fill: var(--color-entry);
@@ -437,6 +458,7 @@ main {
         }
     }
 
+    // .entry__settings-drawer
     &__settings-drawer {
         align-items: center;
         background-color: var(--color-button);
@@ -444,6 +466,7 @@ main {
         height: 0;
         justify-content: flex-end;
         overflow: hidden;
+        padding: 0 6px;
         transition: height 0.35s;
 
         &[data-is-open="true"] {
@@ -451,62 +474,108 @@ main {
         }
     }
 
+    // .entry__action
     &__action {
-        $thisEntryAction: &;
-        width: 60px;
-        display: flex;
-        position: relative;
+        --action-icon-size: 44px;
+        --action-icon-highlight-size: 40px;
+        $entry-action: &;
 
-        &:hover,
-        &:focus,
-        &:active {
-            background-color: var(--color-button);
+        display: flex;
+        height: var(--action-icon-size);
+        overflow: hidden;
+        position: relative;
+        width: var(--action-icon-size);
+
+        // Remove Firefox-specific focus border in favour of our own styles.
+        &::-moz-focus-inner {
+            border: 0;
         }
 
         &::before {
+            background-color: var(--color-action-highlight);
+            border-radius: 4px;
             content: "";
-            width: 1px;
-            height: 45px;
+            height: var(--action-icon-highlight-size);
+            left: 50%;
+            opacity: 0;
             position: absolute;
             top: 50%;
-            left: 0;
-            transform: translateY(-50%);
-            background-color: var(--color-button);
+            transform: translate(-50%, -50%);
+            transition: opacity 0.35s;
+            width: var(--action-icon-highlight-size);
 
-            #{$thisEntryAction}:hover + &,
-            #{$thisEntryAction}:focus + &,
-            #{$thisEntryAction}:active + & {
-                display: none;
+            @at-root {
+                #{$entry-action}:hover::before,
+                #{$entry-action}:focus::before,
+                #{$entry-action}:active::before {
+                    opacity: 1;
+                }
+            }
+
+            @at-root {
+                #{$entry-action}--destructive::before {
+                    background-color: var(--color-action-highlight-warning);
+                }
             }
         }
 
+        // .entry__action__icon
         &__icon {
             margin: auto;
+            position: relative;
 
-            &--spotlight {
-                display: none;
-
-                #{$thisEntry}[data-active-treatment="spotlight"] & {
-                    display: block;
-                }
+            // .entry__action__icon__path-1
+            &__path-1 {
+                fill: var(--color-icon-fill);
             }
 
-            &--suppress {
-                display: none;
-
-                #{$thisEntry}[data-active-treatment="suppress"] & {
-                    display: block;
+            // .entry__action__icon__path-2
+            &__path-2 {
+                [data-click-action="showBackgroundColorModal"] & {
+                    fill: var(--color-icon-fill-background-picker);
                 }
-            }
 
-            &--screen {
-                display: none;
-
-                #{$thisEntry}[data-active-treatment="screen"] & {
-                    display: block;
+                [data-click-action="showBorderColorModal"] & {
+                    fill: var(--color-icon-fill-border-picker);
                 }
             }
         }
+
+        & + & {
+            margin-left: 2px;
+        }
+    }
+
+    // .entry__picker-modal
+    &__picker-modal {
+        height: 100vh;
+        left: 0;
+        position: fixed;
+        top: 0;
+        width: 100vw;
+        z-index: 1;
+
+        &:not([data-is-visible="true"]) {
+            display: none;
+        }
+    }
+
+    // .entry__picker-scrim
+    &__picker-scrim {
+        background-color: hsla(0, 0%, 0%, 0.5);
+        height: 100vh;
+        left: 0;
+        position: absolute;
+        top: 0;
+        width: 100vw;
+    }
+
+    // .entry__picker
+    &__picker {
+        left: 50%;
+        position: absolute;
+        top: 50%;
+        transform: translate(-50%, -50%);
     }
 }
 

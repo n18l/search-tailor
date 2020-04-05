@@ -1,4 +1,5 @@
 const TokenField = require("tokenfield");
+const ColorPicker = require("vanilla-picker");
 const addonData = require("./addonData");
 const addonFunctions = require("./addonFunctions");
 
@@ -31,8 +32,12 @@ class TailoringEntry {
 
         this.cacheData();
         this.defineActions();
-        this.enableTokenField();
+        this.initializeTokenField();
+        this.initializeColorPickers();
         this.bindEvents();
+
+        // Initialize this entry's dynamically-colored icons.
+        this.updateColoredIcons();
 
         // Add this entry's UI to the container element.
         this.container.appendChild(this.element);
@@ -65,6 +70,14 @@ class TailoringEntry {
 
         // The drawer containing settings for this entry.
         this.settingsDrawer = qs(".js-entry-settings-drawer", this.element);
+
+        // Elements related to this entry's color-picking modals.
+        this.pickerElements = {
+            backgroundModal: qs(".js-background-picker-modal", this.element),
+            background: qs(".js-background-picker", this.element),
+            borderModal: qs(".js-border-picker-modal", this.element),
+            border: qs(".js-border-picker", this.element),
+        };
     }
 
     /**
@@ -88,7 +101,7 @@ class TailoringEntry {
      *
      * @see https://github.com/KaneCohen/tokenfield
      */
-    enableTokenField() {
+    initializeTokenField() {
         // Initialize a new TokenField on the domain input field.
         this.tokenField = new TokenField({
             el: this.domainInput,
@@ -97,6 +110,40 @@ class TailoringEntry {
 
         // Save a reference to the TokenField's actual text input element.
         this.tokenFieldInput = qs(".tokenfield-input", this.element);
+    }
+
+    /**
+     * Initializes the color picker inputs for this entry's background and
+     * border colors.
+     */
+    initializeColorPickers() {
+        // Initialize this entry's background color picker.
+        this.backgroundPicker = new ColorPicker({
+            color: this.settings.treatment.backgroundColor,
+            parent: this.pickerElements.background,
+            popup: false,
+        });
+
+        this.backgroundPicker.onChange = newColor =>
+            this.setTreatmentProperty("backgroundColor", newColor.hslaString);
+
+        this.backgroundPicker.onDone = () => {
+            this.backgroundColorModalIsVisible = false;
+        };
+
+        // Initialize this entry's border color picker.
+        this.borderPicker = new ColorPicker({
+            color: this.settings.treatment.borderColor,
+            parent: this.pickerElements.border,
+            popup: false,
+        });
+
+        this.borderPicker.onChange = newColor =>
+            this.setTreatmentProperty("borderColor", newColor.hslaString);
+
+        this.borderPicker.onDone = () => {
+            this.borderColorModalIsVisible = false;
+        };
     }
 
     /**
@@ -138,6 +185,38 @@ class TailoringEntry {
             });
         });
 
+        // Show this entry's background color picker modal on click.
+        this.actionButtons.showBackgroundColorModal.addEventListener(
+            "click",
+            () => {
+                this.backgroundColorModalIsVisible = true;
+            }
+        );
+
+        // Hide this entry's background color picker modal on click.
+        this.actionButtons.hideBackgroundColorModal.addEventListener(
+            "click",
+            () => {
+                this.backgroundColorModalIsVisible = false;
+            }
+        );
+
+        // Show this entry's border color picker modal on click.
+        this.actionButtons.showBorderColorModal.addEventListener(
+            "click",
+            () => {
+                this.borderColorModalIsVisible = true;
+            }
+        );
+
+        // Hide this entry's border color picker modal on click.
+        this.actionButtons.hideBorderColorModal.addEventListener(
+            "click",
+            () => {
+                this.borderColorModalIsVisible = false;
+            }
+        );
+
         // Delete this entry on click.
         this.actionButtons.deleteEntry.addEventListener("click", () =>
             this.delete()
@@ -161,6 +240,64 @@ class TailoringEntry {
     set settingsDrawerIsOpen(newDrawerState) {
         this.settingsDrawer.dataset.isOpen = newDrawerState;
         this.actionButtons.toggleSettingsDrawer.dataset.actionActive = newDrawerState;
+    }
+
+    /**
+     * The current state of this entry's border color modal.
+     */
+    set backgroundColorModalIsVisible(newModalState) {
+        this.pickerElements.backgroundModal.dataset.isVisible = !!newModalState;
+    }
+
+    /**
+     * The current state of this entry's background color modal.
+     */
+    set borderColorModalIsVisible(newModalState) {
+        this.pickerElements.borderModal.dataset.isVisible = !!newModalState;
+    }
+
+    /**
+     * Updates this entry's treatment, applying appropriate side effects based
+     * on the updated property.
+     *
+     * @param {string} property - The treatment property to update.
+     * @param {object} newValue - The updated value to apply.
+     */
+    setTreatmentProperty(property, newValue) {
+        // Update this property's value.
+        this.settings.treatment[property] = newValue;
+
+        if (property === "borderColor") {
+            this.updateColoredIcons(["borderColor"]);
+        }
+
+        if (property === "backgroundColor") {
+            this.updateColoredIcons(["backgroundColor"]);
+        }
+
+        addonFunctions.saveTailoringEntries();
+    }
+
+    /**
+     * Synchronizes any dynamically-colored icons with the appropriate entry
+     * setting.
+     *
+     * @param {array} iconsToUpdate - The colorized icons to update.
+     */
+    updateColoredIcons(iconsToUpdate = ["backgroundColor", "borderColor"]) {
+        if (iconsToUpdate.includes("backgroundColor")) {
+            this.actionButtons.showBackgroundColorModal.style.setProperty(
+                "--color-icon-fill-background-picker",
+                this.settings.treatment.backgroundColor
+            );
+        }
+
+        if (iconsToUpdate.includes("borderColor")) {
+            this.actionButtons.showBorderColorModal.style.setProperty(
+                "--color-icon-fill-border-picker",
+                this.settings.treatment.borderColor
+            );
+        }
     }
 
     /**

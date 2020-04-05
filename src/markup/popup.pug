@@ -54,7 +54,7 @@ html
         div(class="loading-indicator")
 
         template(id="tailoring-entry")
-            li(class="entry js-entry" data-active-treatment="spotlight")
+            div(class="entry js-entry")
                 div(class="entry__primary-ui")
                     div(class="entry__sort-handle js-sort-handle")
                         svg(class="entry__sort-handle__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24")
@@ -71,10 +71,29 @@ html
                             path(class="entry__settings-toggle__icon__path-1" d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z")
 
                 div(class="entry__settings-drawer js-entry-settings-drawer" data-is-open="false")
-                    button(class="entry__action" data-click-action="deleteEntry" title="Delete Entry")
-                        svg(class="entry__action__icon entry__action__icon--delete-entry" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24")
-                            path(fill="hsla(0, 100%, 100%, .75)" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z")
+                    button(class="entry__action" data-click-action="showBackgroundColorModal" title="Set background color")
+                        svg(class="entry__action__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24")
+                            path(d="M0 0h24v24H0z" fill="none")
+                            path(class="entry__action__icon__path-1" d="M16.56 8.94L7.62 0 6.21 1.41l2.38 2.38-5.15 5.15c-.59.59-.59 1.54 0 2.12l5.5 5.5c.29.29.68.44 1.06.44s.77-.15 1.06-.44l5.5-5.5c.59-.58.59-1.53 0-2.12zM5.21 10L10 5.21 14.79 10H5.21zM19 11.5s-2 2.17-2 3.5c0 1.1.9 2 2 2s2-.9 2-2c0-1.33-2-3.5-2-3.5z")
+                            path(class="entry__action__icon__path-2" d="M0 20h24v4H0z")
 
+                    button(class="entry__action" data-click-action="showBorderColorModal" title="Set border color")
+                        svg(class="entry__action__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24")
+                            path(d="M0 0h24v24H0z" fill="none")
+                            path(class="entry__action__icon__path-1" d="M17.75 7L14 3.25l-10 10V17h3.75l10-10zm2.96-2.96c.39-.39.39-1.02 0-1.41L18.37.29c-.39-.39-1.02-.39-1.41 0L15 2.25 18.75 6l1.96-1.96z")
+                            path(class="entry__action__icon__path-2" d="M0 20h24v4H0z")
+
+                    button(class="entry__action entry__action--destructive" data-click-action="deleteEntry" title="Delete entry")
+                        svg(class="entry__action__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24")
+                            path(class="entry__action__icon__path-1" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z")
+
+                div(class="entry__picker-modal js-background-picker-modal" data-is-visible="false")
+                    div(class="entry__picker-scrim" data-click-action="hideBackgroundColorModal")
+                    div(class="entry__picker js-background-picker")
+
+                div(class="entry__picker-modal js-border-picker-modal" data-is-visible="false")
+                    div(class="entry__picker-scrim" data-click-action="hideBorderColorModal")
+                    div(class="entry__picker js-border-picker")
 
         template(id="entry")
             li(class="entry js-entry" data-active-treatment="spotlight" data-drag-disabled="false")
