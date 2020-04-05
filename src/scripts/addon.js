@@ -50,12 +50,14 @@ class TailorableSearch {
     }
 
     /**
-     * Remove all treatments from the current search results.
+     * Remove all treatment settings from the current search results.
      */
     resetTailoring() {
-        this.tailoredResults.forEach(tailoredResult =>
-            tailoredResult.removeAttribute("data-tailoring-treatment")
-        );
+        this.tailoredResults.forEach(tailoredResult => {
+            const thisResult = tailoredResult;
+            thisResult.removeAttribute("data-tailoring-treatment");
+            thisResult.style.opacity = null;
+        });
     }
 
     /**
