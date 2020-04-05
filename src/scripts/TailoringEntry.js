@@ -33,6 +33,9 @@ class TailoringEntry {
         this.initializeColorPickers();
         this.bindEvents();
 
+        // Initialize this entry's opacity slider to its set value.
+        this.opacityInput.value = this.settings.treatment.opacity;
+
         // Initialize this entry's dynamically-colored icons.
         this.updateColoredIcons();
 
@@ -67,6 +70,9 @@ class TailoringEntry {
 
         // The drawer containing settings for this entry.
         this.settingsDrawer = qs(".js-entry-settings-drawer", this.element);
+
+        // The range slider for this entry's opacity value.
+        this.opacityInput = qs(".js-entry-opacity-input", this.element);
 
         // Elements related to this entry's color-picking modals.
         this.pickerElements = {
@@ -193,6 +199,14 @@ class TailoringEntry {
                 behavior: "smooth",
                 block: "nearest",
             });
+        });
+
+        // Update and save the opacity setting for this entry's treatment when
+        // a change is detected.
+        this.opacityInput.addEventListener("change", e => {
+            this.settings.treatment.opacity = +e.target.value;
+
+            saveTailoringEntries();
         });
 
         // Show this entry's background color picker modal on click.
