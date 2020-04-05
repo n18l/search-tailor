@@ -1,5 +1,5 @@
 import addonData from "./addonData";
-import addonFunctions from "./addonFunctions";
+import { applyTailoringTreatmentToElement, logError } from "./addonFunctions";
 
 /* Class representing a user's search that is eligible for tailoring. */
 class TailorableSearch {
@@ -131,7 +131,7 @@ class TailorableSearch {
                         newTreatmentDiv.classList.add("treatment-panel");
                     }
 
-                    addonFunctions.applyTailoringTreatmentToElement(
+                    applyTailoringTreatmentToElement(
                         tailoringEntry.treatment,
                         newTreatmentDiv
                     );
@@ -157,7 +157,7 @@ class TailorableSearch {
 
         browser.storage.sync
             .get(addonData.defaultUserData)
-            .then(applyTailoringTreatments, addonFunctions.logError);
+            .then(applyTailoringTreatments, logError);
     }
 
     /**

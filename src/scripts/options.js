@@ -1,5 +1,5 @@
 import addonData from "./addonData";
-import addonFunctions from "./addonFunctions";
+import { logError } from "./addonFunctions";
 
 function isValidJson(json) {
     try {
@@ -87,7 +87,7 @@ class TailoredSearchOptionsPanel {
                         index
                     ].checked = this.currentSearchEngines[input.name].enabled;
                 });
-            }, addonFunctions.logError);
+            }, logError);
     }
 
     /**
@@ -114,7 +114,7 @@ class TailoredSearchOptionsPanel {
 
                 browser.storage.sync
                     .set({ searchEngines: this.currentSearchEngines })
-                    .then(null, addonFunctions.logError);
+                    .then(null, logError);
             });
         });
 
@@ -141,7 +141,7 @@ class TailoredSearchOptionsPanel {
         this.actionButtons.resetData.addEventListener("click", () => {
             browser.storage.sync
                 .set(JSON.parse(JSON.stringify(addonData.defaultUserData)))
-                .then(null, addonFunctions.logError);
+                .then(null, logError);
         });
 
         // Clear the contents of the JSON Import textarea.
@@ -166,7 +166,7 @@ class TailoredSearchOptionsPanel {
             // Otherwise, update the current extension data with the valid JSON.
             browser.storage.sync
                 .set(JSON.parse(this.inputs.jsonImport.value))
-                .then(null, addonFunctions.logError);
+                .then(null, logError);
         });
     }
 }
