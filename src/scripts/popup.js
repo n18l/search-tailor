@@ -1,5 +1,4 @@
 import Sortable from "sortablejs";
-import Tippy from "tippy.js";
 import addonData from "./addonData";
 import { getUserData, saveTailoringEntries } from "./addonFunctions";
 import TailoringEntry from "./TailoringEntry";
@@ -40,17 +39,6 @@ const popup = {
         addonData.runtime.tailoringEntryObjects = addonData.runtime.tailoringEntries.map(
             entrySettings => new TailoringEntry(entrySettings)
         );
-    },
-
-    /**
-     * Initializes tooltips for various UI elements.
-     */
-    initializeTooltips() {
-        Tippy("[data-tippy-title]", {
-            offset: [0, 5],
-            placement: "bottom",
-            content: reference => reference.getAttribute("title"),
-        });
     },
 
     /**
@@ -106,7 +94,6 @@ const popup = {
         // this.initializeEntries();
         this.initializeTailoringEntries();
         this.enableEntrySorting();
-        this.initializeTooltips();
         this.bindEvents();
 
         document.querySelector("body").dataset.isLoading = false;

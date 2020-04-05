@@ -33,6 +33,7 @@ class TailoringEntry {
         this.initializeDomainInput();
         this.initializeOpacityInput();
         this.initializeColorPickers();
+        this.initializeTooltips();
         this.bindEvents();
 
         // Initialize this entry's dynamically-colored icons.
@@ -124,8 +125,8 @@ class TailoringEntry {
         // Initialize this entry's opacity slider to its set value.
         this.opacityInput.value = this.settings.treatment.opacity;
 
-        // Create an informational tooltip that displays this entry's current
-        // opacity value.
+        // Create a special informational tooltip that displays this entry's
+        // current opacity value.
         this.opacityInputTooltip = new Tippy(this.opacityControl, {
             content: this.opacityTooltipValue,
             hideOnClick: false,
@@ -178,6 +179,19 @@ class TailoringEntry {
             ".picker_editor input",
             this.pickerElements.border
         );
+    }
+
+    /**
+     * Initializes tooltips for this entry.
+     */
+    initializeTooltips() {
+        this.tooltipTargets = qsa("[data-tippy-title]", this.element);
+
+        Tippy(this.tooltipTargets, {
+            content: reference => reference.getAttribute("title"),
+            offset: [0, 5],
+            placement: "bottom",
+        });
     }
 
     /**
