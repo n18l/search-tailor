@@ -474,75 +474,128 @@ main {
         }
     }
 
-    // .entry__action
-    &__action {
-        --action-icon-size: 44px;
-        --action-icon-highlight-size: 40px;
-        $entry-action: &;
+    // .entry__setting
+    &__setting {
+        $entry-setting: &;
+        --setting-size: 44px;
+        --setting-highlight-adjustment: 4px;
+        --setting-highlight-size: calc(
+            var(--setting-size) - var(--setting-highlight-adjustment)
+        );
 
+        align-items: center;
         display: flex;
-        height: var(--action-icon-size);
-        overflow: hidden;
+        height: var(--setting-size);
         position: relative;
-        width: var(--action-icon-size);
+
+        // .entry__setting--opacity
+        &--opacity {
+            flex: 1 1 auto;
+            padding-right: 14px;
+        }
+
+        // .entry__setting--background
+        // .entry__setting--border
+        // .entry__setting--delete
+        &--background,
+        &--border,
+        &--delete {
+            flex: 0 0 var(--setting-size);
+        }
 
         // Remove Firefox-specific focus border in favour of our own styles.
         &::-moz-focus-inner {
             border: 0;
         }
 
+        // Create a pseudo-element background highlight that can be faded in/out
+        // performantly using opacity.
         &::before {
             background-color: var(--color-action-highlight);
             border-radius: 4px;
             content: "";
-            height: var(--action-icon-highlight-size);
+            height: var(--setting-highlight-size);
             left: 50%;
             opacity: 0;
             position: absolute;
             top: 50%;
             transform: translate(-50%, -50%);
             transition: opacity 0.35s;
-            width: var(--action-icon-highlight-size);
+            width: var(--setting-highlight-size);
 
             @at-root {
-                #{$entry-action}:hover::before,
-                #{$entry-action}:focus::before,
-                #{$entry-action}:active::before {
+                #{$entry-setting}:hover::before,
+                #{$entry-setting}:focus::before,
+                #{$entry-setting}:focus-within::before,
+                #{$entry-setting}:active::before {
                     opacity: 1;
                 }
-            }
 
-            @at-root {
-                #{$entry-action}--destructive::before {
+                #{$entry-setting}--opacity::before {
+                    width: calc(100% - var(--setting-highlight-adjustment));
+                }
+
+                #{$entry-setting}--delete::before {
                     background-color: var(--color-action-highlight-warning);
                 }
             }
         }
 
-        // .entry__action__icon
+        // .entry__setting__icon
         &__icon {
             margin: auto;
             position: relative;
 
-            // .entry__action__icon__path-1
+            #{$entry-setting}--opacity & {
+                flex: 0 0 var(--setting-size);
+            }
+
+            // .entry__setting__icon__path-1
             &__path-1 {
                 fill: var(--color-icon-fill);
             }
 
-            // .entry__action__icon__path-2
+            // .entry__setting__icon__path-2
             &__path-2 {
-                [data-click-action="showBackgroundColorModal"] & {
+                #{$entry-setting}--background & {
                     fill: var(--color-icon-fill-background-picker);
                 }
 
-                [data-click-action="showBorderColorModal"] & {
+                #{$entry-setting}--border & {
                     fill: var(--color-icon-fill-border-picker);
                 }
             }
         }
 
-        & + & {
-            margin-left: 2px;
+        // .entry__setting__input
+        &__input {
+            flex: 1 1 auto;
+            margin: 0;
+            position: relative;
+
+            #{$entry-setting}--opacity & {
+                cursor: pointer;
+                height: 32px;
+
+                // Remove Firefox-specific focus border in favour of our own
+                // styles.
+                &::-moz-focus-outer {
+                    border: 0;
+                }
+
+                &::-moz-range-thumb {
+                    background-color: var(--color-icon-fill);
+                    border: 0;
+                    border-radius: 2px;
+                    height: 20px;
+                    width: 6px;
+                }
+
+                &::-moz-range-track {
+                    background-color: var(--color-entry);
+                    height: 4px;
+                }
+            }
         }
     }
 
