@@ -1,3 +1,4 @@
+@use '../../node_modules/tippy.js/dist/tippy';
 @import "reset";
 @import "inputs";
 
@@ -750,6 +751,13 @@ main {
         min-height: calc(24px + var(--token-item-spacing) * 2);
         padding: var(--token-item-spacing);
     }
+}
+
+/**
+ * Settings for the tooltips provided by the Tippy.js library.
+ */
+.tippy-box {
+    font-size: 12px;
 }
 
 .action-bar {

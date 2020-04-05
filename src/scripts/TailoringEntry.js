@@ -361,12 +361,6 @@ class TailoringEntry {
         // back to the opposite of its current state.
         this.settingsDrawerIsOpen =
             shouldBeOpen !== null ? shouldBeOpen : !this.settingsDrawerIsOpen;
-
-        // Update the title text of the drawer's action button.
-        this.actionButtons.toggleSettingsDrawer.title = this
-            .settingsDrawerIsOpen
-            ? "Hide settings"
-            : "Show settings";
     }
 
     /**
