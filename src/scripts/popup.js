@@ -1,6 +1,6 @@
 import Sortable from "sortablejs";
 import addonData from "./addonData";
-import addonFunctions from "./addonFunctions";
+import { getUserData, saveTailoringEntries } from "./addonFunctions";
 import TailoringEntry from "./TailoringEntry";
 
 /**
@@ -81,7 +81,7 @@ const popup = {
                     movedEntry
                 );
 
-                addonFunctions.saveTailoringEntries();
+                saveTailoringEntries();
             },
         });
     },
@@ -101,4 +101,4 @@ const popup = {
 };
 
 // Get the current user data, then initialize the popup UI.
-addonFunctions.getUserData().then(() => popup.initialize());
+getUserData().then(() => popup.initialize());

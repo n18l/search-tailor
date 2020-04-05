@@ -1,7 +1,10 @@
 import TokenField from "tokenfield";
 import ColorPicker from "vanilla-picker";
 import addonData from "./addonData";
-import addonFunctions from "./addonFunctions";
+import {
+    generateTailoringEntryID,
+    saveTailoringEntries,
+} from "./addonFunctions";
 
 function qs(selector, context = document) {
     return context.querySelector(selector);
@@ -25,7 +28,7 @@ class TailoringEntry {
         // Save a reference to the settings this entry is based on, or create
         // a default settings object is none are provided.
         this.settings = tailoringEntry || {
-            id: addonFunctions.generateTailoringEntryID(),
+            id: generateTailoringEntryID(),
             domains: [],
             treatment: addonData.defaultTreatment,
         };
@@ -160,7 +163,7 @@ class TailoringEntry {
             const domainArray = this.tokenField.getItems().map(i => i.name);
             this.settings.domains = domainArray;
 
-            addonFunctions.saveTailoringEntries();
+            saveTailoringEntries();
         });
 
         // Respond to keyboard events in the TokenField.
@@ -276,7 +279,7 @@ class TailoringEntry {
             this.updateColoredIcons(["backgroundColor"]);
         }
 
-        addonFunctions.saveTailoringEntries();
+        saveTailoringEntries();
     }
 
     /**
@@ -329,7 +332,7 @@ class TailoringEntry {
         addonData.runtime.tailoringEntries.splice(this.index, 1);
         addonData.runtime.tailoringEntryObjects.splice(this.index, 1);
 
-        addonFunctions.saveTailoringEntries();
+        saveTailoringEntries();
     }
 }
 
