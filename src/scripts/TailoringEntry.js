@@ -25,7 +25,7 @@ class TailoringEntry {
         this.settings = tailoringEntry || {
             id: generateTailoringEntryID(),
             domains: [],
-            treatment: addonData.defaultTreatment,
+            treatment: Object.assign({}, addonData.defaultTreatment),
         };
 
         this.cacheData();
