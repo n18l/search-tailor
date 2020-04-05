@@ -1,5 +1,5 @@
-const addonData = require("./addonData");
-const addonFunctions = require("./addonFunctions");
+import addonData from "./addonData";
+import addonFunctions from "./addonFunctions";
 
 /* Class representing a user's search that is eligible for tailoring. */
 class TailorableSearch {

@@ -1,4 +1,4 @@
-const addonData = require("./addonData");
+import addonData from "./addonData";
 
 /**
  * Functions used by multiple scripts in the addon.

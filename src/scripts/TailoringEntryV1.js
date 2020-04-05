@@ -1,5 +1,5 @@
-const addonData = require("./addonData");
-const addonFunctions = require("./addonFunctions");
+import addonData from "./addonData";
+import addonFunctions from "./addonFunctions";
 
 /**
  * The interactive representation of a tailoring entry.

@@ -1,9 +1,7 @@
-const Sortable = require("sortablejs");
-const addonData = require("./addonData");
-const addonFunctions = require("./addonFunctions");
-const TailoringGroup = require("./TailoringGroup");
-const TailoringEntryV1 = require("./TailoringEntryV1");
-const TailoringEntry = require("./TailoringEntry");
+import Sortable from "sortablejs";
+import addonData from "./addonData";
+import addonFunctions from "./addonFunctions";
+import TailoringEntry from "./TailoringEntry";
 
 /**
  * Namespace for popup-related properties & methods.

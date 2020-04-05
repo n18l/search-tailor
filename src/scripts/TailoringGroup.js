@@ -1,8 +1,8 @@
-const Sortable = require("sortablejs");
-const ColorPicker = require("vanilla-picker");
-const addonData = require("./addonData");
-const addonFunctions = require("./addonFunctions");
-const TailoringEntryV1 = require("./TailoringEntryV1");
+import Sortable from "sortablejs";
+import ColorPicker from "vanilla-picker";
+import addonData from "./addonData";
+import addonFunctions from "./addonFunctions";
+import TailoringEntryV1 from "./TailoringEntryV1";
 
 /**
  * The interactive representation of tailoring template, grouping together all

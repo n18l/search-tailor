@@ -1,7 +1,7 @@
-const TokenField = require("tokenfield");
-const ColorPicker = require("vanilla-picker");
-const addonData = require("./addonData");
-const addonFunctions = require("./addonFunctions");
+import TokenField from "tokenfield";
+import ColorPicker from "vanilla-picker";
+import addonData from "./addonData";
+import addonFunctions from "./addonFunctions";
 
 function qs(selector, context = document) {
     return context.querySelector(selector);
