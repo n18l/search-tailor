@@ -129,6 +129,12 @@ class TailoringEntry {
             this.backgroundColorModalIsVisible = false;
         };
 
+        // Save a reference to the background picker's input element.
+        this.pickerElements.backgroundInput = qs(
+            ".picker_editor input",
+            this.pickerElements.background
+        );
+
         // Initialize this entry's border color picker.
         this.borderPicker = new ColorPicker({
             color: this.settings.treatment.borderColor,
@@ -142,6 +148,12 @@ class TailoringEntry {
         this.borderPicker.onDone = () => {
             this.borderColorModalIsVisible = false;
         };
+
+        // Save a reference to the border picker's input element.
+        this.pickerElements.borderInput = qs(
+            ".picker_editor input",
+            this.pickerElements.border
+        );
     }
 
     /**
@@ -199,6 +211,21 @@ class TailoringEntry {
             }
         );
 
+        // Move focus in and out of this entry's background color picker modal
+        // after its hide/show animation completes.
+        this.pickerElements.backgroundModal.addEventListener(
+            "animationend",
+            e => {
+                if (e.animationName === "fadeModalIn") {
+                    this.pickerElements.backgroundInput.focus();
+                }
+
+                if (e.animationName === "fadeModalOut") {
+                    this.actionButtons.showBackgroundColorModal.focus();
+                }
+            }
+        );
+
         // Show this entry's border color picker modal on click.
         this.actionButtons.showBorderColorModal.addEventListener(
             "click",
@@ -214,6 +241,18 @@ class TailoringEntry {
                 this.borderColorModalIsVisible = false;
             }
         );
+
+        // Move focus in and out of this entry's border color picker modal after
+        // its hide/show animation completes.
+        this.pickerElements.borderModal.addEventListener("animationend", e => {
+            if (e.animationName === "fadeModalIn") {
+                this.pickerElements.borderInput.focus();
+            }
+
+            if (e.animationName === "fadeModalOut") {
+                this.actionButtons.showBorderColorModal.focus();
+            }
+        });
 
         // Delete this entry on click.
         this.actionButtons.deleteEntry.addEventListener("click", () =>
