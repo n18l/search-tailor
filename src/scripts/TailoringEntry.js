@@ -106,6 +106,7 @@ class TailoringEntry {
         this.tokenField = new TokenField({
             el: this.domainInput,
             setItems: this.settings.domains.map(d => ({ id: d, name: d })),
+            addItemOnBlur: true,
         });
 
         // Save a reference to the TokenField's actual text input element.
