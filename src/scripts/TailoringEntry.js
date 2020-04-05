@@ -1,4 +1,5 @@
 import TokenField from "tokenfield";
+import Tippy from "tippy.js";
 import ColorPicker from "vanilla-picker";
 import addonData from "./addonData";
 import {
@@ -29,12 +30,10 @@ class TailoringEntry {
 
         this.cacheData();
         this.defineActions();
-        this.initializeTokenField();
+        this.initializeDomainInput();
+        this.initializeOpacityInput();
         this.initializeColorPickers();
         this.bindEvents();
-
-        // Initialize this entry's opacity slider to its set value.
-        this.opacityInput.value = this.settings.treatment.opacity;
 
         // Initialize this entry's dynamically-colored icons.
         this.updateColoredIcons();
@@ -71,7 +70,8 @@ class TailoringEntry {
         // The drawer containing settings for this entry.
         this.settingsDrawer = qs(".js-entry-settings-drawer", this.element);
 
-        // The range slider for this entry's opacity value.
+        // The container and input for this entry's opacity value.
+        this.opacityControl = qs(".js-entry-opacity-control", this.element);
         this.opacityInput = qs(".js-entry-opacity-input", this.element);
 
         // Elements related to this entry's color-picking modals.
@@ -100,12 +100,12 @@ class TailoringEntry {
     }
 
     /**
-     * Initializes a token field to act as the input for this entry's domains.
-     *
-     * @see https://github.com/KaneCohen/tokenfield
+     * Initializes the input that controls the domains to which this entry's
+     * treatment settings should apply.
      */
-    initializeTokenField() {
-        // Initialize a new TokenField on the domain input field.
+    initializeDomainInput() {
+        // Initialize a new TokenField to use for the domain input field.
+        // @see https://github.com/KaneCohen/tokenfield
         this.tokenField = new TokenField({
             el: this.domainInput,
             setItems: this.settings.domains.map(d => ({ id: d, name: d })),
@@ -114,6 +114,24 @@ class TailoringEntry {
 
         // Save a reference to the TokenField's actual text input element.
         this.tokenFieldInput = qs(".tokenfield-input", this.element);
+    }
+
+    /**
+     * Initializes the input that controls the opacity value of this entry's
+     * treatment settings.
+     */
+    initializeOpacityInput() {
+        // Initialize this entry's opacity slider to its set value.
+        this.opacityInput.value = this.settings.treatment.opacity;
+
+        // Create an informational tooltip that displays this entry's current
+        // opacity value.
+        this.opacityInputTooltip = new Tippy(this.opacityControl, {
+            content: this.opacityTooltipValue,
+            hideOnClick: false,
+            offset: [0, 5],
+            placement: "bottom",
+        });
     }
 
     /**
@@ -201,10 +219,11 @@ class TailoringEntry {
             });
         });
 
-        // Update and save the opacity setting for this entry's treatment when
-        // a change is detected.
+        // Update the opacity setting for this entry's treatment when a change
+        // is detected and synchronize its informational tooltip.
         this.opacityInput.addEventListener("change", e => {
             this.settings.treatment.opacity = +e.target.value;
+            this.opacityInputTooltip.setContent(this.opacityTooltipValue);
 
             saveTailoringEntries();
         });
@@ -305,6 +324,22 @@ class TailoringEntry {
      */
     set borderColorModalIsVisible(newModalState) {
         this.pickerElements.borderModal.dataset.isVisible = !!newModalState;
+    }
+
+    /**
+     * The current value of this entry's opacity tooltip.
+     */
+    get opacityTooltipValue() {
+        let tooltip = this.opacityInput.title;
+        const roundedOpacityValue = Math.round(this.opacityInput.value * 100);
+
+        if (roundedOpacityValue === 0) {
+            tooltip += ` (hidden)`;
+        } else {
+            tooltip += ` (${roundedOpacityValue}%)`;
+        }
+
+        return tooltip;
     }
 
     /**

@@ -46,7 +46,7 @@ const popup = {
      * Initializes tooltips for various UI elements.
      */
     initializeTooltips() {
-        Tippy("[title]", {
+        Tippy("[data-tippy-title]", {
             offset: [0, 5],
             placement: "bottom",
             content: reference => reference.getAttribute("title"),
