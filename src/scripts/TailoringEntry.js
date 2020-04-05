@@ -2,17 +2,11 @@ import TokenField from "tokenfield";
 import ColorPicker from "vanilla-picker";
 import addonData from "./addonData";
 import {
+    qs,
+    qsa,
     generateTailoringEntryID,
     saveTailoringEntries,
 } from "./addonFunctions";
-
-function qs(selector, context = document) {
-    return context.querySelector(selector);
-}
-
-function qsa(selector, context = document) {
-    return context.querySelectorAll(selector);
-}
 
 /**
  * The interactive representation of a tailoring entry.

@@ -5,6 +5,32 @@ import addonData from "./addonData";
  */
 const addonFunctions = {
     /**
+     * Queries for the first match of a given selector within a given element. A
+     * convenience shorthand for the `Element.querySelector()` method.
+     *
+     * @param {string} selector - The selector to query.
+     * @param {ParentNode} context - The node on which to perform the query.
+     *
+     * @returns {Element} The first element that matches the passed selector in the given context.
+     */
+    qs(selector, context = document) {
+        return context.querySelector(selector);
+    },
+
+    /**
+     * Queries for all matches of a given selector within a given element. A
+     * convenience shorthand for the `Element.querySelectorAll()` method.
+     *
+     * @param {string} selector - The selector to query.
+     * @param {ParentNode} context - The node on which to perform the query.
+     *
+     * @returns {NodeListOf<Element>} All elements that match the passed selector in the given context.
+     */
+    qsa(selector, context = document) {
+        return context.querySelectorAll(selector);
+    },
+
+    /**
      * Apply the settings from a particular tailoring treatment to the
      * appropriate attributes of an HTML element.
      * @param {object} tailoringTreatment - The tailoring treatment to apply styles from.
