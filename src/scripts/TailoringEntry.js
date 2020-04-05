@@ -228,7 +228,7 @@ class TailoringEntry {
      * The index of this entry among all current entries.
      */
     get index() {
-        return addonData.runtime.tailoringEntries.indexOf(this);
+        return addonData.runtime.tailoringEntryObjects.indexOf(this);
     }
 
     /**
