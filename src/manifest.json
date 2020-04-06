@@ -20,20 +20,7 @@
 
     "browser_action": {
         "default_popup": "markup/popup.html",
-
-        "default_icon": "assets/icons/icon-dark.svg",
-        "theme_icons": [
-            {
-                "light": "assets/icons/icon-light.svg",
-                "dark": "assets/icons/icon-dark.svg",
-                "size": 16
-            },
-            {
-                "light": "assets/icons/icon-light.svg",
-                "dark": "assets/icons/icon-dark.svg",
-                "size": 32
-            }
-        ]
+        "default_icon": "assets/icons/icon.svg"
     },
 
     "permissions": ["theme", "storage", "tabs"],
