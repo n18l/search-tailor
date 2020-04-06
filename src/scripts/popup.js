@@ -8,30 +8,6 @@ import TailoringEntry from "./TailoringEntry";
  */
 const popup = {
     /**
-     * Creates a Tailoring Group for each existing treatment in the user data,
-     * adding it to the current working list of all Tailoring Groups.
-     */
-    // initializeGroups() {
-    //     addonData.local.tailoringTreatments.forEach(tailoringTreatment => {
-    //         addonData.local.tailoringGroups.push(
-    //             new TailoringGroup(tailoringTreatment)
-    //         );
-    //     });
-    // },
-
-    /**
-     * Creates a Tailoring Entry for each existing entry in the user data,
-     * adding it to the entry list of the Tailoring Group to which it belongs.
-     */
-    // initializeEntries() {
-    //     addonData.local.tailoringEntries.forEach(tailoringEntry => {
-    //         addonFunctions
-    //             .getTailoringGroupByTreatmentID(tailoringEntry.treatment)
-    //             .entries.push(new TailoringEntryV1(tailoringEntry));
-    //     });
-    // },
-
-    /**
      * Initializes a Tailoring Entry UI for each existing entry setting object
      * in the user data, adding it to the popup.
      */
@@ -90,12 +66,11 @@ const popup = {
      * Initializes the addon's popup UI.
      */
     initialize() {
-        // this.initializeGroups();
-        // this.initializeEntries();
         this.initializeTailoringEntries();
         this.enableEntrySorting();
         this.bindEvents();
 
+        // Remove any active loading indicators.
         document.querySelector("body").dataset.isLoading = false;
     },
 };
