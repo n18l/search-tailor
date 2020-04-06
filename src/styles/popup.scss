@@ -19,6 +19,7 @@
     --color-icon-fill-background-picker: var(--color-icon-fill);
     --color-icon-fill-border-picker: var(--color-icon-fill);
 
+    --color-input-highlight: hsla(200, 100%, 50%, 1);
     --color-action-highlight: hsla(0, 0%, 100%, 0.25);
     --color-action-highlight-warning: hsla(0, 55%, 60%, 0.75);
 
@@ -360,46 +361,41 @@ main {
         }
     }
 
+    // .entry__input-container
     &__input-container {
+        $input-container: &;
+
         background-color: var(--color-button);
         border-radius: 2px;
         flex: 1 1 100%;
         margin: 15px 0 15px 2px;
         position: relative;
         overflow: hidden;
+
+        &::before {
+            background-color: var(--color-input-highlight);
+            bottom: 0;
+            content: "";
+            height: 2px;
+            left: 0;
+            pointer-events: none;
+            position: absolute;
+            scale: 0 1;
+            transition: scale 0.35s;
+            width: 100%;
+
+            @at-root #{$input-container}:focus-within::before {
+                scale: 1 1;
+            }
+        }
     }
 
+    // .entry__domain-input
     &__domain-input {
         padding: 0 0 0 8px;
         height: 100%;
         width: 100%;
         margin: auto;
-    }
-
-    &__input-effects {
-        height: 100%;
-        width: 100%;
-        position: absolute;
-        border-radius: 2px;
-        overflow: hidden;
-        pointer-events: none;
-
-        &::after {
-            content: "";
-            height: 2px;
-            width: 100%;
-            bottom: 0;
-            left: 0;
-            position: absolute;
-            background-color: hsl(200, 100%, 50%);
-            transform: scaleX(0);
-            transition: transform 0.35s;
-
-            #{$thisEntry}__domain-input:focus + &,
-            #{$thisEntry}__domain-input:active + & {
-                transform: scaleX(1);
-            }
-        }
     }
 
     // .entry__settings-toggle
