@@ -99,6 +99,22 @@ export function logError(error) {
 }
 
 /**
+ * Determines whether a passed string is valid JSON.
+ *
+ * @param {string} json The JSON string to check for validity.
+ *
+ * @returns {boolean} Whether the passed string is valid JSON.
+ */
+export function isValidJson(json) {
+    try {
+        JSON.parse(json);
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+/**
  * Save the current tailoring entries via the browser storage API.
  */
 export function saveTailoringEntries() {

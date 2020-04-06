@@ -1,14 +1,5 @@
 import addonData from "./addonData";
-import { logError } from "./addonFunctions";
-
-function isValidJson(json) {
-    try {
-        JSON.parse(json);
-        return true;
-    } catch (e) {
-        return false;
-    }
-}
+import { logError, isValidJson } from "./addonFunctions";
 
 /* Class representing the extension options panel. */
 class TailoredSearchOptionsPanel {
