@@ -2,7 +2,7 @@
     "manifest_version": 2,
 
     "name": "Search Tailor",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "author": "Nick Brombal",
     "homepage_url": "https://github.com/nbrombal/search-tailor",
     "description": "Customizes your search results so you can find what you need with style.",
