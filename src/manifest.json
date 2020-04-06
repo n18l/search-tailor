@@ -2,14 +2,14 @@
     "manifest_version": 2,
 
     "name": "Search Tailor",
-    "version": "1.0.0",
+    "version": "0.2.0",
     "author": "Nick Brombal",
     "homepage_url": "https://github.com/nbrombal/search-tailor",
-    "description": "Hides & highlights your search results so you can find what you need with style.",
+    "description": "Customizes your search results so you can find what you need with style.",
 
     "browser_specific_settings": {
         "gecko": {
-            "id": "searchtailor@nbrombal.com"
+            "id": "{8c259dbf-fa95-4e5d-9c40-636654ff3138}"
         }
     },
 
