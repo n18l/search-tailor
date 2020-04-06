@@ -1,6 +1,5 @@
 @use '../../node_modules/tippy.js/dist/tippy';
 @import "reset";
-@import "inputs";
 
 :root {
     --color-entry-container: hsla(240, 3%, 25%, 1);
@@ -48,288 +47,6 @@ main {
     position: relative;
 }
 
-.entry-group-container {
-    max-height: 400px;
-    overflow: scroll;
-    padding-top: 5px;
-    position: relative;
-    z-index: 1;
-}
-
-.entry-group {
-    $this-entry-group: &;
-
-    background-color: hsl(240, 3%, 30%);
-
-    // .entry-group__header
-    &__header {
-        $header-height: 40px;
-
-        align-items: center;
-        background-color: hsl(240, 2%, 23%);
-        display: flex;
-        height: $header-height;
-        padding-left: 10px;
-
-        // .entry-group__header__icon
-        &__icon {
-            display: none;
-
-            @each $treatmentType in ("screen", "suppress", "spotlight") {
-                // .entry-group__header__icon--screen
-                // .entry-group__header__icon--suppress
-                // .entry-group__header__icon--spotlight
-                &--#{$treatmentType} {
-                    #{$this-entry-group}[data-treatment-id^="#{$treatmentType}"]
-                        & {
-                        display: block;
-                    }
-                }
-            }
-        }
-
-        // .entry-group__header__title
-        &__title {
-            font-size: 1.2rem;
-            margin: 0 6px 0 10px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        // .entry-group__header__action-container
-        &__action-container {
-            display: flex;
-            height: 100%;
-            margin-left: auto;
-        }
-
-        // .entry-group__header__action
-        &__action {
-            $this-action: &;
-
-            align-items: center;
-            display: flex;
-            justify-content: center;
-            width: $header-height;
-
-            &[disabled] {
-                cursor: not-allowed;
-                opacity: 0.5;
-            }
-
-            &:not([disabled]) {
-                &:hover,
-                &:focus {
-                    background-color: hsla(0, 0%, 100%, 0.2);
-                }
-
-                &:active {
-                    background-color: hsla(0, 0%, 100%, 0.4);
-                }
-            }
-
-            &[data-action-active="true"] {
-                background-color: var(--color-button);
-            }
-
-            // .entry-group__header__action__icon
-            &__icon {
-                transition: transform 0.5s;
-
-                #{$this-action}[data-click-action="toggleSettingsDrawer"][data-action-active="true"]
-                    & {
-                    transform: rotate(150deg);
-                }
-            }
-        }
-    }
-
-    // .entry-group__settings-drawer
-    &__settings-drawer {
-        background-color: var(--color-button);
-        display: none;
-        height: 65px;
-
-        &[data-is-open="true"] {
-            display: flex;
-        }
-    }
-
-    // .entry-group__input-container
-    &__input-container {
-        background-color: var(--color-text-input-bg);
-        border-radius: 2px;
-        flex: 1 1 100%;
-        display: flex;
-        margin: 15px;
-        position: relative;
-        overflow: hidden;
-    }
-
-    // .entry-group__label-input
-    &__label-input {
-        padding: 0 0 0 8px;
-        height: 100%;
-        width: 100%;
-        margin: auto;
-    }
-
-    // .entry-group__label-input-effects
-    // The input effects element is used to provide performantly animated states
-    // by only transitioning properties that don't trigger repaints (i.e. scale,
-    // opacity, position, & rotation).
-    &__label-input-effects {
-        height: 100%;
-        width: 100%;
-        position: absolute;
-        border-radius: 2px;
-        overflow: hidden;
-        pointer-events: none;
-
-        &::before,
-        &::after {
-            bottom: 0;
-            content: "";
-            height: 2px;
-            left: 0;
-            position: absolute;
-            width: 100%;
-        }
-
-        &::before {
-            background-color: var(--color-text-input-effects);
-            transform: scaleX(0);
-            transition: transform 0.35s;
-
-            #{$this-entry-group}__label-input:focus + &,
-            #{$this-entry-group}__label-input:active + & {
-                transform: scaleX(1);
-            }
-        }
-
-        &::after {
-            background-color: var(--color-text-input-invalid);
-            opacity: 0;
-            transition: opacity 0.35s;
-
-            #{$this-entry-group}__label-input:invalid + & {
-                opacity: 1;
-            }
-        }
-    }
-
-    // .entry-group__action-container
-    &__action-container {
-        display: flex;
-        margin-left: auto;
-    }
-
-    // .entry-group__action
-    &__action {
-        --color-button-hover: hsla(240, 2%, 49%, 1);
-
-        $this-action: &;
-        width: 60px;
-        display: flex;
-        position: relative;
-
-        &:hover,
-        &:focus,
-        &:active {
-            background-color: var(--color-button-hover);
-        }
-
-        &::before {
-            content: "";
-            width: 1px;
-            height: 45px;
-            position: absolute;
-            top: 50%;
-            left: 0;
-            transform: translateY(-50%);
-            background-color: var(--color-button-hover);
-
-            #{$this-action}:hover + &,
-            #{$this-action}:focus + &,
-            #{$this-action}:active + & {
-                display: none;
-            }
-        }
-
-        // .entry-group__action__icon
-        &__icon {
-            margin: auto;
-
-            // .entry-group__action__icon__path-1
-            &__path-1 {
-                fill: var(--color-icon-fill);
-            }
-
-            // .entry-group__action__icon__path-2
-            &__path-2 {
-                [data-click-action="showBackgroundColorModal"] & {
-                    fill: var(--color-icon-fill-background-picker);
-                }
-
-                [data-click-action="showBorderColorModal"] & {
-                    fill: var(--color-icon-fill-border-picker);
-                }
-            }
-        }
-    }
-
-    // .entry-group__list
-    &__list {
-        padding: 0;
-        margin: 0;
-
-        &:empty {
-            &::after {
-                align-items: center;
-                content: "Add new or drag existing entries here to apply this treatment.";
-                display: flex;
-                font-size: 1.2rem;
-                height: 65px;
-                opacity: 0.7;
-                padding: 0 100px;
-                text-align: center;
-            }
-        }
-    }
-
-    // .entry-group__picker-modal
-    &__picker-modal {
-        height: 100vh;
-        left: 0;
-        position: fixed;
-        top: 0;
-        width: 100vw;
-
-        &:not([data-is-visible="true"]) {
-            display: none;
-        }
-    }
-
-    // .entry-group__picker-scrim
-    &__picker-scrim {
-        background-color: hsla(0, 0%, 0%, 0.5);
-        height: 100vh;
-        left: 0;
-        position: absolute;
-        top: 0;
-        width: 100vw;
-    }
-
-    // .entry-group__picker
-    &__picker {
-        left: 50%;
-        position: absolute;
-        top: 50%;
-        transform: translate(-50%, -50%);
-    }
-}
-
 .entry-container {
     background-color: var(--color-entry-container);
     flex: 1 1 auto;
@@ -347,11 +64,13 @@ main {
     display: flex;
     flex-direction: column;
 
+    // .entry__primary-ui
     &__primary-ui {
         align-items: center;
         display: flex;
     }
 
+    // .entry__sort-handle
     &__sort-handle {
         cursor: move;
         flex: 0 0 auto;
@@ -670,9 +389,30 @@ main {
     }
 }
 
+.action-bar {
+    background-color: var(--color-button);
+    display: flex;
+    flex: 0 0 40px;
+
+    // .action-bar__action
+    &__action {
+        border: 0;
+        border-top: 1px solid var(--color-button-highlight-1);
+        color: hsl(0, 0%, 100%);
+        cursor: pointer;
+        flex: 1 1 auto;
+
+        &:hover,
+        &:focus,
+        &:active {
+            background-color: var(--color-button-highlight-1);
+            border-color: var(--color-button-highlight-2);
+        }
+    }
+}
+
 /**
- * Styles for the Token Field provided by the TokenField library.
- *
+ * Styles for markup provided by the TokenField library.
  * @see https://github.com/KaneCohen/tokenfield
  */
 .tokenfield {
@@ -750,32 +490,11 @@ main {
 }
 
 /**
- * Settings for the tooltips provided by the Tippy.js library.
+ * Styles for markup provided by the Tippy.js library.
+ * @see https://github.com/atomiks/tippyjs
  */
 .tippy-box {
     font-size: 12px;
-}
-
-.action-bar {
-    background-color: var(--color-button);
-    display: flex;
-    flex: 0 0 40px;
-
-    // .action-bar__action
-    &__action {
-        border: 0;
-        border-top: 1px solid var(--color-button-highlight-1);
-        color: hsl(0, 0%, 100%);
-        cursor: pointer;
-        flex: 1 1 auto;
-
-        &:hover,
-        &:focus,
-        &:active {
-            background-color: var(--color-button-highlight-1);
-            border-color: var(--color-button-highlight-2);
-        }
-    }
 }
 
 .hidden {
