@@ -105,17 +105,17 @@ const addonData = {
                 id: "1577836800000-00002",
                 domains: ["w3schools.com"],
                 treatment: {
-                    backgroundColor: "hsla(240,75%,35%,0.25)",
-                    borderColor: "hsla(240,100%,25%,0.35)",
+                    backgroundColor: "hsla(0,0%,100%,0)",
+                    borderColor: "hsla(0,0%,100%,0)",
                     opacity: 0.5,
                 },
             },
             {
                 id: "1577836800000-00003",
-                domains: ["geeksforgeeks"],
+                domains: ["github.com"],
                 treatment: {
-                    backgroundColor: "hsla(240,75%,35%,0.25)",
-                    borderColor: "hsla(240,100%,25%,0.35)",
+                    backgroundColor: "hsla(0,0%,100%,0)",
+                    borderColor: "hsla(0,0%,100%,0)",
                     opacity: 0,
                 },
             },
