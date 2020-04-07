@@ -23,7 +23,7 @@ const addonData = {
      */
     searchEngines: [
         {
-            name: "Google",
+            id: "google",
             matchPattern: ".*://.*.?google.com/search.*",
             selectors: {
                 resultContainer: "#search",
@@ -34,7 +34,7 @@ const addonData = {
             styleViaAttribute: false,
         },
         {
-            name: "DuckDuckGo",
+            id: "duckduckgo",
             matchPattern: ".*://.*.?duckduckgo.com/.*",
             selectors: {
                 resultContainer: ".results",
@@ -45,7 +45,7 @@ const addonData = {
             styleViaAttribute: false,
         },
         {
-            name: "Bing",
+            id: "bing",
             matchPattern: ".*://.*.?bing.com/search.*",
             selectors: {
                 resultContainer: "#b_results",
@@ -56,7 +56,7 @@ const addonData = {
             styleViaAttribute: true,
         },
         {
-            name: "Yahoo!",
+            id: "yahoo",
             matchPattern: ".*://search.yahoo.com/search.*",
             selectors: {
                 resultContainer: "#web > ol",
@@ -120,20 +120,28 @@ const addonData = {
                 },
             },
         ],
-        searchEngines: {
-            Google: {
+        searchEngines: [
+            {
+                id: "google",
+                label: "Google",
                 enabled: true,
             },
-            DuckDuckGo: {
+            {
+                id: "duckduckgo",
+                label: "DuckDuckGo",
                 enabled: true,
             },
-            Bing: {
+            {
+                id: "bing",
+                label: "Bing",
                 enabled: true,
             },
-            "Yahoo!": {
+            {
+                id: "yahoo",
+                label: "Yahoo!",
                 enabled: true,
             },
-        },
+        ],
     },
 };
 

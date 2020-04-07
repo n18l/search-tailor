@@ -74,7 +74,11 @@ class TailorableSearch {
          * @param {object} storageData - Freshly retrieved data from the extension's synchronized storage.
          */
         const applyTailoringTreatments = storageData => {
-            if (!storageData.searchEngines[this.searchEngine.name].enabled)
+            if (
+                !storageData.searchEngines.find(
+                    engine => engine.id === this.searchEngine.id
+                ).enabled
+            )
                 return;
 
             // If this search engine loads results asynchronously, watch its

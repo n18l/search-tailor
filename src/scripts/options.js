@@ -76,7 +76,9 @@ class TailoredSearchOptionsPanel {
                 this.inputs.enableSearchEngine.forEach((input, index) => {
                     this.inputs.enableSearchEngine[
                         index
-                    ].checked = this.currentSearchEngines[input.name].enabled;
+                    ].checked = this.currentSearchEngines.find(
+                        engine => engine.id === input.id
+                    ).enabled;
                 });
             }, logError);
     }
@@ -100,8 +102,9 @@ class TailoredSearchOptionsPanel {
         // Update and sync the search engine settings when checking/unchecking a search engine.
         this.inputs.enableSearchEngine.forEach(input => {
             input.addEventListener("input", e => {
-                this.currentSearchEngines[e.target.name].enabled =
-                    e.target.checked;
+                this.currentSearchEngines.find(
+                    engine => engine.id === e.target.id
+                ).enabled = e.target.checked;
 
                 browser.storage.sync
                     .set({ searchEngines: this.currentSearchEngines })
