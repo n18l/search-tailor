@@ -54,6 +54,7 @@ main {
     max-height: 400px;
     overflow: scroll;
     position: relative;
+    scrollbar-width: none;
     z-index: 1;
 }
 
