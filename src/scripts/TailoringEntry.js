@@ -421,10 +421,17 @@ class TailoringEntry {
      * @param {boolean|null} shouldBeOpen - Whether to force the drawer to its open state.
      */
     toggleSettingsDrawer(shouldBeOpen = null) {
-        // Set the drawer's new state, preferring the passed state but falling
-        // back to the opposite of its current state.
-        this.settingsDrawerIsOpen =
+        // Determine the drawer's new state, preferring the passed state but
+        // falling back to the opposite of its current state.
+        const newOpenSetting =
             shouldBeOpen !== null ? shouldBeOpen : !this.settingsDrawerIsOpen;
+
+        // If opening the drawer, close all others first.
+        if (newOpenSetting === true) {
+            TailoringEntry.closeAllSettingsDrawers();
+        }
+
+        this.settingsDrawerIsOpen = newOpenSetting;
     }
 
     /**
@@ -438,6 +445,17 @@ class TailoringEntry {
         addonData.runtime.tailoringEntryObjects.splice(this.index, 1);
 
         saveTailoringEntries("entry-removed");
+    }
+
+    /**
+     * Closes all settings drawers.
+     */
+    static closeAllSettingsDrawers() {
+        addonData.runtime.tailoringEntryObjects.forEach(entryObject => {
+            const thisEntry = entryObject;
+
+            thisEntry.settingsDrawerIsOpen = false;
+        });
     }
 }
 
