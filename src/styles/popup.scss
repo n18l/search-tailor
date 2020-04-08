@@ -328,6 +328,24 @@ main {
             margin: auto;
             position: relative;
 
+            // .entry__setting__icon--opacity-on
+            &--opacity-on {
+                display: block;
+
+                [data-opacity-on="false"] & {
+                    display: none;
+                }
+            }
+
+            // .entry__setting__icon--opacity-off
+            &--opacity-off {
+                display: none;
+
+                [data-opacity-on="false"] & {
+                    display: block;
+                }
+            }
+
             // .entry__setting__icon__path-1
             &__path-1 {
                 fill: var(--color-icon-fill);

@@ -233,11 +233,26 @@ class TailoringEntry {
             });
         });
 
-        // Update the opacity setting for this entry's treatment when a change
-        // is detected and synchronize its informational tooltip.
+        // Toggle the opacity setting for this entry's treatment between
+        // minimum/maximum values on click.
+        this.opacityToggle.addEventListener("click", () => {
+            const newRangeValue = this.opacityRange.value === "0" ? "100" : "0";
+
+            // Update the range input's value and programmatically trigger an
+            // input event.
+            this.opacityRange.value = newRangeValue;
+            this.opacityRange.dispatchEvent(new Event("input"));
+        });
+
+        // Update the opacity setting for this entry's treatment on input.
         this.opacityRange.addEventListener("input", e => {
             this.settings.treatment.opacity = +e.target.value;
+
+            // Insert the current value into the input's tooltip.
             this.opacityRangeTooltip.setContent(this.opacityTooltipValue);
+
+            // Update the toggle button to display an appropriate icon.
+            this.opacityToggle.dataset.opacityOn = +e.target.value > 0;
 
             saveTailoringEntries("entry-opacity", [this.settings.id]);
         });
