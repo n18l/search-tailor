@@ -6,6 +6,7 @@ import {
     qs,
     qsa,
     generateTailoringEntryID,
+    parseHSLAString,
     saveTailoringEntries,
 } from "./addonFunctions";
 
@@ -32,7 +33,7 @@ class TailoringEntry {
         this.defineActions();
         this.initializeDomainInput();
         this.initializeOpacityInput();
-        this.initializeColorPickers();
+        this.initializeColorInputs();
         this.initializeTooltips();
         this.bindEvents();
 
@@ -136,10 +137,23 @@ class TailoringEntry {
     }
 
     /**
-     * Initializes the color picker inputs for this entry's background and
-     * border colors.
+     * Initializes the colorization toggle and background/border color picker
+     * inputs for this entry.
      */
-    initializeColorPickers() {
+    initializeColorInputs() {
+        // Get the current background and border alpha values.
+        const currentBackgroundAlpha = parseHSLAString(
+            this.settings.treatment.backgroundColor
+        ).alpha;
+        const currentBorderAlpha = parseHSLAString(
+            this.settings.treatment.borderColor
+        ).alpha;
+
+        // If both alpha values are at zero, assume colorization is disabled.
+        if (currentBackgroundAlpha === "0" && currentBorderAlpha === "0") {
+            this.colorizationEnabled = false;
+        }
+
         // Initialize this entry's background color picker.
         this.backgroundPicker = new ColorPicker({
             color: this.settings.treatment.backgroundColor,
@@ -257,6 +271,11 @@ class TailoringEntry {
             saveTailoringEntries("entry-opacity", [this.settings.id]);
         });
 
+        // Toggle this entry's colorization setting on click.
+        this.actionButtons.toggleColorization.addEventListener("click", () => {
+            this.colorizationEnabled = !this.colorizationEnabled;
+        });
+
         // Show this entry's background color picker modal on click.
         this.actionButtons.showBackgroundColorModal.addEventListener(
             "click",
@@ -339,6 +358,48 @@ class TailoringEntry {
     set settingsDrawerIsOpen(newDrawerState) {
         this.settingsDrawer.dataset.isOpen = newDrawerState;
         this.actionButtons.toggleSettingsDrawer.dataset.actionActive = newDrawerState;
+    }
+
+    /**
+     * The current state of this entry's colorization setting. Disabling
+     * colorization simply sets the alpha transparency of the existing
+     * border/background colors to 0. This "removes" the coloring but preserves
+     * the HSL values so they can be reenabled later.
+     */
+    get colorizationEnabled() {
+        return (
+            this.actionButtons.toggleColorization.dataset
+                .colorizationEnabled === "true"
+        );
+    }
+
+    set colorizationEnabled(newState) {
+        this.actionButtons.toggleColorization.dataset.colorizationEnabled = newState;
+
+        // Disable the background/border color picker buttons.
+        this.actionButtons.showBackgroundColorModal.disabled = !newState;
+        this.actionButtons.showBorderColorModal.disabled = !newState;
+
+        // Determine the new alpha value to apply to this entry's background and
+        // border colors. Disabling colorization simply sets the alpha values of
+        // the existing colors to 0, preserving their other values.
+        const alpha = newState === true ? 1 : 0;
+
+        // Update the alpha value of this entry's background color to the
+        // appropriate value.
+        const currentBackgroundColor = this.settings.treatment.backgroundColor;
+        const bkg = parseHSLAString(currentBackgroundColor);
+        this.backgroundPicker.setColor(
+            `hsla(${bkg.hue},${bkg.saturation},${bkg.lightness},${alpha})`
+        );
+
+        // Update the alpha value of this entry's border color to the
+        // appropriate value.
+        const currentBorderColor = this.settings.treatment.borderColor;
+        const bdr = parseHSLAString(currentBorderColor);
+        this.borderPicker.setColor(
+            `hsla(${bdr.hue},${bdr.saturation},${bdr.lightness},${alpha})`
+        );
     }
 
     /**

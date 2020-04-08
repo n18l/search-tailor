@@ -350,6 +350,24 @@ main {
                 }
             }
 
+            // .entry__setting__icon--colorization-enabled
+            &--colorization-enabled {
+                display: block;
+
+                [data-colorization-enabled="false"] & {
+                    display: none;
+                }
+            }
+
+            // .entry__setting__icon--colorization-disabled
+            &--colorization-disabled {
+                display: none;
+
+                [data-colorization-enabled="false"] & {
+                    display: block;
+                }
+            }
+
             // .entry__setting__icon__path-1
             &__path-1 {
                 fill: var(--color-icon-fill);
@@ -357,12 +375,16 @@ main {
 
             // .entry__setting__icon__path-2
             &__path-2 {
-                #{$entry-setting}--background-color & {
-                    fill: var(--color-icon-fill-background-picker);
-                }
+                fill: var(--color-icon-fill);
 
-                #{$entry-setting}--border-color & {
-                    fill: var(--color-icon-fill-border-picker);
+                button:not([disabled]) & {
+                    #{$entry-setting}--background-color & {
+                        fill: var(--color-icon-fill-background-picker);
+                    }
+
+                    #{$entry-setting}--border-color & {
+                        fill: var(--color-icon-fill-border-picker);
+                    }
                 }
             }
         }
