@@ -23,6 +23,9 @@
     --color-button-highlight-1: hsl(240, 2%, 44%);
     --color-button-highlight-2: hsl(240, 2%, 49%);
 
+    --color-button-highlight-settings: hsl(240, 3%, 53%);
+    --color-button-highlight-warning: hsl(0, 30%, 50%);
+
     --color-domain-token-active: hsla(215, 65%, 50%, 0.5);
     --color-domain-token-border: hsla(0, 0%, 70%, 1);
     --color-domain-token-text: hsla(0, 0%, 100%, 1);
@@ -192,108 +195,75 @@ main {
         }
     }
 
+    --setting-size: 40px;
+    --setting-border-radius: 4px;
+
+    &__setting-group {
+        $entry-setting-group: &;
+
+        align-items: center;
+        display: flex;
+        flex: 0 0 auto;
+        position: relative;
+
+        &--opacity {
+            flex: 1 1 auto;
+        }
+
+        &__effects {
+            border: 1px solid var(--color-button-highlight-settings);
+            border-radius: var(--setting-border-radius);
+            height: var(--setting-size);
+            left: 50%;
+            opacity: 0;
+            pointer-events: none;
+            position: absolute;
+            top: 50%;
+            translate: -50% -50%;
+            transition: opacity 0.35s;
+            width: 100%;
+
+            #{$entry-setting-group}:hover &,
+            #{$entry-setting-group}:focus-within & {
+                opacity: 1;
+            }
+        }
+
+        & + & {
+            margin-left: 10px;
+        }
+    }
+
     // .entry__setting
     &__setting {
         $entry-setting: &;
-        --setting-size: 44px;
-        --setting-highlight-adjustment: 4px;
-        --setting-highlight-size: calc(
-            var(--setting-size) - var(--setting-highlight-adjustment)
-        );
 
         align-items: center;
         display: flex;
         height: var(--setting-size);
+        margin: 0;
+        min-width: var(--setting-size);
         position: relative;
 
-        // .entry__setting--opacity
-        &--opacity {
+        &--opacity-range {
             flex: 1 1 auto;
-            padding-right: 14px;
         }
 
-        // .entry__setting--background
-        // .entry__setting--border
-        // .entry__setting--delete
-        &--background,
-        &--border,
-        &--delete {
-            flex: 0 0 var(--setting-size);
-        }
-
-        // Remove Firefox-specific focus border in favour of our own styles.
-        &::-moz-focus-inner {
-            border: 0;
-        }
-
-        // Create a pseudo-element background highlight that can be faded in/out
-        // performantly using opacity.
-        &::before {
-            background-color: var(--color-action-highlight);
-            border-radius: 4px;
-            content: "";
-            height: var(--setting-highlight-size);
-            left: 50%;
-            opacity: 0;
-            position: absolute;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            transition: opacity 0.35s;
-            width: var(--setting-highlight-size);
-
-            @at-root {
-                #{$entry-setting}:hover::before,
-                #{$entry-setting}:focus::before,
-                #{$entry-setting}:focus-within::before,
-                #{$entry-setting}:active::before {
-                    opacity: 1;
-                }
-
-                #{$entry-setting}--opacity::before {
-                    width: calc(100% - var(--setting-highlight-adjustment));
-                }
-
-                #{$entry-setting}--delete::before {
-                    background-color: var(--color-action-highlight-warning);
-                }
-            }
-        }
-
-        // .entry__setting__icon
-        &__icon {
-            margin: auto;
-            position: relative;
-
-            #{$entry-setting}--opacity & {
-                flex: 0 0 var(--setting-size);
-            }
-
-            // .entry__setting__icon__path-1
-            &__path-1 {
-                fill: var(--color-icon-fill);
-            }
-
-            // .entry__setting__icon__path-2
-            &__path-2 {
-                #{$entry-setting}--background & {
-                    fill: var(--color-icon-fill-background-picker);
-                }
-
-                #{$entry-setting}--border & {
-                    fill: var(--color-icon-fill-border-picker);
-                }
-            }
-        }
-
-        // .entry__setting__input
         &__input {
-            flex: 1 1 auto;
+            height: 100%;
             margin: 0;
             position: relative;
+            z-index: 1;
+            width: 100%;
 
-            #{$entry-setting}--opacity & {
+            // Remove Firefox-specific focus border in favour of our own styles.
+            &::-moz-focus-inner {
+                border: 0;
+            }
+
+            &--opacity-range {
                 cursor: pointer;
-                height: 32px;
+                padding: 0 8px;
 
                 // Remove Firefox-specific focus border in favour of our own
                 // styles.
@@ -312,6 +282,65 @@ main {
                 &::-moz-range-track {
                     background-color: var(--color-entry);
                     height: 4px;
+                }
+            }
+        }
+
+        &__effects {
+            background-color: var(--color-button-highlight-settings);
+            height: var(--setting-size);
+            left: 50%;
+            opacity: 0;
+            pointer-events: none;
+            position: absolute;
+            top: 50%;
+            translate: -50% -50%;
+            transition: opacity 0.35s;
+            width: 100%;
+            z-index: 0;
+
+            #{$entry-setting}--delete & {
+                background-color: var(--color-button-highlight-warning);
+            }
+
+            #{$entry-setting}:first-child & {
+                border-bottom-left-radius: var(--setting-border-radius);
+                border-top-left-radius: var(--setting-border-radius);
+            }
+
+            // Target both the last and second-to-last child, as the 'effects'
+            // div is always expected to be present on setting groups.
+            #{$entry-setting}:last-child &,
+            #{$entry-setting}:nth-last-child(2) & {
+                border-bottom-right-radius: var(--setting-border-radius);
+                border-top-right-radius: var(--setting-border-radius);
+            }
+
+            #{$entry-setting}__input:hover + &,
+            #{$entry-setting}__input:active + &,
+            #{$entry-setting}__input:focus + & {
+                opacity: 1;
+            }
+        }
+
+        // .entry__setting__icon
+        &__icon {
+            margin: auto;
+            position: relative;
+
+            // .entry__setting__icon__path-1
+            &__path-1 {
+                fill: var(--color-icon-fill);
+            }
+
+            // .entry__setting__icon__path-2
+            &__path-2 {
+                #{$entry-setting}--background-color & {
+                    fill: var(--color-icon-fill-background-picker);
+                }
+
+                #{$entry-setting}--border-color & {
+                    fill: var(--color-icon-fill-border-picker);
                 }
             }
         }

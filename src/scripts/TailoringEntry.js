@@ -71,9 +71,9 @@ class TailoringEntry {
         // The drawer containing settings for this entry.
         this.settingsDrawer = qs(".js-entry-settings-drawer", this.element);
 
-        // The container and input for this entry's opacity value.
-        this.opacityControl = qs(".js-entry-opacity-control", this.element);
-        this.opacityInput = qs(".js-entry-opacity-input", this.element);
+        // The toggle and input elements for this entry's opacity value.
+        this.opacityToggle = qs(".js-entry-opacity-toggle", this.element);
+        this.opacityRange = qs(".js-entry-opacity-input", this.element);
 
         // Elements related to this entry's color-picking modals.
         this.pickerElements = {
@@ -123,16 +123,15 @@ class TailoringEntry {
      */
     initializeOpacityInput() {
         // Initialize this entry's opacity slider to its set value.
-        this.opacityInput.value = this.settings.treatment.opacity;
+        this.opacityRange.value = this.settings.treatment.opacity;
 
         // Create a special informational tooltip that displays this entry's
         // current opacity value.
-        this.opacityInputTooltip = new Tippy(this.opacityControl, {
+        this.opacityRangeTooltip = new Tippy(this.opacityRange, {
             content: this.opacityTooltipValue,
             hideOnClick: false,
             offset: [0, 5],
             placement: "bottom",
-            triggerTarget: this.opacityInput,
         });
     }
 
@@ -236,9 +235,9 @@ class TailoringEntry {
 
         // Update the opacity setting for this entry's treatment when a change
         // is detected and synchronize its informational tooltip.
-        this.opacityInput.addEventListener("input", e => {
+        this.opacityRange.addEventListener("input", e => {
             this.settings.treatment.opacity = +e.target.value;
-            this.opacityInputTooltip.setContent(this.opacityTooltipValue);
+            this.opacityRangeTooltip.setContent(this.opacityTooltipValue);
 
             saveTailoringEntries("entry-opacity", [this.settings.id]);
         });
@@ -345,8 +344,8 @@ class TailoringEntry {
      * The current value of this entry's opacity tooltip.
      */
     get opacityTooltipValue() {
-        let tooltip = this.opacityInput.title;
-        const roundedOpacityValue = Math.round(this.opacityInput.value * 100);
+        let tooltip = this.opacityRange.title;
+        const roundedOpacityValue = Math.round(this.opacityRange.value * 100);
 
         if (roundedOpacityValue === 0) {
             tooltip += ` (hidden)`;
