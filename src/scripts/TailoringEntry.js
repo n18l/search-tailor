@@ -207,7 +207,7 @@ class TailoringEntry {
             const domainArray = this.tokenField.getItems().map(i => i.name);
             this.settings.domains = domainArray;
 
-            saveTailoringEntries();
+            saveTailoringEntries("entry-domains", [this.settings.id]);
         });
 
         // Respond to keyboard events in the TokenField.
@@ -239,7 +239,7 @@ class TailoringEntry {
             this.settings.treatment.opacity = +e.target.value;
             this.opacityInputTooltip.setContent(this.opacityTooltipValue);
 
-            saveTailoringEntries();
+            saveTailoringEntries("entry-opacity", [this.settings.id]);
         });
 
         // Show this entry's background color picker modal on click.
@@ -375,7 +375,7 @@ class TailoringEntry {
             this.updateColoredIcons(["backgroundColor"]);
         }
 
-        saveTailoringEntries();
+        saveTailoringEntries(`entry-${property}`, [this.settings.id]);
     }
 
     /**
@@ -422,7 +422,7 @@ class TailoringEntry {
         addonData.runtime.tailoringEntries.splice(this.index, 1);
         addonData.runtime.tailoringEntryObjects.splice(this.index, 1);
 
-        saveTailoringEntries();
+        saveTailoringEntries("entry-removed");
     }
 }
 

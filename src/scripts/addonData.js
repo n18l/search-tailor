@@ -15,6 +15,7 @@ const addonData = {
     runtime: {
         tailoringEntries: [],
         tailoringEntryObjects: [],
+        searchEngines: [],
     },
 
     /**

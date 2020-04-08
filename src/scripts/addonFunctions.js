@@ -27,24 +27,6 @@ export function qsa(selector, context = document) {
 }
 
 /**
- * Apply the settings from a particular tailoring treatment to the
- * appropriate attributes of an HTML element.
- *
- * @param {object} tailoringTreatment - The tailoring treatment to apply styles from.
- * @param {object} elementToStyle - The HTML element to apply the treatment's properties to.
- */
-export function applyTailoringTreatmentToElement(
-    tailoringTreatment,
-    elementToStyle
-) {
-    const element = elementToStyle;
-
-    // Style the supplied element with 8-character hex notation.
-    element.style.backgroundColor = tailoringTreatment.backgroundColor;
-    element.style.borderColor = tailoringTreatment.borderColor;
-}
-
-/**
  * Generates a new unique tailoring entry ID.
  *
  * @param {Number} maxRandomInt The multiplication factor to apply to the random ID generation.
@@ -61,11 +43,13 @@ export function generateTailoringEntryID(maxRandomInt = 100000) {
  * saves a local working copy. If the requested data isn't found, it falls
  * back to the addon's defined default values.
  *
+ * @param {string[]} requestedStorageData The storage items to retrieve, defaulting to all.
+ *
  * @returns {Promise} A Promise resolving to the data saved as the local working copy.
  */
-export function getUserData() {
-    const requestedStorageData = ["tailoringEntries"];
-
+export function getUserData(
+    requestedStorageData = ["tailoringEntries", "searchEngines"]
+) {
     const userDataPromise = new Promise((resolve, reject) => {
         browser.storage.sync
             .get(requestedStorageData)
@@ -117,12 +101,24 @@ export function isValidJson(json) {
 /**
  * Save the current tailoring entries via the browser storage API.
  */
-export function saveTailoringEntries() {
+export function saveTailoringEntries(changeType, updatedEntryIDs = null) {
     // Get the settings of all existing entry objects. This is largely to make
     // sure we get them in the order represented in the popup UI.
     const entrySettings = addonData.runtime.tailoringEntryObjects.map(
         entryObject => entryObject.settings
     );
+
+    // Record information about this change to communicate to the extension's
+    // other scripts, allowing them to respond accordingly.
+    const changeInfo = {
+        type: `change:${changeType}`,
+        updatedEntryIDs,
+    };
+
+    // Send a message about this change to each tab's content script.
+    browser.tabs.query({}).then(tabs => {
+        tabs.forEach(tab => browser.tabs.sendMessage(tab.id, changeInfo));
+    });
 
     browser.storage.sync
         .set({ tailoringEntries: entrySettings })

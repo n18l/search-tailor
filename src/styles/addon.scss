@@ -1,11 +1,6 @@
 /* Google */
-
 .rc {
-    &[data-tailoring-treatment="screen"] {
-        display: none;
-    }
-
-    &[data-tailoring-treatment^="spotlight"] {
+    &[data-tailoring-entry-id] {
         position: relative;
 
         .treatment-panel,
@@ -24,17 +19,8 @@
 }
 
 /* DuckDuckGo */
-
 .result {
-    &[data-tailoring-treatment="suppress"] {
-        opacity: 0.5;
-    }
-
-    &[data-tailoring-treatment="screen"] {
-        display: none;
-    }
-
-    &[data-tailoring-treatment^="spotlight"] {
+    &[data-tailoring-entry-id] {
         position: relative;
 
         .treatment-panel,
@@ -58,17 +44,8 @@
 }
 
 /* Bing */
-
 .b_algo {
-    &[data-tailoring-treatment="suppress"] {
-        opacity: 0.5;
-    }
-
-    &[data-tailoring-treatment="screen"] {
-        display: none;
-    }
-
-    &[data-tailoring-treatment^="spotlight"] {
+    &[data-tailoring-entry-id] {
         position: relative;
 
         .treatment-panel,
@@ -97,26 +74,18 @@
 }
 
 /* Yahoo */
-
 .algo {
-    &[data-tailoring-treatment="suppress"] {
-        opacity: 0.5;
-    }
-
-    &[data-tailoring-treatment="screen"] {
-        display: none;
-    }
-
-    &[data-tailoring-treatment^="spotlight"] {
-        $thisSpotlight: &;
+    &[data-tailoring-entry-id] {
         position: relative;
 
-        @at-root li.first & {
-            padding-top: 10px !important;
-        }
+        @at-root {
+            li.first & {
+                padding-top: 10px !important;
+            }
 
-        @at-root li.last & {
-            padding-bottom: 10px !important;
+            li.last & {
+                padding-bottom: 10px !important;
+            }
         }
 
         .treatment-panel,
@@ -131,13 +100,15 @@
             position: absolute;
             z-index: 1;
 
-            @at-root li.first & {
-                top: 0;
-                height: calc(100% + 10px);
-            }
+            @at-root {
+                li.first & {
+                    top: 0;
+                    height: calc(100% + 10px);
+                }
 
-            @at-root li.last & {
-                height: calc(100% + 8px);
+                li.last & {
+                    height: calc(100% + 8px);
+                }
             }
         }
 

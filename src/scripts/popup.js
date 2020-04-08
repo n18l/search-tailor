@@ -57,7 +57,7 @@ const popup = {
                     movedEntry
                 );
 
-                saveTailoringEntries();
+                saveTailoringEntries("entry-order");
             },
         });
     },
