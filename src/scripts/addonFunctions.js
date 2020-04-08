@@ -74,6 +74,33 @@ export function getUserData(
 }
 
 /**
+ * Parses an HSLA-format color string and extracts the individual values,
+ * returning them as an object.
+ *
+ * @param {string} hslaString The HSLA string from which to parse values.
+ */
+export function parseHSLAString(hslaString) {
+    // Remove all whitespace from the HSLA string.
+    const sanitizedHslaString = hslaString.replace(/\s/g, "");
+
+    // Define a regular expression for capturing HSLA values.
+    const hslaStringRegEx = /hsla\((\d*\.?\d+),(\d*\.?\d+%),(\d*\.?\d+%),(\d*\.?\d+)\)/;
+
+    // Initialize return values.
+    let hue = "0";
+    let saturation = "0%";
+    let lightness = "0%";
+    let alpha = "1";
+
+    // Parse the HSLA string and update return values with matches.
+    [, hue, saturation, lightness, alpha] = sanitizedHslaString.match(
+        hslaStringRegEx
+    );
+
+    return { hue, saturation, lightness, alpha };
+}
+
+/**
  * Logs an error.
  *
  * @param {*} error The error output to log.
