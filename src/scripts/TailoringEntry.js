@@ -363,7 +363,7 @@ class TailoringEntry {
         const roundedOpacityValue = Math.round(this.opacityRange.value * 100);
 
         if (roundedOpacityValue === 0) {
-            tooltip += ` (hidden)`;
+            tooltip += ` (results hidden)`;
         } else {
             tooltip += ` (${roundedOpacityValue}%)`;
         }
