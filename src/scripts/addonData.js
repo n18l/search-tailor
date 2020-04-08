@@ -95,29 +95,11 @@ const addonData = {
         tailoringEntries: [
             {
                 id: "1577836800000-00001",
-                domains: ["css-tricks.com", "stackoverflow.com"],
+                domains: ["wikipedia.org"],
                 treatment: {
-                    backgroundColor: "hsla(120,75%,35%,0.25)",
-                    borderColor: "hsla(120,100%,25%,0.35)",
+                    backgroundColor: "hsla(120,60%,85%,1)",
+                    borderColor: "hsla(120,50%,60%,1)",
                     opacity: 1,
-                },
-            },
-            {
-                id: "1577836800000-00002",
-                domains: ["w3schools.com"],
-                treatment: {
-                    backgroundColor: "hsla(0,0%,100%,0)",
-                    borderColor: "hsla(0,0%,100%,0)",
-                    opacity: 0.5,
-                },
-            },
-            {
-                id: "1577836800000-00003",
-                domains: ["github.com"],
-                treatment: {
-                    backgroundColor: "hsla(0,0%,100%,0)",
-                    borderColor: "hsla(0,0%,100%,0)",
-                    opacity: 0,
                 },
             },
         ],
