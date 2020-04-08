@@ -255,6 +255,11 @@ main {
             z-index: 1;
             width: 100%;
 
+            &[disabled] {
+                cursor: not-allowed;
+                opacity: 0.5;
+            }
+
             // Remove Firefox-specific focus border in favour of our own styles.
             &::-moz-focus-inner {
                 border: 0;
