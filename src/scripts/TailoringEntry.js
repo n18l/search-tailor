@@ -235,7 +235,7 @@ class TailoringEntry {
 
         // Update the opacity setting for this entry's treatment when a change
         // is detected and synchronize its informational tooltip.
-        this.opacityInput.addEventListener("change", e => {
+        this.opacityInput.addEventListener("input", e => {
             this.settings.treatment.opacity = +e.target.value;
             this.opacityInputTooltip.setContent(this.opacityTooltipValue);
 
