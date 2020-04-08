@@ -132,6 +132,7 @@ class TailoringEntry {
             hideOnClick: false,
             offset: [0, 5],
             placement: "bottom",
+            triggerTarget: this.opacityInput,
         });
     }
 
