@@ -185,10 +185,10 @@ class TailoringEntry {
      * Initializes tooltips for this entry.
      */
     initializeTooltips() {
-        this.tooltipTargets = qsa("[data-tippy-title]", this.element);
+        this.tooltipTargets = qsa("[data-tippy]", this.element);
 
         Tippy(this.tooltipTargets, {
-            content: reference => reference.getAttribute("title"),
+            content: reference => reference.getAttribute("aria-label"),
             offset: [0, 5],
             placement: "bottom",
         });
@@ -359,7 +359,7 @@ class TailoringEntry {
      * The current value of this entry's opacity tooltip.
      */
     get opacityTooltipValue() {
-        let tooltip = this.opacityRange.title;
+        let tooltip = this.opacityRange.getAttribute("aria-label");
         const roundedOpacityValue = Math.round(this.opacityRange.value * 100);
 
         if (roundedOpacityValue === 0) {
