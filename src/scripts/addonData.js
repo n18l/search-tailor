@@ -83,8 +83,8 @@ const addonData = {
      * The tailoring treatment settings to apply when creating a new group.
      */
     defaultTreatment: {
-        backgroundColor: "hsla(120,75%,35%,0.25)",
-        borderColor: "hsla(120,100%,25%,0.35)",
+        backgroundColor: "hsla(120,60%,85%,1)",
+        borderColor: "hsla(120,50%,60%,1)",
         opacity: 1,
     },
 
