@@ -414,21 +414,26 @@ class TailoringEntry {
         // the existing colors to 0, preserving their other values.
         const alpha = newState === true ? 1 : 0;
 
-        // Update the alpha value of this entry's background color to the
-        // appropriate value.
-        const currentBackgroundColor = this.settings.treatment.backgroundColor;
-        const bkg = parseHSLAString(currentBackgroundColor);
-        this.backgroundPicker.setColor(
-            `hsla(${bkg.hue},${bkg.saturation},${bkg.lightness},${alpha})`
-        );
+        if (this.backgroundPicker) {
+            // Update the alpha value of this entry's background color to the
+            // appropriate value.
+            const currentBackgroundColor = this.settings.treatment
+                .backgroundColor;
+            const bkg = parseHSLAString(currentBackgroundColor);
+            this.backgroundPicker.setColor(
+                `hsla(${bkg.hue},${bkg.saturation},${bkg.lightness},${alpha})`
+            );
+        }
 
-        // Update the alpha value of this entry's border color to the
-        // appropriate value.
-        const currentBorderColor = this.settings.treatment.borderColor;
-        const bdr = parseHSLAString(currentBorderColor);
-        this.borderPicker.setColor(
-            `hsla(${bdr.hue},${bdr.saturation},${bdr.lightness},${alpha})`
-        );
+        if (this.borderPicker) {
+            // Update the alpha value of this entry's border color to the
+            // appropriate value.
+            const currentBorderColor = this.settings.treatment.borderColor;
+            const bdr = parseHSLAString(currentBorderColor);
+            this.borderPicker.setColor(
+                `hsla(${bdr.hue},${bdr.saturation},${bdr.lightness},${alpha})`
+            );
+        }
     }
 
     /**
