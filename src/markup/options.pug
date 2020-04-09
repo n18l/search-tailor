@@ -7,40 +7,31 @@ html
 
     body
         main(id="search-tailor-options-panel")
-            -
-                var searchEngines = [
-                    { name: "Bing", id: "bing" },
-                    { name: "DuckDuckGo", id: "duckduckgo" },
-                    { name: "Google", id: "google" },
-                    { name: "Yahoo!", id: "yahoo" },
-                ];
 
             div(class="search-tailor-option")
                 span(class="search-tailor-option__label") Search Engines
                     mixin searchEngineToggle(searchEngine)
-                        label(
-                            class=[
-                                `search-tailor-option__input-wrapper`,
-                                `search-tailor-option__input-wrapper--toggle`,
-                            ]
-                        )
+                        label(class=[
+                            `search-tailor-option__input-wrapper`,
+                            `search-tailor-option__input-wrapper--toggle`,
+                        ])
                             input(
-                                id=searchEngine.id
+                                id= searchEngine.id
                                 class=[
                                     `search-tailor-option__input`,
                                     `search-tailor-option__input--toggle`,
                                     `js-option-input`,
                                 ]
                                 type="checkbox"
-                                name=searchEngine.name
+                                name= searchEngine.label
                                 data-input-group="enableSearchEngine"
                             )
                             span(class="toggle-switch")
                                 span(class="toggle-switch__track")
                                 span(class="toggle-switch__nub")
-                            span(class="search-tailor-option__input--toggle__label")= searchEngine.name
+                            span(class="search-tailor-option__input--toggle__label")= searchEngine.label
 
-                    each searchEngine in searchEngines
+                    each searchEngine in defaultUserData.searchEngines
                         +searchEngineToggle(searchEngine)
 
             div(class="search-tailor-option")
@@ -54,6 +45,7 @@ html
                     )
                 div(class="search-tailor-option__action-container")
                     button(class="search-tailor-option__action" data-click-action="copyJSON") Copy
+                    button(class="search-tailor-option__action" data-click-action="resetData") Reset to Default
 
             form(class="search-tailor-option")
                 span(class="search-tailor-option__label") JSON Import

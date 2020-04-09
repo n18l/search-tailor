@@ -12,13 +12,19 @@ const addonData = {
         tailoringGroups: [],
     },
 
+    runtime: {
+        tailoringEntries: [],
+        tailoringEntryObjects: [],
+        searchEngines: [],
+    },
+
     /**
      * Search engine-specific data to guide the application of tailoring
      * templates to search results pages.
      */
     searchEngines: [
         {
-            name: "Google",
+            id: "google",
             matchPattern: ".*://.*.?google.com/search.*",
             selectors: {
                 resultContainer: "#search",
@@ -29,7 +35,7 @@ const addonData = {
             styleViaAttribute: false,
         },
         {
-            name: "DuckDuckGo",
+            id: "duckduckgo",
             matchPattern: ".*://.*.?duckduckgo.com/.*",
             selectors: {
                 resultContainer: ".results",
@@ -40,7 +46,7 @@ const addonData = {
             styleViaAttribute: false,
         },
         {
-            name: "Bing",
+            id: "bing",
             matchPattern: ".*://.*.?bing.com/search.*",
             selectors: {
                 resultContainer: "#b_results",
@@ -51,7 +57,7 @@ const addonData = {
             styleViaAttribute: true,
         },
         {
-            name: "Yahoo!",
+            id: "yahoo",
             matchPattern: ".*://search.yahoo.com/search.*",
             selectors: {
                 resultContainer: "#web > ol",
@@ -74,44 +80,51 @@ const addonData = {
     },
 
     /**
+     * The tailoring treatment settings to apply when creating a new group.
+     */
+    defaultTreatment: {
+        backgroundColor: "hsla(120,75%,35%,0.25)",
+        borderColor: "hsla(120,100%,25%,0.35)",
+        opacity: 1,
+    },
+
+    /**
      * The default user data to apply to users who have no preexisting settings.
      */
     defaultUserData: {
-        tailoringEntries: [],
-        tailoringTreatments: [
+        tailoringEntries: [
             {
-                id: "screen",
-                label: "Screen",
-                backgroundColor: "hsla(0,0%,0%,0)",
-                borderColor: "hsla(0,0%,0%,0)",
-            },
-            {
-                id: "suppress",
-                label: "Suppress",
-                backgroundColor: "hsla(0,0%,0%,0)",
-                borderColor: "hsla(0,0%,0%,0)",
-            },
-            {
-                id: "spotlight:default",
-                label: "Favorites",
-                backgroundColor: "hsla(120,75%,35%,0.25)",
-                borderColor: "hsla(120,100%,25%,0.35)",
+                id: "1577836800000-00001",
+                domains: ["wikipedia.org"],
+                treatment: {
+                    backgroundColor: "hsla(120,60%,85%,1)",
+                    borderColor: "hsla(120,50%,60%,1)",
+                    opacity: 1,
+                },
             },
         ],
-        searchEngines: {
-            Google: {
+        searchEngines: [
+            {
+                id: "google",
+                label: "Google",
                 enabled: true,
             },
-            DuckDuckGo: {
+            {
+                id: "duckduckgo",
+                label: "DuckDuckGo",
                 enabled: true,
             },
-            Bing: {
+            {
+                id: "bing",
+                label: "Bing",
                 enabled: true,
             },
-            "Yahoo!": {
+            {
+                id: "yahoo",
+                label: "Yahoo!",
                 enabled: true,
             },
-        },
+        ],
     },
 };
 

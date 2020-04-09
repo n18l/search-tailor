@@ -1,14 +1,5 @@
-const addonData = require("./addonData");
-const addonFunctions = require("./addonFunctions");
-
-function isValidJson(json) {
-    try {
-        JSON.parse(json);
-        return true;
-    } catch (e) {
-        return false;
-    }
-}
+import addonData from "./addonData";
+import { logError, isValidJson } from "./addonFunctions";
 
 /* Class representing the extension options panel. */
 class TailoredSearchOptionsPanel {
@@ -85,9 +76,11 @@ class TailoredSearchOptionsPanel {
                 this.inputs.enableSearchEngine.forEach((input, index) => {
                     this.inputs.enableSearchEngine[
                         index
-                    ].checked = this.currentSearchEngines[input.name].enabled;
+                    ].checked = this.currentSearchEngines.find(
+                        engine => engine.id === input.id
+                    ).enabled;
                 });
-            }, addonFunctions.logError);
+            }, logError);
     }
 
     /**
@@ -109,12 +102,13 @@ class TailoredSearchOptionsPanel {
         // Update and sync the search engine settings when checking/unchecking a search engine.
         this.inputs.enableSearchEngine.forEach(input => {
             input.addEventListener("input", e => {
-                this.currentSearchEngines[e.target.name].enabled =
-                    e.target.checked;
+                this.currentSearchEngines.find(
+                    engine => engine.id === e.target.id
+                ).enabled = e.target.checked;
 
                 browser.storage.sync
                     .set({ searchEngines: this.currentSearchEngines })
-                    .then(null, addonFunctions.logError);
+                    .then(null, logError);
             });
         });
 
@@ -135,6 +129,13 @@ class TailoredSearchOptionsPanel {
             this.inputs.jsonExport.select();
             document.execCommand("copy");
             this.actionButtons.copyJSON.focus();
+        });
+
+        // Reset extension data to the default values.
+        this.actionButtons.resetData.addEventListener("click", () => {
+            browser.storage.sync
+                .set(JSON.parse(JSON.stringify(addonData.defaultUserData)))
+                .then(null, logError);
         });
 
         // Clear the contents of the JSON Import textarea.
@@ -159,7 +160,7 @@ class TailoredSearchOptionsPanel {
             // Otherwise, update the current extension data with the valid JSON.
             browser.storage.sync
                 .set(JSON.parse(this.inputs.jsonImport.value))
-                .then(null, addonFunctions.logError);
+                .then(null, logError);
         });
     }
 }

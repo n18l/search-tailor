@@ -2,25 +2,25 @@
     "manifest_version": 2,
 
     "name": "Search Tailor",
-    "version": "1.0",
+    "version": "0.2.2",
     "author": "Nick Brombal",
-    "homepage_url": "https://nickbrombal.codes/",
-    "description": "Tailor your search results.",
+    "homepage_url": "https://github.com/nbrombal/search-tailor",
+    "description": "Customizes your search results so you can find what you need with style.",
 
     "browser_specific_settings": {
         "gecko": {
-            "id": "nick@brombal.com"
+            "id": "{8c259dbf-fa95-4e5d-9c40-636654ff3138}"
         }
     },
 
     "icons": {
-        "48": "assets/icons/black.svg",
-        "96": "assets/icons/black.svg"
+        "48": "assets/icons/icon.svg",
+        "96": "assets/icons/icon.svg"
     },
 
     "browser_action": {
-        "default_icon": "assets/icons/search-light.svg",
-        "default_popup": "markup/popup.html"
+        "default_popup": "markup/popup.html",
+        "default_icon": "assets/icons/icon.svg"
     },
 
     "permissions": ["theme", "storage", "tabs"],

@@ -1,25 +1,54 @@
+@use '../../node_modules/tippy.js/dist/tippy';
 @import "reset";
-@import "inputs";
 
 :root {
+    --color-text: hsl(0, 0%, 100%);
+
+    --color-entry-container: hsla(240, 3%, 25%, 1);
+    --color-entry: hsla(240, 3%, 30%, 1);
+    --color-entry-divider: hsl(240, 3%, 37%);
+    --color-entry-input: hsl(240, 3%, 37%);
+
+    --color-icon-fill: hsl(240, 0%, 85%);
+    --color-icon-fill-background-picker: var(--color-icon-fill);
+    --color-icon-fill-border-picker: var(--color-icon-fill);
+    --color-picker-scrim: hsla(0, 0%, 0%, 0.5);
+
+    --color-input-highlight: hsla(200, 100%, 50%, 1);
+    --color-action-highlight: hsla(0, 0%, 100%, 0.25);
+    --color-action-highlight-warning: hsla(0, 55%, 60%, 0.75);
+
     --color-button: hsl(240, 3%, 37%);
+    --color-button-text: hsl(0, 0%, 100%);
     --color-button-highlight-1: hsl(240, 2%, 44%);
     --color-button-highlight-2: hsl(240, 2%, 49%);
 
-    --color-text-input: hsla(0, 0%, 100%, 1);
-    --color-text-input-bg: hsla(0, 0%, 100%, 0.1);
-    --color-text-input-effects: hsl(200, 100%, 50%);
-    --color-text-input-invalid: hsl(0, 75%, 60%);
+    --color-button-highlight-settings: hsl(240, 3%, 53%);
+    --color-button-highlight-warning: hsl(0, 30%, 50%);
 
-    --color-background-icon-fill: hsla(0, 100%, 100%, 0.75);
-    --color-border-icon-fill: hsla(0, 100%, 100%, 0.75);
+    --color-domain-token-active: hsla(215, 65%, 50%, 0.5);
+    --color-domain-token-border: hsla(0, 0%, 70%, 1);
+    --color-domain-token-text: hsla(0, 0%, 100%, 1);
+    --color-domain-token-remove-active: hsla(0, 45%, 60%, 1);
+    --color-domain-token-remove-text: hsla(0, 0%, 100%, 1);
 
-    --color-icon-fill: hsla(0, 100%, 100%, 0.75);
+    --action-bar-height: 40px;
+    --action-bar-padding: 10px;
+
+    --color-action-bar: hsl(240, 3%, 18%);
+    --color-action-bar-highlight: hsl(240, 3%, 22%);
+
+    --shadow-elevation-1: 0 1px 3px hsla(0, 0%, 0%, 0.12),
+        0 1px 2px hsla(0, 0%, 0%, 0.24);
+    --shadow-elevation-2: 0 3px 6px hsla(0, 0%, 0%, 0.16),
+        0 3px 6px hsla(0, 0%, 0%, 0.23);
+    --shadow-elevation-3: 0 10px 20px hsla(0, 0%, 0%, 0.19),
+        0 6px 6px hsla(0, 0%, 0%, 0.23);
 }
 
 html,
 body {
-    background-color: hsl(240, 3%, 30%);
+    background-color: var(--color-entry);
     border-radius: 2px;
     font-family: sans-serif;
     font-size: 10px;
@@ -27,279 +56,428 @@ body {
 }
 
 main {
-    color: hsl(0, 0%, 100%);
+    color: var(--color-text);
     display: flex;
     flex-direction: column;
-    height: 100%;
+    height: 100vh;
+    padding-top: 5px;
     position: relative;
 }
 
-.entry-group-container {
-    max-height: 400px;
+.entry-container {
+    background-color: var(--color-entry-container);
+    flex: 1 1 auto;
     overflow: scroll;
-    padding-top: 5px;
     position: relative;
+    scrollbar-width: none;
     z-index: 1;
 }
 
-.entry-group {
-    $this-entry-group: &;
+.entry {
+    $thisEntry: &;
 
-    background-color: hsl(240, 3%, 30%);
+    background-color: var(--color-entry);
+    border-top: 1px solid var(--color-entry-divider);
+    display: flex;
+    flex-direction: column;
 
-    // .entry-group__header
-    &__header {
-        $header-height: 40px;
+    &:last-child {
+        margin-bottom: calc(
+            var(--action-bar-height) + (var(--action-bar-padding) * 2)
+        );
+        position: relative;
 
+        &::after {
+            bottom: 0;
+            content: "";
+            box-shadow: var(--shadow-elevation-1);
+            height: 1px;
+            position: absolute;
+            width: 100%;
+            z-index: -1;
+        }
+    }
+
+    // .entry__primary-ui
+    &__primary-ui {
         align-items: center;
-        background-color: hsl(240, 2%, 23%);
         display: flex;
-        height: $header-height;
-        padding-left: 10px;
+    }
 
-        // .entry-group__header__icon
+    // .entry__sort-handle
+    &__sort-handle {
+        cursor: move;
+        flex: 0 0 auto;
+
         &__icon {
-            display: none;
-
-            @each $treatmentType in ("screen", "suppress", "spotlight") {
-                // .entry-group__header__icon--screen
-                // .entry-group__header__icon--suppress
-                // .entry-group__header__icon--spotlight
-                &--#{$treatmentType} {
-                    #{$this-entry-group}[data-treatment-id^="#{$treatmentType}"]
-                        & {
-                        display: block;
-                    }
-                }
-            }
-        }
-
-        // .entry-group__header__title
-        &__title {
-            font-size: 1.2rem;
-            margin: 0 6px 0 10px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        // .entry-group__header__action-container
-        &__action-container {
-            display: flex;
-            height: 100%;
-            margin-left: auto;
-        }
-
-        // .entry-group__header__action
-        &__action {
-            $this-action: &;
-
-            align-items: center;
-            display: flex;
-            justify-content: center;
-            width: $header-height;
-
-            &[disabled] {
-                cursor: not-allowed;
-                opacity: 0.5;
-            }
-
-            &:not([disabled]) {
-                &:hover,
-                &:focus {
-                    background-color: hsla(0, 0%, 100%, 0.2);
-                }
-
-                &:active {
-                    background-color: hsla(0, 0%, 100%, 0.4);
-                }
-            }
-
-            &[data-action-active="true"] {
-                background-color: var(--color-button);
-            }
-
-            // .entry-group__header__action__icon
-            &__icon {
-                transition: transform 0.5s;
-
-                #{$this-action}[data-click-action="toggleSettingsDrawer"][data-action-active="true"]
-                    & {
-                    transform: rotate(150deg);
-                }
-            }
+            display: block;
         }
     }
 
-    // .entry-group__settings-drawer
-    &__settings-drawer {
-        background-color: var(--color-button);
-        display: none;
-        height: 65px;
-
-        &[data-is-open="true"] {
-            display: flex;
-        }
-    }
-
-    // .entry-group__input-container
+    // .entry__input-container
     &__input-container {
-        background-color: var(--color-text-input-bg);
+        $input-container: &;
+
+        background-color: var(--color-entry-input);
         border-radius: 2px;
         flex: 1 1 100%;
-        display: flex;
-        margin: 15px;
+        margin: 15px 0 15px 2px;
         position: relative;
         overflow: hidden;
+
+        &::before {
+            background-color: var(--color-input-highlight);
+            bottom: 0;
+            content: "";
+            height: 2px;
+            left: 0;
+            pointer-events: none;
+            position: absolute;
+            scale: 0 1;
+            transition: scale 0.35s;
+            width: 100%;
+
+            @at-root #{$input-container}:focus-within::before {
+                scale: 1 1;
+            }
+        }
     }
 
-    // .entry-group__label-input
-    &__label-input {
+    // .entry__domain-input
+    &__domain-input {
         padding: 0 0 0 8px;
         height: 100%;
         width: 100%;
         margin: auto;
     }
 
-    // .entry-group__label-input-effects
-    // The input effects element is used to provide performantly animated states
-    // by only transitioning properties that don't trigger repaints (i.e. scale,
-    // opacity, position, & rotation).
-    &__label-input-effects {
-        height: 100%;
-        width: 100%;
-        position: absolute;
-        border-radius: 2px;
-        overflow: hidden;
-        pointer-events: none;
+    // .entry__settings-toggle
+    &__settings-toggle {
+        $settings-toggle: &;
 
-        &::before,
-        &::after {
-            bottom: 0;
-            content: "";
-            height: 2px;
-            left: 0;
-            position: absolute;
-            width: 100%;
-        }
+        border-radius: 50%;
+        flex: 0 0 auto;
+        margin: 0 4px;
+        padding: 2px;
+        position: relative;
 
         &::before {
-            background-color: var(--color-text-input-effects);
-            transform: scaleX(0);
-            transition: transform 0.35s;
+            background-color: var(--color-action-highlight);
+            border-radius: 50%;
+            content: "";
+            height: 100%;
+            left: 50%;
+            opacity: 0;
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.35s;
+            width: 100%;
+            z-index: 0;
 
-            #{$this-entry-group}__label-input:focus + &,
-            #{$this-entry-group}__label-input:active + & {
-                transform: scaleX(1);
+            @at-root {
+                #{$settings-toggle}:hover::before,
+                #{$settings-toggle}:focus::before,
+                #{$settings-toggle}:active::before {
+                    opacity: 1;
+                }
             }
         }
 
-        &::after {
-            background-color: var(--color-text-input-invalid);
-            opacity: 0;
-            transition: opacity 0.35s;
+        &[data-action-active="true"] {
+            background-color: var(--color-icon-fill);
+        }
 
-            #{$this-entry-group}__label-input:invalid + & {
+        // .entry__settings-toggle__icon
+        &__icon {
+            display: block;
+            transition: transform 0.35s;
+
+            #{$settings-toggle}[data-action-active="true"] & {
+                transform: rotate(150deg);
+            }
+
+            // .entry__settings-toggle__icon__path-1
+            &__path-1 {
+                fill: var(--color-icon-fill);
+
+                #{$settings-toggle}[data-action-active="true"] & {
+                    fill: var(--color-entry);
+                }
+            }
+        }
+    }
+
+    // .entry__settings-drawer
+    &__settings-drawer {
+        align-items: center;
+        background-color: var(--color-entry-divider);
+        display: flex;
+        height: 0;
+        justify-content: flex-end;
+        overflow: hidden;
+        padding: 0 6px;
+        transition: height 0.35s;
+
+        &[data-is-open="true"] {
+            height: 48px;
+        }
+    }
+
+    --setting-size: 40px;
+    --setting-border-radius: 4px;
+
+    &__setting-group {
+        $entry-setting-group: &;
+
+        align-items: center;
+        display: flex;
+        flex: 0 0 auto;
+        position: relative;
+
+        &--opacity {
+            flex: 1 1 auto;
+        }
+
+        &__effects {
+            border: 1px solid var(--color-button-highlight-settings);
+            border-radius: var(--setting-border-radius);
+            height: var(--setting-size);
+            left: 50%;
+            opacity: 0;
+            pointer-events: none;
+            position: absolute;
+            top: 50%;
+            translate: -50% -50%;
+            transition: opacity 0.35s;
+            width: 100%;
+
+            #{$entry-setting-group}:hover &,
+            #{$entry-setting-group}:focus-within & {
                 opacity: 1;
             }
         }
+
+        & + & {
+            margin-left: 10px;
+        }
     }
 
-    // .entry-group__action-container
-    &__action-container {
-        display: flex;
-        margin-left: auto;
-    }
+    // .entry__setting
+    &__setting {
+        $entry-setting: &;
 
-    // .entry-group__action
-    &__action {
-        --color-button-hover: hsla(240, 2%, 49%, 1);
-
-        $this-action: &;
-        width: 60px;
+        align-items: center;
         display: flex;
+        height: var(--setting-size);
+        margin: 0;
+        min-width: var(--setting-size);
         position: relative;
 
-        &:hover,
-        &:focus,
-        &:active {
-            background-color: var(--color-button-hover);
+        &--opacity-range {
+            flex: 1 1 auto;
         }
 
-        &::before {
-            content: "";
-            width: 1px;
-            height: 45px;
-            position: absolute;
-            top: 50%;
-            left: 0;
-            transform: translateY(-50%);
-            background-color: var(--color-button-hover);
+        &__input {
+            height: 100%;
+            margin: 0;
+            position: relative;
+            z-index: 1;
+            width: 100%;
 
-            #{$this-action}:hover + &,
-            #{$this-action}:focus + &,
-            #{$this-action}:active + & {
-                display: none;
+            &[disabled] {
+                cursor: not-allowed;
+                opacity: 0.5;
+            }
+
+            // Remove Firefox-specific focus border in favour of our own styles.
+            &::-moz-focus-inner {
+                border: 0;
+            }
+
+            &--opacity-range {
+                cursor: pointer;
+                padding: 0 8px;
+
+                // Remove Firefox-specific focus border in favour of our own
+                // styles.
+                &::-moz-focus-outer {
+                    border: 0;
+                }
+
+                &::-moz-range-thumb {
+                    background-color: var(--color-icon-fill);
+                    border: 0;
+                    border-radius: 2px;
+                    height: 20px;
+                    width: 6px;
+                }
+
+                &::-moz-range-track {
+                    background-color: var(--color-entry);
+                    height: 4px;
+                }
             }
         }
 
-        // .entry-group__action__icon
+        &__effects {
+            background-color: var(--color-button-highlight-settings);
+            height: var(--setting-size);
+            left: 50%;
+            opacity: 0;
+            pointer-events: none;
+            position: absolute;
+            top: 50%;
+            translate: -50% -50%;
+            transition: opacity 0.35s;
+            width: 100%;
+            z-index: 0;
+
+            #{$entry-setting}--delete & {
+                background-color: var(--color-button-highlight-warning);
+            }
+
+            #{$entry-setting}:first-child & {
+                border-bottom-left-radius: var(--setting-border-radius);
+                border-top-left-radius: var(--setting-border-radius);
+            }
+
+            // Target both the last and second-to-last child, as the 'effects'
+            // div is always expected to be present on setting groups.
+            #{$entry-setting}:last-child &,
+            #{$entry-setting}:nth-last-child(2) & {
+                border-bottom-right-radius: var(--setting-border-radius);
+                border-top-right-radius: var(--setting-border-radius);
+            }
+
+            #{$entry-setting}__input:hover + &,
+            #{$entry-setting}__input:active + &,
+            #{$entry-setting}__input:focus + & {
+                opacity: 1;
+            }
+        }
+
+        // .entry__setting__icon
         &__icon {
             margin: auto;
+            position: relative;
 
-            // .entry-group__action__icon__path-1
+            // .entry__setting__icon--opacity-on
+            &--opacity-on {
+                display: block;
+
+                [data-opacity-on="false"] & {
+                    display: none;
+                }
+            }
+
+            // .entry__setting__icon--opacity-off
+            &--opacity-off {
+                display: none;
+
+                [data-opacity-on="false"] & {
+                    display: block;
+                }
+            }
+
+            // .entry__setting__icon--colorization-enabled
+            &--colorization-enabled {
+                display: block;
+
+                [data-colorization-enabled="false"] & {
+                    display: none;
+                }
+            }
+
+            // .entry__setting__icon--colorization-disabled
+            &--colorization-disabled {
+                display: none;
+
+                [data-colorization-enabled="false"] & {
+                    display: block;
+                }
+            }
+
+            // .entry__setting__icon__path-1
             &__path-1 {
                 fill: var(--color-icon-fill);
             }
 
-            // .entry-group__action__icon__path-2
+            // .entry__setting__icon__path-2
             &__path-2 {
-                [data-click-action="showBackgroundColorModal"] & {
-                    fill: var(--color-background-icon-fill);
-                }
+                fill: var(--color-icon-fill);
 
-                [data-click-action="showBorderColorModal"] & {
-                    fill: var(--color-border-icon-fill);
+                button:not([disabled]) & {
+                    #{$entry-setting}--background-color & {
+                        fill: var(--color-icon-fill-background-picker);
+                    }
+
+                    #{$entry-setting}--border-color & {
+                        fill: var(--color-icon-fill-border-picker);
+                    }
                 }
             }
         }
     }
 
-    // .entry-group__list
-    &__list {
-        padding: 0;
-        margin: 0;
-
-        &:empty {
-            &::after {
-                align-items: center;
-                content: "Add new or drag existing entries here to apply this treatment.";
-                display: flex;
-                font-size: 1.2rem;
-                height: 65px;
-                opacity: 0.7;
-                padding: 0 100px;
-                text-align: center;
-            }
-        }
-    }
-
-    // .entry-group__picker-modal
+    // .entry__picker-modal
     &__picker-modal {
+        animation-duration: 0.35s;
+        animation-fill-mode: forwards;
         height: 100vh;
         left: 0;
         position: fixed;
         top: 0;
+        visibility: hidden;
         width: 100vw;
+        z-index: 1;
 
-        &:not([data-is-visible="true"]) {
-            display: none;
+        &[data-is-visible="true"] {
+            animation-name: fadeModalIn;
+        }
+
+        &[data-is-visible="false"] {
+            animation-name: fadeModalOut;
+        }
+
+        @keyframes fadeModalIn {
+            0% {
+                opacity: 0;
+                visibility: hidden;
+            }
+
+            1% {
+                opacity: 0;
+                visibility: visible;
+            }
+
+            100% {
+                opacity: 1;
+                visibility: visible;
+            }
+        }
+
+        @keyframes fadeModalOut {
+            0% {
+                opacity: 1;
+                visibility: visible;
+            }
+
+            99% {
+                opacity: 0;
+                visibility: visible;
+            }
+
+            100% {
+                opacity: 0;
+                visibility: hidden;
+            }
         }
     }
 
-    // .entry-group__picker-scrim
+    // .entry__picker-scrim
     &__picker-scrim {
-        background-color: hsla(0, 0%, 0%, 0.5);
+        background-color: var(--color-picker-scrim);
         height: 100vh;
         left: 0;
         position: absolute;
@@ -307,7 +485,7 @@ main {
         width: 100vw;
     }
 
-    // .entry-group__picker
+    // .entry__picker
     &__picker {
         left: 50%;
         position: absolute;
@@ -316,167 +494,147 @@ main {
     }
 }
 
-.entry {
-    $thisEntry: &;
-    display: flex;
-    flex-direction: column;
-
-    &__primary-ui {
-        display: flex;
-        height: 65px;
-    }
-
-    &__sort-handle {
-        align-self: center;
-        cursor: move;
-
-        &__icon {
-            display: block;
-        }
-    }
-
-    &__input-container {
-        background-color: var(--color-button);
-        border-radius: 2px;
-        flex: 1 1 100%;
-        display: flex;
-        margin: 15px;
-        margin-left: 2px;
-        position: relative;
-        overflow: hidden;
-    }
-
-    &__domain-input {
-        padding: 0 0 0 8px;
-        height: 100%;
-        width: 100%;
-        margin: auto;
-    }
-
-    &__input-effects {
-        height: 100%;
-        width: 100%;
-        position: absolute;
-        border-radius: 2px;
-        overflow: hidden;
-        pointer-events: none;
-
-        &::after {
-            content: "";
-            height: 2px;
-            width: 100%;
-            bottom: 0;
-            left: 0;
-            position: absolute;
-            background-color: hsl(200, 100%, 50%);
-            transform: scaleX(0);
-            transition: transform 0.35s;
-
-            #{$thisEntry}__domain-input:focus + &,
-            #{$thisEntry}__domain-input:active + & {
-                transform: scaleX(1);
-            }
-        }
-    }
-
-    &__color-treatment-button {
-        display: flex;
-
-        #{$thisEntry}[data-active-treatment="suppress"] &,
-        #{$thisEntry}[data-active-treatment="screen"] & {
-            display: none;
-        }
-    }
-
-    &__action-container {
-        display: flex;
-        margin-left: auto;
-    }
-
-    &__action {
-        $thisEntryAction: &;
-        width: 60px;
-        display: flex;
-        position: relative;
-
-        &:hover,
-        &:focus,
-        &:active {
-            background-color: var(--color-button);
-        }
-
-        &::before {
-            content: "";
-            width: 1px;
-            height: 45px;
-            position: absolute;
-            top: 50%;
-            left: 0;
-            transform: translateY(-50%);
-            background-color: var(--color-button);
-
-            #{$thisEntryAction}:hover + &,
-            #{$thisEntryAction}:focus + &,
-            #{$thisEntryAction}:active + & {
-                display: none;
-            }
-        }
-
-        &__icon {
-            margin: auto;
-
-            &--spotlight {
-                display: none;
-
-                #{$thisEntry}[data-active-treatment="spotlight"] & {
-                    display: block;
-                }
-            }
-
-            &--suppress {
-                display: none;
-
-                #{$thisEntry}[data-active-treatment="suppress"] & {
-                    display: block;
-                }
-            }
-
-            &--screen {
-                display: none;
-
-                #{$thisEntry}[data-active-treatment="screen"] & {
-                    display: block;
-                }
-            }
-        }
-    }
-
-    & + & {
-        border-top: 1px solid var(--color-button);
-    }
-}
-
 .action-bar {
-    flex: 0 0 40px;
-    margin-top: auto;
+    background-color: var(--color-action-bar);
+    border-radius: calc(var(--action-bar-height) / 2);
+    bottom: var(--action-bar-padding);
+    box-shadow: var(--shadow-elevation-1);
     display: flex;
-    background-color: var(--color-button);
+    height: 40px;
+    left: 50%;
+    translate: -50%;
+    overflow: hidden;
+    position: fixed;
+    z-index: 1;
+
+    &:hover,
+    &:focus-within {
+        box-shadow: var(--shadow-elevation-2);
+    }
 
     // .action-bar__action
     &__action {
+        align-items: center;
         border: 0;
-        border-top: 1px solid var(--color-button-highlight-1);
-        color: hsl(0, 0%, 100%);
         cursor: pointer;
+        display: flex;
         flex: 1 1 auto;
+        padding: 0 20px;
 
         &:hover,
         &:focus,
         &:active {
-            background-color: var(--color-button-highlight-1);
-            border-color: var(--color-button-highlight-2);
+            background-color: var(--color-action-bar-highlight);
+        }
+
+        // .action-bar__action__icon
+        &__icon {
+            fill: var(--color-icon-fill);
+        }
+
+        // .action-bar__action__label
+        &__label {
+            color: var(--color-button-text);
+            font-size: 1.2rem;
+            font-weight: 300;
+            letter-spacing: 0.05rem;
+            margin: 0 6px;
         }
     }
+}
+
+/**
+ * Styles for markup provided by the TokenField library.
+ * @see https://github.com/KaneCohen/tokenfield
+ */
+.tokenfield {
+    --token-item-spacing: 5px;
+
+    // .tokenfield-set
+    &-set {
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        // .tokenfield-set-item
+        &-item {
+            --token-border-width: 2px;
+            --token-border-radius: 3px;
+
+            align-items: center;
+            border: var(--token-border-width) solid
+                var(--color-domain-token-border);
+            border-radius: var(--token-border-radius);
+            color: var(--color-domain-token-text);
+            display: flex;
+            float: left;
+            font-size: 1.2rem;
+            height: 24px;
+            margin: var(--token-item-spacing) 0 0 var(--token-item-spacing);
+            max-width: calc(100% - var(--token-item-spacing) * 2);
+
+            &.focused {
+                background-color: var(--color-domain-token-active);
+            }
+
+            .item-label {
+                cursor: pointer;
+                overflow: hidden;
+                padding: 0 8px;
+                text-overflow: ellipsis;
+            }
+
+            .item-remove {
+                align-items: center;
+                background-color: var(--color-domain-token-border);
+                border-radius: 0 var(--token-border-radius)
+                    var(--token-border-radius) 0;
+                color: var(--color-entry-input);
+                display: flex;
+                flex: 0 0 auto;
+                font-size: 1.6rem;
+                font-weight: 300;
+                height: calc(100% + var(--token-border-width) * 2);
+                justify-content: center;
+                margin-right: calc(var(--token-border-width) * -1);
+                text-decoration: none;
+                width: 20px;
+
+                &:hover,
+                &:active,
+                &:focus {
+                    background-color: var(--color-domain-token-remove-active);
+                    color: var(--color-domain-token-remove-text);
+                }
+            }
+        }
+    }
+
+    // .tokenfield-input
+    &-input {
+        float: left;
+        font-size: 1.2rem;
+        min-height: calc(24px + var(--token-item-spacing) * 2);
+        padding: var(--token-item-spacing);
+    }
+}
+
+/**
+ * Styles for markup provided by the Vanilla Picker library.
+ * @see https://github.com/Sphinxxxx/vanilla-picker
+ */
+.picker_alpha {
+    display: none;
+}
+
+/**
+ * Styles for markup provided by the Tippy.js library.
+ * @see https://github.com/atomiks/tippyjs
+ */
+.tippy-box {
+    font-size: 12px;
 }
 
 .hidden {

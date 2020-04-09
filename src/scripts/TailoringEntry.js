@@ -1,230 +1,551 @@
-const addonData = require("./addonData");
-const addonFunctions = require("./addonFunctions");
+import TokenField from "tokenfield";
+import Tippy from "tippy.js";
+import ColorPicker from "vanilla-picker";
+import addonData from "./addonData";
+import {
+    qs,
+    qsa,
+    generateTailoringEntryID,
+    getCustomPropertyValue,
+    parseHSLAString,
+    saveTailoringEntries,
+} from "./addonFunctions";
 
 /**
  * The interactive representation of a tailoring entry.
  */
 class TailoringEntry {
     /**
-     * Initialize the list entry.
+     * Initializes this tailoring entry interface.
      *
-     * @param {Object} [tailoringEntry] The tailoring settings to use for this entry.
-     * @param {boolean} [focusInput] Whether to focus this entry's domain input field on creation.
+     * @param {Object} [tailoringEntry] The settings object to base this interface on.
+     * @param {boolean} [focusInput]    Whether to focus this entry's domain input field on creation.
      */
-    constructor(
-        tailoringEntry = {
-            domain: "",
-            treatment: null,
-        },
-        focusInput = false
-    ) {
-        this.cacheData(tailoringEntry);
-        this.populateTreatmentSelect();
+    constructor(tailoringEntry = null, focusInput = false) {
+        // Save a reference to the settings this entry is based on, or create
+        // a default settings object is none are provided.
+        this.settings = tailoringEntry || {
+            id: generateTailoringEntryID(),
+            domains: [],
+            treatment: Object.assign({}, addonData.defaultTreatment),
+        };
+
+        this.cacheData();
         this.defineActions();
+        this.initializeDomainInput();
+        this.initializeOpacityInput();
+        this.initializeColorInputs();
+        this.initializeTooltips();
         this.bindEvents();
 
-        if (tailoringEntry.domain) {
-            this.domainInput.value = tailoringEntry.domain;
-            this.element.dataset.dragDisabled = false;
-        } else {
-            this.element.dataset.dragDisabled = true;
-        }
+        // Initialize this entry's dynamically-colored icons.
+        this.updateColoredIcons();
 
-        this.treatmentSelect.value = this.settings.treatment;
+        // Add this entry's UI to the container element.
+        this.container.appendChild(this.element);
 
-        this.parentGroup.entryList.appendChild(this.element);
-
+        // Focus this entry's domain input if desired.
         if (focusInput) {
-            this.domainInput.focus();
+            this.tokenFieldInput.focus({ preventScroll: true });
+            this.element.scrollIntoView({ behavior: "smooth" });
         }
     }
 
-    populateTreatmentSelect() {
-        addonData.local.tailoringTreatments.forEach(treatment => {
-            const optionElement = document.createElement("option");
-            optionElement.setAttribute("value", treatment.id);
-            optionElement.textContent = treatment.label;
-
-            this.treatmentSelect.appendChild(optionElement);
-        });
-    }
-
     /**
-     * Cache selectors and other immutable data for this entry.
+     * Caches immutable data for this entry.
      */
-    cacheData(tailoringEntry) {
-        this.settings = tailoringEntry;
+    cacheData() {
+        // The HTML template to base this entry's UI on.
+        this.elementTemplate = qs("template#tailoring-entry");
 
-        this.elementTemplate = document.querySelector("template#entry");
-
-        // This entry.
-        this.element = document
-            .importNode(this.elementTemplate.content, true)
-            .querySelector(".js-entry");
-
-        // Input elements for this entry.
-        this.domainInput = this.element.querySelector(".js-entry-domain-input");
-        this.treatmentSelect = this.element.querySelector(
-            ".js-entry-treatment-select"
+        // A copy of the template's contents to add to the DOM.
+        this.element = qs(
+            ".js-entry",
+            document.importNode(this.elementTemplate.content, true)
         );
+
+        // The container this entry will be inserted into.
+        this.container = qs(".js-entry-container");
+
+        // The input field for the domains this entry applies to.
+        this.domainInput = qs(".js-entry-domain-input", this.element);
+
+        // The drawer containing settings for this entry.
+        this.settingsDrawer = qs(".js-entry-settings-drawer", this.element);
+
+        // The toggle and input elements for this entry's opacity value.
+        this.opacityToggle = qs(".js-entry-opacity-toggle", this.element);
+        this.opacityRange = qs(".js-entry-opacity-input", this.element);
+
+        // Elements related to this entry's color-picking modals.
+        this.pickerElements = {
+            backgroundModal: qs(".js-background-picker-modal", this.element),
+            background: qs(".js-background-picker", this.element),
+            borderModal: qs(".js-border-picker-modal", this.element),
+            border: qs(".js-border-picker", this.element),
+        };
     }
 
     /**
-     * Identify and assign the entry's action buttons.
+     * Stores references to this entry's action buttons.
      */
     defineActions() {
         this.actionButtons = {};
 
-        // Assign each Node with a "data-click-action" attribute value to a
+        // Assign each Node with a [data-click-action] attribute value to a
         // matching actionButton property.
-        const actionButtons = this.element.querySelectorAll(
-            "[data-click-action]"
-        );
+        const actionButtons = qsa("[data-click-action]", this.element);
 
         actionButtons.forEach(actionButton => {
             const { clickAction } = actionButton.dataset;
             this.actionButtons[clickAction] = actionButton;
         });
+    }
 
-        // Assign a NodeList of all Nodes sharing a "data-click-action[]"
-        // attribute value to a matching actionButton property.
-        const actionButtonArrays = this.element.querySelectorAll(
-            "[data-click-action\\[\\]]"
-        );
+    /**
+     * Initializes the input that controls the domains to which this entry's
+     * treatment settings should apply.
+     */
+    initializeDomainInput() {
+        // Initialize a new TokenField to use for the domain input field.
+        // @see https://github.com/KaneCohen/tokenfield
+        this.tokenField = new TokenField({
+            el: this.domainInput,
+            setItems: this.settings.domains.map(d => ({ id: d, name: d })),
+            addItemOnBlur: true,
+        });
 
-        actionButtonArrays.forEach(actionButtonArray => {
-            const clickAction = actionButtonArray.dataset["clickAction[]"];
-            this.actionButtons[clickAction] = this.element.querySelectorAll(
-                `[data-click-action\\[\\]="${clickAction}"]`
-            );
+        // Save a reference to the TokenField's actual text input element.
+        this.tokenFieldInput = qs(".tokenfield-input", this.element);
+    }
+
+    /**
+     * Initializes the input that controls the opacity value of this entry's
+     * treatment settings.
+     */
+    initializeOpacityInput() {
+        // Initialize this entry's opacity slider to its set value.
+        this.opacityRange.value = this.settings.treatment.opacity;
+
+        // Create a special informational tooltip that displays this entry's
+        // current opacity value.
+        this.opacityRangeTooltip = new Tippy(this.opacityRange, {
+            content: this.opacityTooltipValue,
+            hideOnClick: false,
+            offset: [0, 5],
+            placement: "bottom",
         });
     }
 
     /**
-     * Attach event handlers.
+     * Initializes the colorization toggle and background/border color picker
+     * inputs for this entry.
      */
-    bindEvents() {
-        this.domainInput.addEventListener("change", () => {
-            this.element.dataset.dragDisabled = this.domainInput.value === "";
+    initializeColorInputs() {
+        // Get the current background and border alpha values.
+        const currentBackgroundAlpha = parseHSLAString(
+            this.settings.treatment.backgroundColor
+        ).alpha;
+        const currentBorderAlpha = parseHSLAString(
+            this.settings.treatment.borderColor
+        ).alpha;
 
-            addonFunctions.syncTailoringEntriesToStorage();
+        // If both alpha values are at zero, assume colorization is disabled.
+        if (currentBackgroundAlpha === "0" && currentBorderAlpha === "0") {
+            this.colorizationEnabled = false;
+        }
+
+        // Initialize this entry's background color picker.
+        this.backgroundPicker = new ColorPicker({
+            color: this.settings.treatment.backgroundColor,
+            parent: this.pickerElements.background,
+            popup: false,
         });
 
-        this.domainInput.addEventListener("input", () =>
-            this.parentGroup.validateEntries(
-                () => this.parentGroup.enableNewEntries(),
-                () => this.parentGroup.disableNewEntries()
-            )
+        this.backgroundPicker.onChange = newColor =>
+            this.setTreatmentProperty("backgroundColor", newColor.hslaString);
+
+        this.backgroundPicker.onDone = () => {
+            this.backgroundColorModalIsVisible = false;
+        };
+
+        // Save a reference to the background picker's input element.
+        this.pickerElements.backgroundInput = qs(
+            ".picker_editor input",
+            this.pickerElements.background
         );
 
-        this.domainInput.addEventListener("keypress", e => {
+        // Initialize this entry's border color picker.
+        this.borderPicker = new ColorPicker({
+            color: this.settings.treatment.borderColor,
+            parent: this.pickerElements.border,
+            popup: false,
+        });
+
+        this.borderPicker.onChange = newColor =>
+            this.setTreatmentProperty("borderColor", newColor.hslaString);
+
+        this.borderPicker.onDone = () => {
+            this.borderColorModalIsVisible = false;
+        };
+
+        // Save a reference to the border picker's input element.
+        this.pickerElements.borderInput = qs(
+            ".picker_editor input",
+            this.pickerElements.border
+        );
+    }
+
+    /**
+     * Initializes tooltips for this entry.
+     */
+    initializeTooltips() {
+        this.tooltipTargets = qsa("[data-tippy]", this.element);
+
+        Tippy(this.tooltipTargets, {
+            content: reference => reference.getAttribute("aria-label"),
+            offset: [0, 5],
+            placement: "bottom",
+        });
+    }
+
+    /**
+     * Attaches event handlers.
+     */
+    bindEvents() {
+        // Save all entries when the domain tokens change. Note that this uses
+        // the NodeJS Event API as implemented by the TokenField library.
+        // @see https://nodejs.org/api/events.html#events_emitter_on_eventname_listener
+        this.tokenField.on("change", () => {
+            // Get the raw TokenField values as an array of strings and apply it
+            // to this entry's settings object.
+            const domainArray = this.tokenField.getItems().map(i => i.name);
+            this.settings.domains = domainArray;
+
+            saveTailoringEntries("entry-domains", [this.settings.id]);
+        });
+
+        // Respond to keyboard events in the TokenField.
+        this.tokenFieldInput.addEventListener("keydown", e => {
+            // Disallow spaces within the TokenField's input.
             if (e.key === " ") e.preventDefault();
         });
 
-        this.treatmentSelect.addEventListener("change", e => {
-            this.element.dataset.activeTreatment = e.target.value;
+        // Open and close this entry's settings drawer.
+        this.actionButtons.toggleSettingsDrawer.addEventListener("click", () =>
+            this.toggleSettingsDrawer()
+        );
 
-            // Identify the newly selected treatment group and move this entry
-            // to that group, updating the UI to match.
-            const newTreatmentGroup = addonFunctions.getTailoringGroupByTreatmentID(
-                e.target.value
+        // Scroll this entry's settings drawer into view when it opens.
+        this.settingsDrawer.addEventListener("transitionend", e => {
+            // Only respond to changes in height.
+            if (e.propertyName !== "height") {
+                return;
+            }
+
+            // Only proceed if the drawer was opened.
+            if (!this.settingsDrawerIsOpen) {
+                return;
+            }
+
+            // Calculate how far from the bottom of the entry container to
+            // scroll to ensure that this settings drawer is not obscured by the
+            // floating action bar when opened.
+            const drawerBottom = this.settingsDrawer.getBoundingClientRect()
+                .bottom;
+            const distanceToContainerBottom =
+                this.container.clientHeight - drawerBottom;
+            const actionBarHeight = getCustomPropertyValue(
+                "--action-bar-height",
+                "px"
             );
-            this.move(
-                newTreatmentGroup.entries.length,
-                newTreatmentGroup,
-                true
+            const actionBarPadding = getCustomPropertyValue(
+                "--action-bar-padding",
+                "px"
             );
+            const actionBarOffset = actionBarHeight + actionBarPadding * 2;
+            const scrollAmount = actionBarOffset - distanceToContainerBottom;
+
+            if (scrollAmount <= 0) {
+                return;
+            }
+
+            this.container.scrollBy({
+                top: scrollAmount,
+                behavior: "smooth",
+            });
         });
 
+        // Toggle the opacity setting for this entry's treatment between
+        // minimum/maximum values on click.
+        this.opacityToggle.addEventListener("click", () => {
+            const newRangeValue = this.opacityRange.value === "0" ? "100" : "0";
+
+            // Update the range input's value and programmatically trigger an
+            // input event.
+            this.opacityRange.value = newRangeValue;
+            this.opacityRange.dispatchEvent(new Event("input"));
+        });
+
+        // Update the opacity setting for this entry's treatment on input.
+        this.opacityRange.addEventListener("input", e => {
+            this.settings.treatment.opacity = +e.target.value;
+
+            // Insert the current value into the input's tooltip.
+            this.opacityRangeTooltip.setContent(this.opacityTooltipValue);
+
+            // Update the toggle button to display an appropriate icon.
+            this.opacityToggle.dataset.opacityOn = +e.target.value > 0;
+
+            saveTailoringEntries("entry-opacity", [this.settings.id]);
+        });
+
+        // Toggle this entry's colorization setting on click.
+        this.actionButtons.toggleColorization.addEventListener("click", () => {
+            this.colorizationEnabled = !this.colorizationEnabled;
+        });
+
+        // Show this entry's background color picker modal on click.
+        this.actionButtons.showBackgroundColorModal.addEventListener(
+            "click",
+            () => {
+                this.backgroundColorModalIsVisible = true;
+            }
+        );
+
+        // Hide this entry's background color picker modal on click.
+        this.actionButtons.hideBackgroundColorModal.addEventListener(
+            "click",
+            () => {
+                this.backgroundColorModalIsVisible = false;
+            }
+        );
+
+        // Move focus in and out of this entry's background color picker modal
+        // after its hide/show animation completes.
+        this.pickerElements.backgroundModal.addEventListener(
+            "animationend",
+            e => {
+                if (e.animationName === "fadeModalIn") {
+                    this.pickerElements.backgroundInput.focus();
+                }
+
+                if (e.animationName === "fadeModalOut") {
+                    this.actionButtons.showBackgroundColorModal.focus();
+                }
+            }
+        );
+
+        // Show this entry's border color picker modal on click.
+        this.actionButtons.showBorderColorModal.addEventListener(
+            "click",
+            () => {
+                this.borderColorModalIsVisible = true;
+            }
+        );
+
+        // Hide this entry's border color picker modal on click.
+        this.actionButtons.hideBorderColorModal.addEventListener(
+            "click",
+            () => {
+                this.borderColorModalIsVisible = false;
+            }
+        );
+
+        // Move focus in and out of this entry's border color picker modal after
+        // its hide/show animation completes.
+        this.pickerElements.borderModal.addEventListener("animationend", e => {
+            if (e.animationName === "fadeModalIn") {
+                this.pickerElements.borderInput.focus();
+            }
+
+            if (e.animationName === "fadeModalOut") {
+                this.actionButtons.showBorderColorModal.focus();
+            }
+        });
+
+        // Delete this entry on click.
         this.actionButtons.deleteEntry.addEventListener("click", () =>
             this.delete()
         );
     }
 
-    get parentGroup() {
-        return addonFunctions.getTailoringGroupByTreatmentID(
-            this.settings.treatment
-        );
-    }
-
     /**
-     * Gets the position of this entry among others in its group.
+     * The index of this entry among all current entries.
      */
     get index() {
-        return this.parentGroup.entries.indexOf(this);
+        return addonData.runtime.tailoringEntryObjects.indexOf(this);
     }
 
     /**
-     * Get the value of the entry as an object.
+     * The current state of this entry's settings drawer.
      */
-    get value() {
-        return {
-            domain: this.domainInput.value,
-            treatment: this.treatmentSelect.value,
-        };
+    get settingsDrawerIsOpen() {
+        return this.settingsDrawer.dataset.isOpen === "true";
+    }
+
+    set settingsDrawerIsOpen(newDrawerState) {
+        this.settingsDrawer.dataset.isOpen = newDrawerState;
+        this.actionButtons.toggleSettingsDrawer.dataset.actionActive = newDrawerState;
     }
 
     /**
-     * Moves this entry within or between groups.
-     *
-     * @param {integer} targetIndex - The index in the target group where this entry should be placed.
-     * @param {integer} targetGroup - The group to which the moved entry should be assigned.
-     * @param {boolean} updateUI - Whether the entry's element should be removed and added to the new list.
+     * The current state of this entry's colorization setting. Disabling
+     * colorization simply sets the alpha transparency of the existing
+     * border/background colors to 0. This "removes" the coloring but preserves
+     * the HSL values so they can be reenabled later.
      */
-    move(targetIndex, targetGroup = this.parentGroup, updateUI = false) {
-        let entry = this;
-
-        // Remove this entry from its current position in its parent group's
-        // entry array.
-        entry.parentGroup.entries.splice(entry.index, 1);
-
-        if (updateUI) {
-            // Remove the entry's element and reinitialize it to manually create
-            // a new one.
-            entry.element.remove();
-            entry = new TailoringEntry({
-                domain: this.value.domain,
-                treatment: targetGroup.treatment.id,
-            });
-            targetGroup.entries.push(entry);
-        } else {
-            // Insert this entry's object into the target group's entry array.
-            targetGroup.entries.splice(targetIndex, 0, entry);
-        }
-
-        // Update the entry's treatment type if switching groups.
-        if (targetGroup !== entry.parentGroup) {
-            entry.settings.treatment = targetGroup.treatment.id;
-            entry.treatmentSelect.value = targetGroup.treatment.id;
-            entry.element.dataset.activeTreatment = targetGroup.treatment.id;
-        }
-
-        addonFunctions.syncTailoringEntriesToStorage();
+    get colorizationEnabled() {
+        return (
+            this.actionButtons.toggleColorization.dataset
+                .colorizationEnabled === "true"
+        );
     }
 
-    /**
-     * Remove the entry from its parent list.
-     */
-    delete() {
-        this.parentGroup.entries.splice(this.index, 1);
-        this.element.remove();
+    set colorizationEnabled(newState) {
+        this.actionButtons.toggleColorization.dataset.colorizationEnabled = newState;
 
-        this.parentGroup.validateEntries(
-            () => this.parentGroup.enableNewEntries(),
-            () => this.parentGroup.disableNewEntries()
+        // Disable the background/border color picker buttons.
+        this.actionButtons.showBackgroundColorModal.disabled = !newState;
+        this.actionButtons.showBorderColorModal.disabled = !newState;
+
+        // Determine the new alpha value to apply to this entry's background and
+        // border colors. Disabling colorization simply sets the alpha values of
+        // the existing colors to 0, preserving their other values.
+        const alpha = newState === true ? 1 : 0;
+
+        // Update the alpha value of this entry's background color to the
+        // appropriate value.
+        const currentBackgroundColor = this.settings.treatment.backgroundColor;
+        const bkg = parseHSLAString(currentBackgroundColor);
+        this.backgroundPicker.setColor(
+            `hsla(${bkg.hue},${bkg.saturation},${bkg.lightness},${alpha})`
         );
 
-        addonFunctions.syncTailoringEntriesToStorage();
+        // Update the alpha value of this entry's border color to the
+        // appropriate value.
+        const currentBorderColor = this.settings.treatment.borderColor;
+        const bdr = parseHSLAString(currentBorderColor);
+        this.borderPicker.setColor(
+            `hsla(${bdr.hue},${bdr.saturation},${bdr.lightness},${alpha})`
+        );
     }
 
     /**
-     * Test the entry's validity.
-     * @returns {boolean} - Whether or not this entry is valid.
+     * The current state of this entry's border color modal.
      */
-    validate() {
-        const validityRequirements = [this.domainInput.value !== ""];
+    set backgroundColorModalIsVisible(newModalState) {
+        this.pickerElements.backgroundModal.dataset.isVisible = !!newModalState;
+    }
 
-        return !validityRequirements.includes(false);
+    /**
+     * The current state of this entry's background color modal.
+     */
+    set borderColorModalIsVisible(newModalState) {
+        this.pickerElements.borderModal.dataset.isVisible = !!newModalState;
+    }
+
+    /**
+     * The current value of this entry's opacity tooltip.
+     */
+    get opacityTooltipValue() {
+        let tooltip = this.opacityRange.getAttribute("aria-label");
+        const roundedOpacityValue = Math.round(this.opacityRange.value * 100);
+
+        if (roundedOpacityValue === 0) {
+            tooltip += ` (results hidden)`;
+        } else {
+            tooltip += ` (${roundedOpacityValue}%)`;
+        }
+
+        return tooltip;
+    }
+
+    /**
+     * Updates this entry's treatment, applying appropriate side effects based
+     * on the updated property.
+     *
+     * @param {string} property - The treatment property to update.
+     * @param {object} newValue - The updated value to apply.
+     */
+    setTreatmentProperty(property, newValue) {
+        // Update this property's value.
+        this.settings.treatment[property] = newValue;
+
+        if (property === "borderColor") {
+            this.updateColoredIcons(["borderColor"]);
+        }
+
+        if (property === "backgroundColor") {
+            this.updateColoredIcons(["backgroundColor"]);
+        }
+
+        saveTailoringEntries(`entry-${property}`, [this.settings.id]);
+    }
+
+    /**
+     * Synchronizes any dynamically-colored icons with the appropriate entry
+     * setting.
+     *
+     * @param {array} iconsToUpdate - The colorized icons to update.
+     */
+    updateColoredIcons(iconsToUpdate = ["backgroundColor", "borderColor"]) {
+        if (iconsToUpdate.includes("backgroundColor")) {
+            this.actionButtons.showBackgroundColorModal.style.setProperty(
+                "--color-icon-fill-background-picker",
+                this.settings.treatment.backgroundColor
+            );
+        }
+
+        if (iconsToUpdate.includes("borderColor")) {
+            this.actionButtons.showBorderColorModal.style.setProperty(
+                "--color-icon-fill-border-picker",
+                this.settings.treatment.borderColor
+            );
+        }
+    }
+
+    /**
+     * Toggles the open state of this entry's settings drawer.
+     *
+     * @param {boolean|null} shouldBeOpen - Whether to force the drawer to its open state.
+     */
+    toggleSettingsDrawer(shouldBeOpen = null) {
+        // Determine the drawer's new state, preferring the passed state but
+        // falling back to the opposite of its current state.
+        const newOpenSetting =
+            shouldBeOpen !== null ? shouldBeOpen : !this.settingsDrawerIsOpen;
+
+        // If opening the drawer, close all others first.
+        if (newOpenSetting === true) {
+            TailoringEntry.closeAllSettingsDrawers();
+        }
+
+        this.settingsDrawerIsOpen = newOpenSetting;
+    }
+
+    /**
+     * Removes this entry's UI from the popup interface, deletes its runtime
+     * data, and saves the updated data to storage.
+     */
+    delete() {
+        this.element.remove();
+
+        addonData.runtime.tailoringEntries.splice(this.index, 1);
+        addonData.runtime.tailoringEntryObjects.splice(this.index, 1);
+
+        saveTailoringEntries("entry-removed");
+    }
+
+    /**
+     * Closes all settings drawers.
+     */
+    static closeAllSettingsDrawers() {
+        addonData.runtime.tailoringEntryObjects.forEach(entryObject => {
+            const thisEntry = entryObject;
+
+            thisEntry.settingsDrawerIsOpen = false;
+        });
     }
 }
 

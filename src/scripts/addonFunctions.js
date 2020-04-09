@@ -1,209 +1,178 @@
-const addonData = require("./addonData");
+import addonData from "./addonData";
 
 /**
- * Functions used by multiple scripts in the addon.
+ * Queries for the first match of a given selector within a given element. A
+ * convenience shorthand for the `Element.querySelector()` method.
+ *
+ * @param {string} selector - The selector to query.
+ * @param {ParentNode} context - The node on which to perform the query.
+ *
+ * @returns {Element} The first element that matches the passed selector in the given context.
  */
-const addonFunctions = {
-    /**
-     * Apply the settings from a particular tailoring treatment to the
-     * appropriate attributes of an HTML element.
-     * @param {object} tailoringTreatment - The tailoring treatment to apply styles from.
-     * @param {object} elementToStyle - The HTML element to apply the treatment's properties to.
-     * @param {bool} applyTitle - Whether or not to also apply the treatment's label as the element's title attribute.
-     */
-    applyTailoringTreatmentToElement(
-        tailoringTreatment,
-        elementToStyle,
-        applyTitle = false
-    ) {
-        const element = elementToStyle;
+export function qs(selector, context = document) {
+    return context.querySelector(selector);
+}
 
-        // Style the supplied element with 8-character hex notation.
-        element.style.backgroundColor = tailoringTreatment.backgroundColor;
-        element.style.borderColor = tailoringTreatment.borderColor;
+/**
+ * Queries for all matches of a given selector within a given element. A
+ * convenience shorthand for the `Element.querySelectorAll()` method.
+ *
+ * @param {string} selector - The selector to query.
+ * @param {ParentNode} context - The node on which to perform the query.
+ *
+ * @returns {NodeListOf<Element>} All elements that match the passed selector in the given context.
+ */
+export function qsa(selector, context = document) {
+    return context.querySelectorAll(selector);
+}
 
-        if (applyTitle) {
-            element.title = tailoringTreatment.label;
-        }
-    },
+/**
+ * Generates a new unique tailoring entry ID.
+ *
+ * @param {Number} maxRandomInt The multiplication factor to apply to the random ID generation.
+ */
+export function generateTailoringEntryID(maxRandomInt = 100000) {
+    const currentTimestamp = Date.now();
+    const randomInt = Math.floor(Math.random() * Math.floor(maxRandomInt));
 
-    /**
-     * Converts a given hex color string value into HSL (Hue, Saturation,
-     * Lightness) values, either as an array or a CSS-compatible string.
-     * @param {string} hexString - The hex value to be converted.
-     * @param {boolean} returnAsString - Whether or not to return the converted value as a CSS-compatible string. Defaults to false.
-     * @param {integer} [alphaValue] - An optional alpha value to apply when outputting as a string, between 0 and 1 inclusive. Defaults to 1.
-     */
-    hexToHSL(hexString, returnAsString = false, alphaValue = 1) {
-        if (!hexString) {
-            return console.error(
-                "hexToHSL function requires a valid hex string."
-            );
-        }
+    return `${currentTimestamp}-${randomInt}`;
+}
 
-        const r = parseInt(hexString.substr(1, 2), 16) / 255;
-        const g = parseInt(hexString.substr(3, 2), 16) / 255;
-        const b = parseInt(hexString.substr(5, 2), 16) / 255;
-        const max = Math.max(r, g, b);
-        const min = Math.min(r, g, b);
-
-        let hue;
-        let saturation;
-        const lightness = (max + min) / 2;
-
-        if (max === min) {
-            hue = 0;
-            saturation = 0;
-        } else {
-            const delta = max - min;
-
-            switch (max) {
-                case r:
-                    hue = (g - b) / delta + (g < b ? 6 : 0);
-                    break;
-                case g:
-                    hue = (b - r) / delta + 2;
-                    break;
-                case b:
-                    hue = (r - g) / delta + 4;
-                    break;
-                default:
-                    break;
-            }
-
-            hue = Math.round(hue / (6 / 360));
-            saturation =
-                lightness > 0.5 ? delta / (2 - max - min) : delta / (max + min);
-        }
-
-        if (returnAsString) {
-            return `hsla(${hue}, ${saturation * 100}%, ${lightness *
-                100}%, ${alphaValue})`;
-        }
-
-        return [hue, saturation, lightness];
-    },
-
-    /**
-     * Logs an error.
-     *
-     * @param {*} error The error output to log.
-     */
-    logError(error) {
-        console.error(error);
-    },
-
-    /**
-     * Synchronize the list's current entries with the browser.storage API,
-     * then reinitialize the addon in any tabs affected by the extension.
-     */
-    syncTailoringEntriesToStorage() {
-        let allEntryValues = [];
-
-        addonData.local.tailoringGroups.forEach(tailoringGroup => {
-            allEntryValues = allEntryValues.concat(tailoringGroup.entryValues);
-        });
-
-        const validTailoringEntries = allEntryValues.filter(
-            entryValues => entryValues.domain !== ""
-        );
-
+/**
+ * Retrieves the addon's current user data using the browser storage API and
+ * saves a local working copy. If the requested data isn't found, it falls
+ * back to the addon's defined default values.
+ *
+ * @param {string[]} requestedStorageData The storage items to retrieve, defaulting to all.
+ *
+ * @returns {Promise} A Promise resolving to the data saved as the local working copy.
+ */
+export function getUserData(
+    requestedStorageData = ["tailoringEntries", "searchEngines"]
+) {
+    const userDataPromise = new Promise((resolve, reject) => {
         browser.storage.sync
-            .set({ tailoringEntries: validTailoringEntries })
-            .then(null, addonFunctions.logError);
-    },
+            .get(requestedStorageData)
+            .then(storageData => {
+                requestedStorageData.forEach(dataType => {
+                    addonData.runtime[dataType] = [];
 
-    /**
-     * Synchronize the current tailoring templates with the browser.storage API.
-     */
-    syncTailoringTreatmentsToStorage() {
-        browser.storage.sync
-            .set({
-                tailoringTreatments: addonData.local.tailoringTreatments,
+                    if (storageData[dataType] && storageData[dataType].length) {
+                        addonData.runtime[dataType] = storageData[dataType];
+                    } else {
+                        addonData.runtime[dataType] =
+                            addonData.defaultUserData[dataType];
+                    }
+                });
+
+                resolve(addonData.runtime);
             })
-            .then(null, addonFunctions.logError);
-    },
+            .catch(error => reject(error));
+    });
 
-    /**
-     * Generates a new unique tailoring treatment ID.
-     *
-     * @param {String} treatmentType The type of treatment, which is prepended to the ID.
-     * @param {Number} maxRandomInt The multiplication factor to apply to the random ID generation.
-     */
-    generateTailoringTreatmentID(
-        treatmentType = "spotlight",
-        maxRandomInt = 100000
-    ) {
-        const currentTimestamp = Date.now();
-        const randomInt = Math.floor(Math.random() * Math.floor(maxRandomInt));
+    return userDataPromise;
+}
 
-        return `${treatmentType}:${currentTimestamp}-${randomInt}`;
-    },
+/**
+ * Parses an HSLA-format color string and extracts the individual values,
+ * returning them as an object.
+ *
+ * @param {string} hslaString The HSLA string from which to parse values.
+ */
+export function parseHSLAString(hslaString) {
+    // Remove all whitespace from the HSLA string.
+    const sanitizedHslaString = hslaString.replace(/\s/g, "");
 
-    /**
-     * Retrieves the data of the tailoring treatment using the provided ID.
-     *
-     * @param {String} treatmentID The ID of the treatment to retrieve.
-     *
-     * @returns {Object|undefined} The requested tailoring treatment, or undefined if not found.
-     */
-    getTailoringTreatmentByID(treatmentID) {
-        return addonData.local.tailoringTreatments.find(
-            treatment => treatment.id === treatmentID
-        );
-    },
+    // Define a regular expression for capturing HSLA values.
+    const hslaStringRegEx = /hsla\((\d*\.?\d+),(\d*\.?\d+%),(\d*\.?\d+%),(\d*\.?\d+)\)/;
 
-    /**
-     * Retrieves the TailoringGroup object with the provided treatment ID.
-     *
-     * @param {String} treatmentID The treatment ID to search against
-     *
-     * @returns {TailoringGroup} The TailoringGroup with the matching treatment ID, or undefined if none.
-     */
-    getTailoringGroupByTreatmentID(treatmentID) {
-        return addonData.local.tailoringGroups.find(
-            tailoringGroup => tailoringGroup.treatment.id === treatmentID
-        );
-    },
+    // Initialize return values.
+    let hue = "0";
+    let saturation = "0%";
+    let lightness = "0%";
+    let alpha = "1";
 
-    /**
-     * Retrieves the addon's current user data using the browser storage API and
-     * saves a local working copy. If the requested data isn't found, it falls
-     * back to the addon's defined default values.
-     *
-     * @returns {Promise} A Promise resolving to the data saved as the local working copy.
-     */
-    getUserData() {
-        const requestedStorageData = [
-            "tailoringEntries",
-            "tailoringTreatments",
-        ];
+    // Parse the HSLA string and update return values with matches.
+    [, hue, saturation, lightness, alpha] = sanitizedHslaString.match(
+        hslaStringRegEx
+    );
 
-        const userDataPromise = new Promise((resolve, reject) => {
-            browser.storage.sync
-                .get(requestedStorageData)
-                .then(storageData => {
-                    requestedStorageData.forEach(dataType => {
-                        addonData.local[dataType] = [];
+    return { hue, saturation, lightness, alpha };
+}
 
-                        if (
-                            storageData[dataType] &&
-                            storageData[dataType].length
-                        ) {
-                            addonData.local[dataType] = storageData[dataType];
-                        } else {
-                            addonData.local[dataType] =
-                                addonData.defaultUserData[dataType];
-                        }
-                    });
+/**
+ * Retrieves the value of a CSS custom property set on the root of the page.
+ *
+ * @param {string} customProperty The name of the CSS custom property to retrieve.
+ * @param {string} unitToStrip The expected unit of the property to attempt to remove.
+ *
+ * @returns {string|number|null} The custom property string value, as an int if a unit is stripped, or null if not found.
+ */
+export function getCustomPropertyValue(customProperty, unitToStrip = "") {
+    const root = document.querySelector("html");
+    const propertyValue = window
+        .getComputedStyle(root)
+        .getPropertyValue(customProperty);
 
-                    resolve(addonData.local);
-                })
-                .catch(error => reject(error));
-        });
+    if (!propertyValue) {
+        return null;
+    }
 
-        return userDataPromise;
-    },
-};
+    if (unitToStrip) {
+        return +propertyValue.replace(unitToStrip, "");
+    }
 
-module.exports = addonFunctions;
+    return propertyValue;
+}
+
+/**
+ * Logs an error.
+ *
+ * @param {*} error The error output to log.
+ */
+export function logError(error) {
+    console.error(error);
+}
+
+/**
+ * Determines whether a passed string is valid JSON.
+ *
+ * @param {string} json The JSON string to check for validity.
+ *
+ * @returns {boolean} Whether the passed string is valid JSON.
+ */
+export function isValidJson(json) {
+    try {
+        JSON.parse(json);
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+/**
+ * Save the current tailoring entries via the browser storage API.
+ */
+export function saveTailoringEntries(changeType, updatedEntryIDs = null) {
+    // Get the settings of all existing entry objects. This is largely to make
+    // sure we get them in the order represented in the popup UI.
+    const entrySettings = addonData.runtime.tailoringEntryObjects.map(
+        entryObject => entryObject.settings
+    );
+
+    // Record information about this change to communicate to the extension's
+    // other scripts, allowing them to respond accordingly.
+    const changeInfo = {
+        type: `change:${changeType}`,
+        updatedEntryIDs,
+    };
+
+    // Send a message about this change to each tab's content script.
+    browser.tabs.query({}).then(tabs => {
+        tabs.forEach(tab => browser.tabs.sendMessage(tab.id, changeInfo));
+    });
+
+    browser.storage.sync
+        .set({ tailoringEntries: entrySettings })
+        .then(null, logError);
+}

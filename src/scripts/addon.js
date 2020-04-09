@@ -1,165 +1,112 @@
-const addonData = require("./addonData");
-const addonFunctions = require("./addonFunctions");
+import addonData from "./addonData";
+import { qs, qsa, getUserData } from "./addonFunctions";
 
 /* Class representing a user's search that is eligible for tailoring. */
-class TailorableSearch {
-    /**
-     * Create a new Tailorable Search, attached to the current window.
-     * @param {object} searchWindow - The window object of the tab containing a
-     * valid search.
-     */
-    constructor(searchWindow) {
-        this.document = searchWindow.document;
-
-        // Identify which of the predefined search engines we're targeting,
-        // returning if one isn't found.
+class TailoredSearch {
+    constructor() {
+        // Identify which of the predefined search engines was used for this
+        // search, if any.
         this.searchEngine = addonData.searchEngines.find(searchEngine =>
-            RegExp(searchEngine.matchPattern).test(searchWindow.location)
+            RegExp(searchEngine.matchPattern).test(window.location)
         );
 
-        if (!this.searchEngine) return false;
+        // Only proceed if this is a supported search engine.
+        if (!this.searchEngine) {
+            return;
+        }
 
-        this.tailorResults();
+        // Only proceed if the user has this search engine enabled.
+        const searchEngineIsEnabled = addonData.runtime.searchEngines.find(
+            searchEngine => searchEngine.id === this.searchEngine.id
+        ).enabled;
+
+        if (!searchEngineIsEnabled) {
+            return;
+        }
+
+        this.cacheData();
+
+        // If this search engine loads results asynchronously, apply tailoring
+        // when its results change. Otherwise, simply tailor on load.
+        if (this.searchEngine.observe) {
+            this.tailorOnMutation();
+        } else {
+            this.tailor();
+        }
+
+        // Reapply tailoring when sent a targeted change message. The message
+        // denotes which entry IDs to apply changes for, allowing patch updates.
+        browser.runtime.onMessage.addListener(message => {
+            // Only proceed if this is a change message.
+            if (!message.type.startsWith("change")) {
+                return;
+            }
+
+            // Refresh the current user data and re-tailor the appropriate
+            // search results.
+            getUserData().then(() => {
+                this.tailor(message.updatedEntryIDs);
+            });
+        });
     }
 
     /**
-     * Get the current search result container.
+     * Caches immutable data for this tailored search.
      */
-    get searchResultsContainer() {
-        return this.document.querySelector(
+    cacheData() {
+        // The element containing the list of search results.
+        this.searchResultsContainer = qs(
             this.searchEngine.selectors.resultContainer
         );
+
+        // The selector used to identify treatment panels.
+        this.treatmentPanelSelector =
+            ".treatment-panel, [data-treatment-panel]";
     }
 
     /**
-     * Get all current search results.
+     * Customizes all search results on the current page that match one of the
+     * provided tailoring entries.
+     *
+     * @param {string[]} tailoringEntryIDs The IDs of the tailoring entries to apply tailoring for, defaulting to all.
+     */
+    tailor(tailoringEntryIDs = null) {
+        this.applyEntryIdAttributes(tailoringEntryIDs);
+        this.insertTreatmentPanels();
+        this.applyTreatments(tailoringEntryIDs);
+
+        this.pruneTailoredResults();
+    }
+
+    /**
+     * The current search results.
      */
     get searchResults() {
-        return this.searchResultsContainer.querySelectorAll(
-            this.searchEngine.selectors.result
+        return Array.from(
+            qsa(this.searchEngine.selectors.result, this.searchResultsContainer)
         );
     }
 
     /**
-     * Get all current search results that have a treatment applied to them.
+     * The currently tailored search results.
      */
-    get tailoredResults() {
-        return this.searchResultsContainer.querySelectorAll(
-            "[data-tailoring-treatment]"
+    get tailoredSearchResults() {
+        return Array.from(
+            qsa("[data-tailoring-entry-id]", this.searchResultsContainer)
         );
     }
 
     /**
-     * Remove all treatments from the current search results.
+     * Observes mutations to this search's results container, tailoring the
+     * results whenever they change.
      */
-    resetTailoring() {
-        this.tailoredResults.forEach(tailoredResult =>
-            tailoredResult.removeAttribute("data-tailoring-treatment")
-        );
-    }
-
-    /**
-     * Get the current user-defined list of tailoring entries, then apply fresh
-     * treatments to matching search results.
-     */
-    tailorResults() {
-        this.resetTailoring();
-
-        /**
-         * Apply the appropriate treatment to each result that matches an entry
-         * from the user-defined list of tailoring entries.
-         *
-         * @param {object} storageData - Freshly retrieved data from the extension's synchronized storage.
-         */
-        const applyTailoringTreatments = storageData => {
-            if (!storageData.searchEngines[this.searchEngine.name].enabled)
-                return;
-
-            // If this search engine loads results asynchronously, watch its
-            // results container for changes.
-            if (this.searchEngine.observe) this.setUpObserver();
-
-            // Cache the current search results.
-            const currentSearchResults = Array.from(this.searchResults);
-
-            // Filter the search results against each user-defined tailoring
-            // entry, applying treatments to matching results.
-            storageData.tailoringEntries.forEach(tailoringEntry => {
-                const matchingResults = currentSearchResults.filter(result =>
-                    RegExp(`.*://.*.?${tailoringEntry.domain}.*`).test(
-                        result.querySelector(
-                            this.searchEngine.selectors.resultLink
-                        )
-                    )
-                );
-
-                matchingResults.forEach(matchingResult => {
-                    const thisResult = matchingResult;
-                    // If this treatment needs to be spotlit, create a new
-                    // element and apply the appropriate tailoring treatment
-                    // styles to it.
-                    if (tailoringEntry.treatment.startsWith("spotlight")) {
-                        const newTreatmentDiv = document.createElement("div");
-
-                        // Some search engines apparently observe DOM mutations
-                        // and block the insertion of elements with classes into
-                        // search results (coughBINGcough). In such cases, add a
-                        // data attribute to style against instead.
-                        if (this.searchEngine.styleViaAttribute) {
-                            newTreatmentDiv.dataset.treatmentPanel = "";
-                        } else {
-                            newTreatmentDiv.classList.add("treatment-panel");
-                        }
-
-                        const tailoringTreatment = storageData.tailoringTreatments.find(
-                            treatment =>
-                                treatment.id === tailoringEntry.treatment
-                        );
-
-                        addonFunctions.applyTailoringTreatmentToElement(
-                            tailoringTreatment,
-                            newTreatmentDiv
-                        );
-
-                        const existingTreatmentDiv = thisResult.querySelector(
-                            ".treatment-panel, [data-treatment-panel]"
-                        );
-
-                        if (existingTreatmentDiv) {
-                            thisResult.replaceChild(
-                                newTreatmentDiv,
-                                existingTreatmentDiv
-                            );
-                        } else {
-                            thisResult.insertAdjacentElement(
-                                "afterbegin",
-                                newTreatmentDiv
-                            );
-                        }
-                    }
-
-                    thisResult.dataset.tailoringTreatment =
-                        tailoringEntry.treatment;
-                });
-            });
-        };
-
-        browser.storage.sync
-            .get(addonData.defaultUserData)
-            .then(applyTailoringTreatments, addonFunctions.logError);
-    }
-
-    /**
-     * Observe mutations to this search page's results container, tailoring the
-     * results appropriately whenever they change.
-     */
-    setUpObserver() {
+    tailorOnMutation() {
         // Disconnect any existing observers.
         if (this.searchObserver) this.searchObserver.disconnect();
 
         // Create a new observer to tailor currently-matching entries on
         // mutation.
-        this.searchObserver = new MutationObserver(() => this.tailorResults());
+        this.searchObserver = new MutationObserver(() => this.tailor());
 
         // Have the observer watch for changes to the current page's search
         // results.
@@ -167,21 +114,159 @@ class TailorableSearch {
             childList: true,
         });
     }
+
+    /**
+     * Applies a data attribute to each search result matching the tailoring
+     * entry that applies to it, if any.
+     *
+     * @param {string[]} tailoringEntryIDs The IDs of the tailoring entries to apply attributes for, defaulting to all.
+     */
+    applyEntryIdAttributes(tailoringEntryIDs = null) {
+        // Apply IDs for all entries by default.
+        let entriesToApply = addonData.runtime.tailoringEntries;
+
+        // Apply IDs only to a specific entry if an ID is provided.
+        if (tailoringEntryIDs) {
+            entriesToApply = entriesToApply.filter(tailoringEntry =>
+                tailoringEntryIDs.includes(tailoringEntry.id)
+            );
+        }
+
+        // Get the search results matching each existing entry, and apply that
+        // entry's ID to the result as a data attribute.
+        entriesToApply.forEach(tailoringEntry => {
+            // Combine all of this entry's listed domains into a single,
+            // RegEx compatible string.
+            const entryDomains = tailoringEntry.domains.join("|");
+
+            // Create an array of all current search results that match this
+            // entry.
+            this.searchResults.forEach(result => {
+                const thisResult = result;
+
+                // Only proceed if this result matches the current tailoring
+                // entry.
+                const isMatchingResult = !entryDomains
+                    ? false
+                    : RegExp(`.*://.*.?${entryDomains}.*`).test(
+                          qs(this.searchEngine.selectors.resultLink, thisResult)
+                      );
+
+                if (!isMatchingResult) {
+                    // If this result no longer matches a tailoring entry, mark
+                    // it for pruning.
+                    if (
+                        thisResult.dataset.tailoringEntryId ===
+                        tailoringEntry.id
+                    ) {
+                        thisResult.dataset.tailoringEntryId = "prune";
+                    }
+
+                    return;
+                }
+
+                thisResult.dataset.tailoringEntryId = tailoringEntry.id;
+            });
+        });
+    }
+
+    /**
+     * Creates and inserts treatment panel elements within each search result
+     * that matches a tailoring entry.
+     */
+    insertTreatmentPanels() {
+        // Identify all search results that are missing treatment panels.
+        const resultsWithoutPanels = this.tailoredSearchResults.filter(
+            searchResult => !qs(this.treatmentPanelSelector, searchResult)
+        );
+
+        resultsWithoutPanels.forEach(searchResult => {
+            const newTreatmentDiv = document.createElement("div");
+
+            // Some search engines apparently observe DOM mutations
+            // and block the insertion of elements with classes into
+            // search results (cough-BING-cough). In such cases, add a
+            // data attribute to style against instead.
+            if (this.searchEngine.styleViaAttribute) {
+                newTreatmentDiv.dataset.treatmentPanel = "";
+            } else {
+                newTreatmentDiv.classList.add("treatment-panel");
+            }
+
+            searchResult.insertAdjacentElement("afterbegin", newTreatmentDiv);
+        });
+    }
+
+    /**
+     * Removes all tailoring entries marked for pruning.
+     */
+    pruneTailoredResults() {
+        // Identify all search results that have been marked for pruning.
+        const resultsToPrune = this.searchResults.filter(
+            searchResult => searchResult.dataset.tailoringEntryId === "prune"
+        );
+
+        // Prune each marked result, removing all alterations applied by the
+        // extension.
+        resultsToPrune.forEach(entryToPrune => {
+            const thisEntry = entryToPrune;
+
+            delete thisEntry.dataset.tailoringEntryId;
+            thisEntry.style.opacity = null;
+            thisEntry.style.display = null;
+            qs(this.treatmentPanelSelector, thisEntry).remove();
+        });
+    }
+
+    /**
+     * Applies the appropriate tailoring entry's treatment settings to each
+     * search result marked with an entry's ID.
+     *
+     * @param {string[]} tailoringEntryIDs The IDs of the tailoring entries to apply treatments for, defaulting to all.
+     */
+    applyTreatments(tailoringEntryIDs = null) {
+        // Apply treatments to all tailored results by default.
+        let searchResultsToTailor = this.tailoredSearchResults;
+
+        // Limit treatment application when a specific entry ID is provided.
+        if (tailoringEntryIDs) {
+            searchResultsToTailor = searchResultsToTailor.filter(searchResult =>
+                tailoringEntryIDs.includes(
+                    searchResult.dataset.tailoringEntryId
+                )
+            );
+        }
+
+        searchResultsToTailor.forEach(searchResult => {
+            const thisResult = searchResult;
+
+            // Identify the tailoring entry that applies to this result.
+            const tailoringEntry = addonData.runtime.tailoringEntries.find(
+                entry => entry.id === thisResult.dataset.tailoringEntryId
+            );
+
+            // If this result's treatment is set to an opacity of 0, screen the
+            // result completely.
+            if (tailoringEntry.treatment.opacity === 0) {
+                thisResult.style.display = "none";
+                return;
+            }
+
+            // Ensure this result element is visible and apply it's treatment's
+            // opacity setting directly.
+            thisResult.style.display = null;
+            thisResult.style.opacity = tailoringEntry.treatment.opacity;
+
+            const treatmentPanel = qs(this.treatmentPanelSelector, thisResult);
+
+            // Apply the other treatment settings for this result to its
+            // treatment panel.
+            treatmentPanel.style.backgroundColor =
+                tailoringEntry.treatment.backgroundColor;
+            treatmentPanel.style.borderColor =
+                tailoringEntry.treatment.borderColor;
+        });
+    }
 }
 
-const currentSearch = (function initAddon() {
-    /**
-     * Check and set a global guard variable.
-     * If this content script is injected into the same page again, it will do
-     * nothing next time.
-     */
-
-    if (window.hasRun) return null;
-
-    window.hasRun = true;
-
-    return new TailorableSearch(window);
-})();
-
-// Listen for storage updates, retailoring on change
-browser.storage.onChanged.addListener(() => currentSearch.tailorResults());
+getUserData().then(() => new TailoredSearch());
