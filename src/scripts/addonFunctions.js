@@ -101,6 +101,31 @@ export function parseHSLAString(hslaString) {
 }
 
 /**
+ * Retrieves the value of a CSS custom property set on the root of the page.
+ *
+ * @param {string} customProperty The name of the CSS custom property to retrieve.
+ * @param {string} unitToStrip The expected unit of the property to attempt to remove.
+ *
+ * @returns {string|number|null} The custom property string value, as an int if a unit is stripped, or null if not found.
+ */
+export function getCustomPropertyValue(customProperty, unitToStrip = "") {
+    const root = document.querySelector("html");
+    const propertyValue = window
+        .getComputedStyle(root)
+        .getPropertyValue(customProperty);
+
+    if (!propertyValue) {
+        return null;
+    }
+
+    if (unitToStrip) {
+        return +propertyValue.replace(unitToStrip, "");
+    }
+
+    return propertyValue;
+}
+
+/**
  * Logs an error.
  *
  * @param {*} error The error output to log.

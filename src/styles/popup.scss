@@ -31,6 +31,19 @@
     --color-domain-token-text: hsla(0, 0%, 100%, 1);
     --color-domain-token-remove-active: hsla(0, 45%, 60%, 1);
     --color-domain-token-remove-text: hsla(0, 0%, 100%, 1);
+
+    --action-bar-height: 40px;
+    --action-bar-padding: 10px;
+
+    --color-action-bar: hsl(240, 3%, 18%);
+    --color-action-bar-highlight: hsl(240, 3%, 22%);
+
+    --shadow-elevation-1: 0 1px 3px hsla(0, 0%, 0%, 0.12),
+        0 1px 2px hsla(0, 0%, 0%, 0.24);
+    --shadow-elevation-2: 0 3px 6px hsla(0, 0%, 0%, 0.16),
+        0 3px 6px hsla(0, 0%, 0%, 0.23);
+    --shadow-elevation-3: 0 10px 20px hsla(0, 0%, 0%, 0.19),
+        0 6px 6px hsla(0, 0%, 0%, 0.23);
 }
 
 html,
@@ -67,6 +80,23 @@ main {
     border-top: 1px solid var(--color-entry-divider);
     display: flex;
     flex-direction: column;
+
+    &:last-child {
+        margin-bottom: calc(
+            var(--action-bar-height) + (var(--action-bar-padding) * 2)
+        );
+        position: relative;
+
+        &::after {
+            bottom: 0;
+            content: "";
+            box-shadow: var(--shadow-elevation-1);
+            height: 1px;
+            position: absolute;
+            width: 100%;
+            z-index: -1;
+        }
+    }
 
     // .entry__primary-ui
     &__primary-ui {
@@ -465,23 +495,50 @@ main {
 }
 
 .action-bar {
-    background-color: var(--color-button);
+    background-color: var(--color-action-bar);
+    border-radius: calc(var(--action-bar-height) / 2);
+    bottom: var(--action-bar-padding);
+    box-shadow: var(--shadow-elevation-1);
     display: flex;
-    flex: 0 0 40px;
+    height: 40px;
+    left: 50%;
+    translate: -50%;
+    overflow: hidden;
+    position: fixed;
+    z-index: 1;
+
+    &:hover,
+    &:focus-within {
+        box-shadow: var(--shadow-elevation-2);
+    }
 
     // .action-bar__action
     &__action {
+        align-items: center;
         border: 0;
-        border-top: 1px solid var(--color-button-highlight-1);
-        color: var(--color-button-text);
         cursor: pointer;
+        display: flex;
         flex: 1 1 auto;
+        padding: 0 20px;
 
         &:hover,
         &:focus,
         &:active {
-            background-color: var(--color-button-highlight-1);
-            border-color: var(--color-button-highlight-2);
+            background-color: var(--color-action-bar-highlight);
+        }
+
+        // .action-bar__action__icon
+        &__icon {
+            fill: var(--color-icon-fill);
+        }
+
+        // .action-bar__action__label
+        &__label {
+            color: var(--color-button-text);
+            font-size: 1.2rem;
+            font-weight: 300;
+            letter-spacing: 0.05rem;
+            margin: 0 6px;
         }
     }
 }

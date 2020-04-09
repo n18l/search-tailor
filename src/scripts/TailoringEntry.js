@@ -6,6 +6,7 @@ import {
     qs,
     qsa,
     generateTailoringEntryID,
+    getCustomPropertyValue,
     parseHSLAString,
     saveTailoringEntries,
 } from "./addonFunctions";
@@ -236,14 +237,42 @@ class TailoringEntry {
         );
 
         // Scroll this entry's settings drawer into view when it opens.
-        this.settingsDrawer.addEventListener("transitionend", () => {
+        this.settingsDrawer.addEventListener("transitionend", e => {
+            // Only respond to changes in height.
+            if (e.propertyName !== "height") {
+                return;
+            }
+
+            // Only proceed if the drawer was opened.
             if (!this.settingsDrawerIsOpen) {
                 return;
             }
 
-            this.settingsDrawer.scrollIntoView({
+            // Calculate how far from the bottom of the entry container to
+            // scroll to ensure that this settings drawer is not obscured by the
+            // floating action bar when opened.
+            const drawerBottom = this.settingsDrawer.getBoundingClientRect()
+                .bottom;
+            const distanceToContainerBottom =
+                this.container.clientHeight - drawerBottom;
+            const actionBarHeight = getCustomPropertyValue(
+                "--action-bar-height",
+                "px"
+            );
+            const actionBarPadding = getCustomPropertyValue(
+                "--action-bar-padding",
+                "px"
+            );
+            const actionBarOffset = actionBarHeight + actionBarPadding * 2;
+            const scrollAmount = actionBarOffset - distanceToContainerBottom;
+
+            if (scrollAmount <= 0) {
+                return;
+            }
+
+            this.container.scrollBy({
+                top: scrollAmount,
                 behavior: "smooth",
-                block: "nearest",
             });
         });
 
