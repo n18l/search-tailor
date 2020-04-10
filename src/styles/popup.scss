@@ -80,22 +80,22 @@ main {
     border-top: 1px solid var(--color-entry-divider);
     display: flex;
     flex-direction: column;
+    position: relative;
+
+    &::after {
+        bottom: 0;
+        content: "";
+        box-shadow: var(--shadow-elevation-1);
+        height: 1px;
+        position: absolute;
+        width: 100%;
+        z-index: -1;
+    }
 
     &:last-child {
         margin-bottom: calc(
             var(--action-bar-height) + (var(--action-bar-padding) * 2)
         );
-        position: relative;
-
-        &::after {
-            bottom: 0;
-            content: "";
-            box-shadow: var(--shadow-elevation-1);
-            height: 1px;
-            position: absolute;
-            width: 100%;
-            z-index: -1;
-        }
     }
 
     // .entry__primary-ui
