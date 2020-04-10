@@ -20,8 +20,13 @@ class TailoringEntry {
      *
      * @param {Object} [tailoringEntry] The settings object to base this interface on.
      * @param {boolean} [focusInput]    Whether to focus this entry's domain input field on creation.
+     * @param {boolean} [showSettings]  Whether to open this entry's settings drawer on creation.
      */
-    constructor(tailoringEntry = null, focusInput = false) {
+    constructor(
+        tailoringEntry = null,
+        focusInput = false,
+        showSettings = false
+    ) {
         // Save a reference to the settings this entry is based on, or create
         // a default settings object is none are provided.
         this.settings = tailoringEntry || {
@@ -40,6 +45,11 @@ class TailoringEntry {
 
         // Initialize this entry's dynamically-colored icons.
         this.updateColoredIcons();
+
+        // Open this entry's settings drawer if desired.
+        if (showSettings) {
+            this.toggleSettingsDrawer(true);
+        }
 
         // Add this entry's UI to the container element.
         this.container.appendChild(this.element);
