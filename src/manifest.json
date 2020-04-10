@@ -33,8 +33,8 @@
                 "*://*.bing.com/search*",
                 "*://search.yahoo.com/search*"
             ],
-            "js": ["scripts/addon.js"],
-            "css": ["styles/addon.css"]
+            "js": ["scripts/tab.js"],
+            "css": ["styles/tab.css"]
         }
     ],
 

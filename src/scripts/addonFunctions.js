@@ -1,4 +1,4 @@
-import addonData from "./addonData";
+import { workingCopy, defaultUserData } from "./addonData";
 
 /**
  * Queries for the first match of a given selector within a given element. A
@@ -55,17 +55,16 @@ export function getUserData(
             .get(requestedStorageData)
             .then(storageData => {
                 requestedStorageData.forEach(dataType => {
-                    addonData.runtime[dataType] = [];
+                    workingCopy[dataType] = [];
 
                     if (storageData[dataType] && storageData[dataType].length) {
-                        addonData.runtime[dataType] = storageData[dataType];
+                        workingCopy[dataType] = storageData[dataType];
                     } else {
-                        addonData.runtime[dataType] =
-                            addonData.defaultUserData[dataType];
+                        workingCopy[dataType] = defaultUserData[dataType];
                     }
                 });
 
-                resolve(addonData.runtime);
+                resolve(workingCopy);
             })
             .catch(error => reject(error));
     });
@@ -156,7 +155,7 @@ export function isValidJson(json) {
 export function saveTailoringEntries(changeType, updatedEntryIDs = null) {
     // Get the settings of all existing entry objects. This is largely to make
     // sure we get them in the order represented in the popup UI.
-    const entrySettings = addonData.runtime.tailoringEntryObjects.map(
+    const entrySettings = workingCopy.tailoringEntryObjects.map(
         entryObject => entryObject.settings
     );
 

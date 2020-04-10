@@ -1,7 +1,7 @@
 import TokenField from "tokenfield";
 import Tippy from "tippy.js";
 import ColorPicker from "vanilla-picker";
-import addonData from "./addonData";
+import { workingCopy, defaultTreatment } from "./addonData";
 import {
     qs,
     qsa,
@@ -36,7 +36,7 @@ class TailoringEntry {
         this.settings = tailoringEntry || {
             id: generateTailoringEntryID(),
             domains: [],
-            treatment: Object.assign({}, addonData.defaultTreatment),
+            treatment: Object.assign({}, defaultTreatment),
         };
 
         this.cacheData();
@@ -373,7 +373,7 @@ class TailoringEntry {
      * The index of this entry among all current entries.
      */
     get index() {
-        return addonData.runtime.tailoringEntryObjects.indexOf(this);
+        return workingCopy.tailoringEntryObjects.indexOf(this);
     }
 
     /**
@@ -591,8 +591,8 @@ class TailoringEntry {
         this.element.dataset.isBeingDeleted = true;
 
         // Delete this entry's data and save the update to storage.
-        addonData.runtime.tailoringEntries.splice(this.index, 1);
-        addonData.runtime.tailoringEntryObjects.splice(this.index, 1);
+        workingCopy.tailoringEntries.splice(this.index, 1);
+        workingCopy.tailoringEntryObjects.splice(this.index, 1);
 
         saveTailoringEntries("entry-removed");
     }
@@ -601,7 +601,7 @@ class TailoringEntry {
      * Closes all settings drawers.
      */
     static closeAllSettingsDrawers() {
-        addonData.runtime.tailoringEntryObjects.forEach(entryObject => {
+        workingCopy.tailoringEntryObjects.forEach(entryObject => {
             const thisEntry = entryObject;
 
             thisEntry.settingsDrawerIsOpen = false;
