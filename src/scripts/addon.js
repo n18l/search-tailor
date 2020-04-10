@@ -73,9 +73,7 @@ class TailoredSearch {
     tailor(tailoringEntryIDs = null) {
         this.applyEntryIdAttributes(tailoringEntryIDs);
         this.insertTreatmentPanels();
-        this.applyTreatments(tailoringEntryIDs);
-
-        this.pruneTailoredResults();
+        this.updateTreatments(tailoringEntryIDs);
     }
 
     /**
@@ -153,13 +151,13 @@ class TailoredSearch {
                       );
 
                 if (!isMatchingResult) {
-                    // If this result no longer matches a tailoring entry, mark
-                    // it for pruning.
+                    // If this result no longer matches a tailoring entry,
+                    // remove its entry ID attribute so it will be pruned.
                     if (
                         thisResult.dataset.tailoringEntryId ===
                         tailoringEntry.id
                     ) {
-                        thisResult.dataset.tailoringEntryId = "prune";
+                        thisResult.dataset.tailoringEntryId = "";
                     }
 
                     return;
@@ -198,33 +196,12 @@ class TailoredSearch {
     }
 
     /**
-     * Removes all tailoring entries marked for pruning.
-     */
-    pruneTailoredResults() {
-        // Identify all search results that have been marked for pruning.
-        const resultsToPrune = this.searchResults.filter(
-            searchResult => searchResult.dataset.tailoringEntryId === "prune"
-        );
-
-        // Prune each marked result, removing all alterations applied by the
-        // extension.
-        resultsToPrune.forEach(entryToPrune => {
-            const thisEntry = entryToPrune;
-
-            delete thisEntry.dataset.tailoringEntryId;
-            thisEntry.style.opacity = null;
-            thisEntry.style.display = null;
-            qs(this.treatmentPanelSelector, thisEntry).remove();
-        });
-    }
-
-    /**
-     * Applies the appropriate tailoring entry's treatment settings to each
-     * search result marked with an entry's ID.
+     * Updates the current treatment of each search result that currently has a
+     * tailoring entry ID, adding, changing, or removing it as appropriate.
      *
      * @param {string[]} tailoringEntryIDs The IDs of the tailoring entries to apply treatments for, defaulting to all.
      */
-    applyTreatments(tailoringEntryIDs = null) {
+    updateTreatments(tailoringEntryIDs = null) {
         // Apply treatments to all tailored results by default.
         let searchResultsToTailor = this.tailoredSearchResults;
 
@@ -244,6 +221,16 @@ class TailoredSearch {
             const tailoringEntry = addonData.runtime.tailoringEntries.find(
                 entry => entry.id === thisResult.dataset.tailoringEntryId
             );
+
+            // If this result has no applicable entry, remove any existing
+            // alterations applied by the extension.
+            if (!tailoringEntry) {
+                delete thisResult.dataset.tailoringEntryId;
+                thisResult.style.opacity = null;
+                thisResult.style.display = null;
+                qs(this.treatmentPanelSelector, thisResult).remove();
+                return;
+            }
 
             // If this result's treatment is set to an opacity of 0, screen the
             // result completely.
