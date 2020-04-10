@@ -69,9 +69,6 @@ const popup = {
         this.initializeTailoringEntries();
         this.enableEntrySorting();
         this.bindEvents();
-
-        // Remove any active loading indicators.
-        document.querySelector("body").dataset.isLoading = false;
     },
 };
 

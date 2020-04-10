@@ -6,53 +6,12 @@ html
         link(rel="stylesheet" href="../styles/popup.css")
 
         style(type='text/css').
-            :root {
-                --loading-indicator-size: 48px;
-            }
-
             body {
                 height: 420px;
                 min-width: 374px;
-                position: relative;
             }
 
-            .loading-indicator {
-                align-items: center;
-                animation: linear 2s rotate infinite;
-                background-color: white;
-                border-radius: 50%;
-                display: flex;
-                height: var(--loading-indicator-size);
-                justify-content: center;
-                left: calc(50% - var(--loading-indicator-size) / 2);
-                position: absolute;
-                top: calc(50% - var(--loading-indicator-size) / 2);
-                width: var(--loading-indicator-size);
-                z-index: 0;
-                transition: opacity 0.5s;
-            }
-
-            .loading-indicator::after {
-                background-color: hsl(240, 3%, 30%);
-                border-radius: 50%;
-                content: '';
-                display: block;
-                height: calc(var(--loading-indicator-size) + 2px);
-                width: calc(var(--loading-indicator-size) - 6px);
-                margin-top: 0px;
-            }
-
-            body[data-is-loading="false"] .loading-indicator {
-                opacity: 0;
-            }
-
-            @keyframes rotate {
-                to { transform: rotate(360deg); }
-            }
-
-    body(data-is-loading="true")
-        div(class="loading-indicator")
-
+    body
         template(id="tailoring-entry")
             div(class="entry js-entry")
                 div(class="entry__primary-ui")
