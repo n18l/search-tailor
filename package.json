@@ -8,7 +8,7 @@
     "scripts": {
         "build:manifest": "cp src/manifest.json dist/",
         "watch:manifest": "chokidar \"src/manifest.json\" -c \"npm run build:manifest\" --initial",
-        "build:html": "pug -O src/scripts/addonData.js src/markup --out dist/markup",
+        "build:html": "pug -O src/scripts/addonData.js src/markup/*.pug --out dist/markup",
         "watch:html": "chokidar \"src/markup/*.pug\" -c \"pug -O src/scripts/addonData.js {path} --out dist/markup\" --initial",
         "build:css": "sass --update src/styles:dist/styles --style compressed",
         "watch:css": "sass --watch src/styles:dist/styles --style compressed",
