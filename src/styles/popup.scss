@@ -100,6 +100,24 @@ main {
         );
     }
 
+    &[data-is-being-inserted="true"] {
+        animation: insertEntry 350ms forwards;
+        pointer-events: none;
+    }
+
+    // Fade-in animation for entry insertion.
+    @keyframes insertEntry {
+        0% {
+            opacity: 0;
+            overflow: visible;
+        }
+
+        100% {
+            opacity: 1;
+            overflow: hidden;
+        }
+    }
+
     &[data-is-being-deleted="true"] {
         animation: deleteEntry 700ms forwards;
         pointer-events: none;

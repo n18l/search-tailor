@@ -18,15 +18,19 @@ class TailoringEntry {
     /**
      * Initializes this tailoring entry interface.
      *
-     * @param {Object} [tailoringEntry] The settings object to base this interface on.
-     * @param {boolean} [focusInput]    Whether to focus this entry's domain input field on creation.
-     * @param {boolean} [showSettings]  Whether to open this entry's settings drawer on creation.
+     * @param {Object}  tailoringEntry The treatment settings object to use to initialize this entry's interface.
+     * @param {boolean} focusInput     Whether to focus this entry's domain input after insertion.
+     * @param {boolean} showSettings   Whether to insert this entry with its settings drawer open.
      */
     constructor(
         tailoringEntry = null,
         focusInput = false,
         showSettings = false
     ) {
+        // Determine if this is a new entry based on whether or not a treatment
+        // settings object was passed for initialization
+        this.isNew = !tailoringEntry;
+
         // Save a reference to the settings this entry is based on, or create
         // a default settings object is none are provided.
         this.settings = tailoringEntry || {
@@ -42,23 +46,8 @@ class TailoringEntry {
         this.initializeColorInputs();
         this.initializeTooltips();
         this.bindEvents();
-
-        // Initialize this entry's dynamically-colored icons.
         this.updateColoredIcons();
-
-        // Open this entry's settings drawer if desired.
-        if (showSettings) {
-            this.toggleSettingsDrawer(true);
-        }
-
-        // Add this entry's UI to the container element.
-        this.container.appendChild(this.element);
-
-        // Focus this entry's domain input if desired.
-        if (focusInput) {
-            this.tokenFieldInput.focus({ preventScroll: true });
-            this.element.scrollIntoView({ behavior: "smooth" });
-        }
+        this.insert(focusInput, showSettings, this.isNew);
     }
 
     /**
@@ -517,6 +506,46 @@ class TailoringEntry {
                 "--color-icon-fill-border-picker",
                 this.settings.treatment.borderColor
             );
+        }
+    }
+
+    /**
+     * Inserts this entry into the popup interface.
+     *
+     * @param {boolean} focusInput Whether to focus this entry's domain input after insertion.
+     * @param {boolean} showSettings Whether to insert this entry with its settings drawer open.
+     * @param {boolean} animateIn Whether to animate the insertion of this entry.
+     */
+    insert(focusInput = false, showSettings = false, animateIn = false) {
+        // Open this entry's settings drawer if desired.
+        if (showSettings) {
+            this.toggleSettingsDrawer(true);
+        }
+
+        // Animate the entry's insertion if desired.
+        if (animateIn) {
+            // Listen for the end of the insertion animation to remove the
+            // animation attribute.
+            this.element.addEventListener("animationend", e => {
+                // Only proceed if this was the insertion animation.
+                if (e.animationName !== "insertEntry") {
+                    return;
+                }
+
+                delete this.element.dataset.isBeingInserted;
+            });
+
+            // Apply a data attribute to trigger the insertion animation.
+            this.element.dataset.isBeingInserted = true;
+        }
+
+        // Add this entry's UI to the container element.
+        this.container.appendChild(this.element);
+
+        // Focus this entry's domain input if desired.
+        if (focusInput) {
+            this.tokenFieldInput.focus({ preventScroll: true });
+            this.element.scrollIntoView({ behavior: "smooth" });
         }
     }
 
