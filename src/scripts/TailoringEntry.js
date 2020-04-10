@@ -222,7 +222,7 @@ class TailoringEntry {
             const domainArray = this.tokenField.getItems().map(i => i.name);
             this.settings.domains = domainArray;
 
-            saveTailoringEntries("entry-domains", [this.settings.id]);
+            saveTailoringEntries("entry-domains");
         });
 
         // Respond to keyboard events in the TokenField.
