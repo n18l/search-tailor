@@ -5,13 +5,6 @@ const addonData = {
     /**
      * A working copy of the addon's loaded data.
      */
-    local: {
-        /**
-         * A full list of all current TailoringGroup objects.
-         */
-        tailoringGroups: [],
-    },
-
     runtime: {
         tailoringEntries: [],
         tailoringEntryObjects: [],
@@ -70,17 +63,7 @@ const addonData = {
     ],
 
     /**
-     * The tailoring treatment settings to apply when creating a new group.
-     */
-    defaultTreatmentSettings: {
-        id: null,
-        label: "New Treatment",
-        backgroundColor: "hsla(120,75%,35%,0.25)",
-        borderColor: "hsla(120,100%,25%,0.35)",
-    },
-
-    /**
-     * The tailoring treatment settings to apply when creating a new group.
+     * The treatment settings to apply when creating a new tailoring entry.
      */
     defaultTreatment: {
         backgroundColor: "hsla(120,60%,85%,1)",
