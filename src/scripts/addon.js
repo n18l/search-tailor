@@ -225,34 +225,56 @@ class TailoredSearch {
             // If this result has no applicable entry, remove any existing
             // alterations applied by the extension.
             if (!tailoringEntry) {
-                delete thisResult.dataset.tailoringEntryId;
-                thisResult.style.opacity = null;
-                thisResult.style.display = null;
-                qs(this.treatmentPanelSelector, thisResult).remove();
+                this.removeTreatment(thisResult);
                 return;
             }
 
-            // If this result's treatment is set to an opacity of 0, screen the
-            // result completely.
-            if (tailoringEntry.treatment.opacity === 0) {
-                thisResult.style.display = "none";
-                return;
-            }
-
-            // Ensure this result element is visible and apply it's treatment's
-            // opacity setting directly.
-            thisResult.style.display = null;
-            thisResult.style.opacity = tailoringEntry.treatment.opacity;
-
-            const treatmentPanel = qs(this.treatmentPanelSelector, thisResult);
-
-            // Apply the other treatment settings for this result to its
-            // treatment panel.
-            treatmentPanel.style.backgroundColor =
-                tailoringEntry.treatment.backgroundColor;
-            treatmentPanel.style.borderColor =
-                tailoringEntry.treatment.borderColor;
+            this.applyTreatment(thisResult, tailoringEntry.treatment);
         });
+    }
+
+    /**
+     * Applies the given treatment to the provided search result element.
+     *
+     * @param {Element} searchResult The search result element to apply the treatment to.
+     * @param {Object} treatment The treatment settings to apply to this element.
+     */
+    applyTreatment(searchResult, treatment) {
+        const thisResult = searchResult;
+
+        // If this result's treatment is set to an opacity of 0, screen the
+        // result completely.
+        if (treatment.opacity === 0) {
+            thisResult.style.display = "none";
+            return;
+        }
+
+        // Ensure this result element is visible and apply it's treatment's
+        // opacity setting directly.
+        thisResult.style.display = null;
+        thisResult.style.opacity = treatment.opacity;
+
+        const treatmentPanel = qs(this.treatmentPanelSelector, thisResult);
+
+        // Apply the other treatment settings for this result to its
+        // treatment panel.
+        treatmentPanel.style.backgroundColor = treatment.backgroundColor;
+        treatmentPanel.style.borderColor = treatment.borderColor;
+    }
+
+    /**
+     * Removes all alterations applied by the extension from the provided
+     * search result element.
+     *
+     * @param searchResult The search result element to remove a treatment from.
+     */
+    removeTreatment(searchResult) {
+        const thisResult = searchResult;
+
+        delete thisResult.dataset.tailoringEntryId;
+        thisResult.style.opacity = null;
+        thisResult.style.display = null;
+        qs(this.treatmentPanelSelector, thisResult).remove();
     }
 }
 
