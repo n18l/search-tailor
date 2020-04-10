@@ -30,7 +30,7 @@ const popup = {
         // Add a new Tailoring Entry.
         addEntryButton.addEventListener("click", () => {
             addonData.runtime.tailoringEntryObjects.push(
-                new TailoringEntry(null, true)
+                new TailoringEntry(null, true, true)
             );
         });
     },
