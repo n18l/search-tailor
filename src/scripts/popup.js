@@ -1,5 +1,5 @@
 import Sortable from "sortablejs";
-import addonData from "./addonData";
+import { workingCopy } from "./addonData";
 import { getUserData, saveTailoringEntries } from "./addonFunctions";
 import TailoringEntry from "./TailoringEntry";
 
@@ -12,7 +12,7 @@ const popup = {
      * in the user data, adding it to the popup.
      */
     initializeTailoringEntries() {
-        addonData.runtime.tailoringEntryObjects = addonData.runtime.tailoringEntries.map(
+        workingCopy.tailoringEntryObjects = workingCopy.tailoringEntries.map(
             entrySettings => new TailoringEntry(entrySettings)
         );
     },
@@ -29,7 +29,7 @@ const popup = {
 
         // Add a new Tailoring Entry.
         addEntryButton.addEventListener("click", () => {
-            addonData.runtime.tailoringEntryObjects.push(
+            workingCopy.tailoringEntryObjects.push(
                 new TailoringEntry(null, true, true)
             );
         });
@@ -45,13 +45,13 @@ const popup = {
             onUpdate(event) {
                 // Remove the entry from it's old position in the object array,
                 // capturing a copy of it as we do so.
-                const movedEntry = addonData.runtime.tailoringEntryObjects.splice(
+                const movedEntry = workingCopy.tailoringEntryObjects.splice(
                     event.oldIndex,
                     1
                 )[0];
 
                 // Add the entry back into the object array at its new position.
-                addonData.runtime.tailoringEntryObjects.splice(
+                workingCopy.tailoringEntryObjects.splice(
                     event.newIndex,
                     0,
                     movedEntry

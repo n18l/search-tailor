@@ -1,4 +1,4 @@
-import addonData from "./addonData";
+import { defaultUserData } from "./addonData";
 import { logError, isValidJson } from "./addonFunctions";
 
 /* Class representing the extension options panel. */
@@ -56,31 +56,29 @@ class TailoredSearchOptionsPanel {
      * Populate the option fields with current extension data.
      */
     populateOptions() {
-        browser.storage.sync
-            .get(addonData.defaultUserData)
-            .then(storageData => {
-                // Create a local, formatted copy of the current tailoring entry
-                // settings.
-                this.currentJSONExport = JSON.stringify(storageData, null, 4);
+        browser.storage.sync.get(defaultUserData).then(storageData => {
+            // Create a local, formatted copy of the current tailoring entry
+            // settings.
+            this.currentJSONExport = JSON.stringify(storageData, null, 4);
 
-                // Populate the JSON Export field and resize it so it can be scrolled cleanly.
-                this.inputs.jsonExport.value = this.currentJSONExport;
-                this.inputs.jsonExport.style.height = `${
-                    this.inputs.jsonExport.scrollHeight
-                }px`;
+            // Populate the JSON Export field and resize it so it can be scrolled cleanly.
+            this.inputs.jsonExport.value = this.currentJSONExport;
+            this.inputs.jsonExport.style.height = `${
+                this.inputs.jsonExport.scrollHeight
+            }px`;
 
-                // Create a local copy of the Search Engine settings.
-                this.currentSearchEngines = storageData.searchEngines;
+            // Create a local copy of the Search Engine settings.
+            this.currentSearchEngines = storageData.searchEngines;
 
-                // Set each Search Engine checkbox to match its "enabled" setting.
-                this.inputs.enableSearchEngine.forEach((input, index) => {
-                    this.inputs.enableSearchEngine[
-                        index
-                    ].checked = this.currentSearchEngines.find(
-                        engine => engine.id === input.id
-                    ).enabled;
-                });
-            }, logError);
+            // Set each Search Engine checkbox to match its "enabled" setting.
+            this.inputs.enableSearchEngine.forEach((input, index) => {
+                this.inputs.enableSearchEngine[
+                    index
+                ].checked = this.currentSearchEngines.find(
+                    engine => engine.id === input.id
+                ).enabled;
+            });
+        }, logError);
     }
 
     /**
@@ -134,7 +132,7 @@ class TailoredSearchOptionsPanel {
         // Reset extension data to the default values.
         this.actionButtons.resetData.addEventListener("click", () => {
             browser.storage.sync
-                .set(JSON.parse(JSON.stringify(addonData.defaultUserData)))
+                .set(JSON.parse(JSON.stringify(defaultUserData)))
                 .then(null, logError);
         });
 

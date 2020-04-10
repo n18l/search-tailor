@@ -1,4 +1,4 @@
-import addonData from "./addonData";
+import { workingCopy, searchEngines } from "./addonData";
 import { qs, qsa, getUserData } from "./addonFunctions";
 
 /* Class representing a user's search that is eligible for tailoring. */
@@ -6,7 +6,7 @@ class TailoredSearch {
     constructor() {
         // Identify which of the predefined search engines was used for this
         // search, if any.
-        this.searchEngine = addonData.searchEngines.find(searchEngine =>
+        this.searchEngine = searchEngines.find(searchEngine =>
             RegExp(searchEngine.matchPattern).test(window.location)
         );
 
@@ -16,7 +16,7 @@ class TailoredSearch {
         }
 
         // Only proceed if the user has this search engine enabled.
-        const searchEngineIsEnabled = addonData.runtime.searchEngines.find(
+        const searchEngineIsEnabled = workingCopy.searchEngines.find(
             searchEngine => searchEngine.id === this.searchEngine.id
         ).enabled;
 
@@ -121,7 +121,7 @@ class TailoredSearch {
      */
     applyEntryIdAttributes(tailoringEntryIDs = null) {
         // Apply IDs for all entries by default.
-        let entriesToApply = addonData.runtime.tailoringEntries;
+        let entriesToApply = workingCopy.tailoringEntries;
 
         // Apply IDs only to a specific entry if an ID is provided.
         if (tailoringEntryIDs) {
@@ -218,7 +218,7 @@ class TailoredSearch {
             const thisResult = searchResult;
 
             // Identify the tailoring entry that applies to this result.
-            const tailoringEntry = addonData.runtime.tailoringEntries.find(
+            const tailoringEntry = workingCopy.tailoringEntries.find(
                 entry => entry.id === thisResult.dataset.tailoringEntryId
             );
 
