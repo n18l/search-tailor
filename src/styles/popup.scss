@@ -75,26 +75,63 @@ main {
 
 .entry {
     $thisEntry: &;
+    --entry-height: auto;
 
     background-color: var(--color-entry);
     border-top: 1px solid var(--color-entry-divider);
     display: flex;
     flex-direction: column;
+    height: var(--entry-height);
+    position: relative;
+
+    &::after {
+        bottom: 0;
+        content: "";
+        box-shadow: var(--shadow-elevation-1);
+        height: 1px;
+        position: absolute;
+        width: 100%;
+        z-index: -1;
+    }
 
     &:last-child {
         margin-bottom: calc(
             var(--action-bar-height) + (var(--action-bar-padding) * 2)
         );
-        position: relative;
+    }
 
-        &::after {
-            bottom: 0;
-            content: "";
-            box-shadow: var(--shadow-elevation-1);
-            height: 1px;
-            position: absolute;
-            width: 100%;
-            z-index: -1;
+    &[data-is-being-deleted="true"] {
+        animation: deleteEntry 700ms forwards;
+        pointer-events: none;
+    }
+
+    // Slide-and-shrink animation for entry deletion.
+    @keyframes deleteEntry {
+        // Begin with unaltered values. Height is set to a static value with
+        // JavaScript before triggering the animation via data attribute.
+        0% {
+            height: var(--entry-height);
+            opacity: 1;
+            overflow: visible;
+            translate: 0;
+        }
+
+        // Slide the entry out to the right and set its overflow to hidden to
+        // prevent any child elements from propping the entry container open.
+        50% {
+            height: var(--entry-height);
+            opacity: 1;
+            overflow: hidden;
+            translate: 100%;
+        }
+
+        // Shrink the entry down to nothing. JavaScript will listen for the
+        // animationend event and finally remove the entry from the DOM.
+        100% {
+            height: 0;
+            opacity: 0;
+            overflow: hidden;
+            translate: 100%;
         }
     }
 

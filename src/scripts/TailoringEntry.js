@@ -222,7 +222,7 @@ class TailoringEntry {
             const domainArray = this.tokenField.getItems().map(i => i.name);
             this.settings.domains = domainArray;
 
-            saveTailoringEntries("entry-domains", [this.settings.id]);
+            saveTailoringEntries("entry-domains");
         });
 
         // Respond to keyboard events in the TokenField.
@@ -530,12 +530,28 @@ class TailoringEntry {
     }
 
     /**
-     * Removes this entry's UI from the popup interface, deletes its runtime
-     * data, and saves the updated data to storage.
+     * Removes this entry's UI and data.
      */
     delete() {
-        this.element.remove();
+        // Listen for the end of the deletion animation before actually removing
+        // the element from the DOM.
+        this.element.addEventListener("animationend", e => {
+            // Only proceed if this was the deletion animation.
+            if (e.animationName !== "deleteEntry") {
+                return;
+            }
 
+            this.element.remove();
+        });
+
+        // Get and apply this entry's height in-line for animation purposes.
+        const entryHeight = this.element.getBoundingClientRect().height;
+        this.element.style.setProperty("--entry-height", `${entryHeight}px`);
+
+        // Apply a data attribute to trigger the deletion animation.
+        this.element.dataset.isBeingDeleted = true;
+
+        // Delete this entry's data and save the update to storage.
         addonData.runtime.tailoringEntries.splice(this.index, 1);
         addonData.runtime.tailoringEntryObjects.splice(this.index, 1);
 
