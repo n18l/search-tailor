@@ -1,5 +1,5 @@
-import { defaultUserData } from "./addonData";
-import { logError, isValidJson } from "./addonFunctions";
+import { workingCopy, defaultUserData } from "./addonData";
+import { saveSearchEngines, logError, isValidJson } from "./addonFunctions";
 
 /* Class representing the extension options panel. */
 class TailoredSearchOptionsPanel {
@@ -104,9 +104,9 @@ class TailoredSearchOptionsPanel {
                     engine => engine.id === e.target.id
                 ).enabled = e.target.checked;
 
-                browser.storage.sync
-                    .set({ searchEngines: this.currentSearchEngines })
-                    .then(null, logError);
+                workingCopy.searchEngines = this.currentSearchEngines;
+
+                saveSearchEngines();
             });
         });
 

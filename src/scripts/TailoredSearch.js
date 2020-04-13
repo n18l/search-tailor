@@ -4,36 +4,6 @@ import { qs, qsa, getUserData } from "./addonFunctions";
 /* Class representing a user's search that is eligible for tailoring. */
 class TailoredSearch {
     constructor() {
-        // Identify which of the predefined search engines was used for this
-        // search, if any.
-        this.searchEngine = searchEngines.find(searchEngine =>
-            RegExp(searchEngine.matchPattern).test(window.location)
-        );
-
-        // Only proceed if this is a supported search engine.
-        if (!this.searchEngine) {
-            return;
-        }
-
-        // Only proceed if the user has this search engine enabled.
-        const searchEngineIsEnabled = workingCopy.searchEngines.find(
-            searchEngine => searchEngine.id === this.searchEngine.id
-        ).enabled;
-
-        if (!searchEngineIsEnabled) {
-            return;
-        }
-
-        this.cacheData();
-
-        // If this search engine loads results asynchronously, apply tailoring
-        // when its results change. Otherwise, simply tailor on load.
-        if (this.searchEngine.observe) {
-            this.tailorOnMutation();
-        } else {
-            this.tailor();
-        }
-
         // Reapply tailoring when sent a targeted change message. The message
         // denotes which entry IDs to apply changes for, allowing patch updates.
         browser.runtime.onMessage.addListener(message => {
@@ -48,16 +18,38 @@ class TailoredSearch {
                 this.tailor(message.updatedEntryIDs);
             });
         });
+
+        this.cacheData();
+
+        // Only proceed if this is a supported search engine.
+        if (this.searchEngineStatus === "unsupported") {
+            return;
+        }
+
+        // If this search engine loads results asynchronously, apply tailoring
+        // when its results change. Otherwise, simply tailor on load.
+        if (this.searchEngine.observe) {
+            this.tailorOnMutation();
+        } else {
+            this.tailor();
+        }
     }
 
     /**
      * Caches immutable data for this tailored search.
      */
     cacheData() {
-        // The element containing the list of search results.
-        this.searchResultsContainer = qs(
-            this.searchEngine.selectors.resultContainer
+        // Identify which of the predefined search engines was used for this
+        // search, if any.
+        this.searchEngine = searchEngines.find(searchEngine =>
+            RegExp(searchEngine.matchPattern).test(window.location)
         );
+
+        // The element containing the list of search results.
+        this.searchResultsContainer =
+            this.searchEngineStatus === "unsupported"
+                ? null
+                : qs(this.searchEngine.selectors.resultContainer);
 
         // The selector used to identify treatment panels.
         this.treatmentPanelSelector =
@@ -71,9 +63,32 @@ class TailoredSearch {
      * @param {string[]} tailoringEntryIDs The IDs of the tailoring entries to apply tailoring for, defaulting to all.
      */
     tailor(tailoringEntryIDs = null) {
+        // Clear all applied treatments if this engine is disabled.
+        if (this.searchEngineStatus === "disabled") {
+            this.clearTreatments();
+            return;
+        }
+
         this.applyEntryIdAttributes(tailoringEntryIDs);
         this.insertTreatmentPanels();
         this.updateTreatments(tailoringEntryIDs);
+    }
+
+    /**
+     * @returns {'unsupported'|'enabled'|'disabled'} The status of the current search engine.
+     */
+    get searchEngineStatus() {
+        // Unsupported search engines don't match any defined patterns.
+        if (!this.searchEngine) {
+            return "unsupported";
+        }
+
+        // Check the user's settings for this engine's enabled status.
+        const searchEngineIsEnabled = workingCopy.searchEngines.find(
+            searchEngine => searchEngine.id === this.searchEngine.id
+        ).enabled;
+
+        return searchEngineIsEnabled ? "enabled" : "disabled";
     }
 
     /**
@@ -275,6 +290,16 @@ class TailoredSearch {
         thisResult.style.opacity = null;
         thisResult.style.display = null;
         qs(this.treatmentPanelSelector, thisResult).remove();
+    }
+
+    /**
+     * Removes all alterations applied by the extension from all search result
+     * elements.
+     */
+    clearTreatments() {
+        this.tailoredSearchResults.forEach(result =>
+            this.removeTreatment(result)
+        );
     }
 }
 

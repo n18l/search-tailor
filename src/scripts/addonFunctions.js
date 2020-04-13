@@ -177,6 +177,26 @@ export function saveTailoringEntries(changeType, updatedEntryIDs = null) {
 }
 
 /**
+ * Save the current search engine settings via the browser storage API.
+ */
+export function saveSearchEngines() {
+    // Record information about this change to communicate to the extension's
+    // other scripts, allowing them to respond accordingly.
+    const changeInfo = {
+        type: `change:search-engines`,
+    };
+
+    // Send a message about this change to each tab's content script.
+    browser.tabs.query({}).then(tabs => {
+        tabs.forEach(tab => browser.tabs.sendMessage(tab.id, changeInfo));
+    });
+
+    browser.storage.sync
+        .set({ searchEngines: workingCopy.searchEngines })
+        .then(null, logError);
+}
+
+/**
  * Fetches a random informational tidbit.
  */
 export function getRandomTidbit() {
