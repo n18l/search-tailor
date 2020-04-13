@@ -78,6 +78,7 @@ class TailoringEntry {
 
         // Elements related to this entry's color-picking modals.
         this.pickerElements = {
+            template: qs("template#picker").innerHTML,
             backgroundModal: qs(".js-background-picker-modal", this.element),
             background: qs(".js-background-picker", this.element),
             borderModal: qs(".js-border-picker-modal", this.element),
@@ -159,6 +160,7 @@ class TailoringEntry {
             color: this.settings.treatment.backgroundColor,
             parent: this.pickerElements.background,
             popup: false,
+            template: this.pickerElements.template,
         });
 
         this.backgroundPicker.onChange = newColor =>
@@ -179,6 +181,7 @@ class TailoringEntry {
             color: this.settings.treatment.borderColor,
             parent: this.pickerElements.border,
             popup: false,
+            template: this.pickerElements.template,
         });
 
         this.borderPicker.onChange = newColor =>
