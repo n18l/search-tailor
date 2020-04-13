@@ -164,7 +164,7 @@ class TailoredSearchOptionsPanel {
 }
 
 const optionsPanelElement = document.querySelector(
-    "#search-tailor-options-panel"
+    "#search-tailor-options-page"
 );
 
 const currentOptionsPanel = (function initOptionsPanel() {

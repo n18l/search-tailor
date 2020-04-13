@@ -1,0 +1,64 @@
+:root {
+    --color-text: hsl(0, 0%, 100%);
+
+    --color-white: hsla(0, 0%, 100%, 1);
+    --color-grey-15: hsla(240, 3%, 15%, 1);
+    --color-grey-25: hsla(240, 3%, 25%, 1);
+    --color-grey-30: hsla(240, 3%, 30%, 1);
+    --color-grey-35: hsla(240, 3%, 35%, 1);
+    --color-grey-90: hsla(240, 3%, 90%, 1);
+
+    --radius-outer: 4px;
+    --radius-inner: 2px;
+
+    --options-page-background: var(--color-grey-15);
+    --options-panel-background: var(--color-grey-25);
+    --options-panel-radius: var(--radius-outer);
+    --options-panel-text: var(--color-grey-90);
+    --options-action-border: var(--color-grey-90);
+    --options-action-highlight: var(--color-grey-35);
+
+    --color-entry-container: hsla(240, 3%, 25%, 1);
+    --color-entry: hsla(240, 3%, 30%, 1);
+    --color-entry-divider: hsl(240, 3%, 37%);
+    --color-entry-input: hsl(240, 3%, 37%);
+
+    --color-icon-fill: hsl(240, 0%, 85%);
+    --color-icon-fill-background-picker: var(--color-icon-fill);
+    --color-icon-fill-border-picker: var(--color-icon-fill);
+    --color-picker-scrim: hsla(0, 0%, 0%, 0.5);
+
+    --color-input-highlight: hsla(200, 100%, 50%, 1);
+    --color-action-highlight: hsla(0, 0%, 100%, 0.25);
+    --color-action-highlight-warning: hsla(0, 55%, 60%, 0.75);
+
+    --color-button: hsl(240, 3%, 37%);
+    --color-button-text: hsl(0, 0%, 100%);
+    --color-button-highlight-1: hsl(240, 2%, 44%);
+    --color-button-highlight-2: hsl(240, 2%, 49%);
+
+    --color-button-highlight-settings: hsl(240, 3%, 53%);
+    --color-button-highlight-warning: hsl(0, 30%, 50%);
+
+    --color-domain-token-active: hsla(215, 65%, 50%, 0.5);
+    --color-domain-token-border: hsla(0, 0%, 70%, 1);
+    --color-domain-token-text: hsla(0, 0%, 100%, 1);
+    --color-domain-token-remove-active: hsla(0, 45%, 60%, 1);
+    --color-domain-token-remove-text: hsla(0, 0%, 100%, 1);
+
+    --action-bar-height: 40px;
+    --action-bar-padding: 10px;
+
+    --color-action-bar: hsl(240, 3%, 18%);
+    --color-action-bar-highlight: hsl(240, 3%, 22%);
+
+    --shadow-elevation-1: 0 1px 3px hsla(0, 0%, 0%, 0.12),
+        0 1px 2px hsla(0, 0%, 0%, 0.24);
+    --shadow-elevation-2: 0 3px 6px hsla(0, 0%, 0%, 0.16),
+        0 3px 6px hsla(0, 0%, 0%, 0.23);
+    --shadow-elevation-3: 0 10px 20px hsla(0, 0%, 0%, 0.19),
+        0 6px 6px hsla(0, 0%, 0%, 0.23);
+
+    --input-radius: 2px;
+    --action-radius: 4px;
+}
