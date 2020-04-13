@@ -64,6 +64,10 @@ main {
     position: relative;
 }
 
+/**
+ * The title bar at the top of the popup interface that contains external links
+ * to extension-related resources.
+ */
 .title-bar {
     --title-bar-height: 40px;
     --title-bar-action-size: 32px;
@@ -156,27 +160,9 @@ main {
     }
 }
 
-.tooltip-contents {
-    padding-top: 4px;
-    max-width: 75vw;
-
-    // .tooltip-contents__section
-    &__section {
-        & + & {
-            margin-top: 6px;
-        }
-
-        &[data-label]::before {
-            content: attr(data-label);
-            display: block;
-            letter-spacing: 0.05rem;
-            font-size: 0.8rem;
-            font-weight: 300;
-            text-transform: uppercase;
-        }
-    }
-}
-
+/**
+ * The container for the list of tailoring entries.
+ */
 .entry-container {
     flex: 1 1 auto;
     overflow: scroll;
@@ -185,6 +171,9 @@ main {
     z-index: 1;
 }
 
+/**
+ * Individual tailoring entries.
+ */
 .entry {
     $thisEntry: &;
     --entry-height: auto;
@@ -279,6 +268,7 @@ main {
         cursor: move;
         flex: 0 0 auto;
 
+        // .entry__sort-handle__icon
         &__icon {
             display: block;
         }
@@ -398,6 +388,7 @@ main {
     --setting-size: 40px;
     --setting-border-radius: 4px;
 
+    // .entry__setting-group
     &__setting-group {
         $entry-setting-group: &;
 
@@ -406,10 +397,16 @@ main {
         flex: 0 0 auto;
         position: relative;
 
+        & + & {
+            margin-left: 10px;
+        }
+
+        // .entry__setting-group--opacity
         &--opacity {
             flex: 1 1 auto;
         }
 
+        // .entry__setting-group__effects
         &__effects {
             border: 1px solid var(--color-button-highlight-settings);
             border-radius: var(--setting-border-radius);
@@ -428,10 +425,6 @@ main {
                 opacity: 1;
             }
         }
-
-        & + & {
-            margin-left: 10px;
-        }
     }
 
     // .entry__setting
@@ -445,10 +438,12 @@ main {
         min-width: var(--setting-size);
         position: relative;
 
+        // .entry__setting--opacity-range
         &--opacity-range {
             flex: 1 1 auto;
         }
 
+        // .entry__setting__input
         &__input {
             height: 100%;
             margin: 0;
@@ -466,6 +461,7 @@ main {
                 border: 0;
             }
 
+            // .entry__setting__input--opacity-range
             &--opacity-range {
                 cursor: pointer;
                 padding: 0 8px;
@@ -491,6 +487,7 @@ main {
             }
         }
 
+        // .entry__setting__effects
         &__effects {
             background-color: var(--color-button-highlight-settings);
             height: var(--setting-size);
@@ -665,6 +662,9 @@ main {
     }
 }
 
+/**
+ * The action bar near the bottom of the popup window.
+ */
 .action-bar {
     background-color: var(--color-action-bar);
     border-radius: calc(var(--action-bar-height) / 2);
@@ -806,6 +806,30 @@ main {
  */
 .tippy-box {
     font-size: 12px;
+}
+
+/**
+ * The HTML contents for a tooltip.
+ */
+.tooltip-contents {
+    padding-top: 4px;
+    max-width: 75vw;
+
+    // .tooltip-contents__section
+    &__section {
+        & + & {
+            margin-top: 6px;
+        }
+
+        &[data-label]::before {
+            content: attr(data-label);
+            display: block;
+            letter-spacing: 0.05rem;
+            font-size: 0.8rem;
+            font-weight: 300;
+            text-transform: uppercase;
+        }
+    }
 }
 
 [data-tippy-contents] {
