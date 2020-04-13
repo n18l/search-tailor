@@ -44,6 +44,9 @@
         0 3px 6px hsla(0, 0%, 0%, 0.23);
     --shadow-elevation-3: 0 10px 20px hsla(0, 0%, 0%, 0.19),
         0 6px 6px hsla(0, 0%, 0%, 0.23);
+
+    --input-radius: 2px;
+    --action-radius: 4px;
 }
 
 html,
@@ -279,7 +282,7 @@ main {
         $input-container: &;
 
         background-color: var(--color-entry-input);
-        border-radius: 2px;
+        border-radius: var(--input-radius);
         flex: 1 1 100%;
         margin: 15px 0 15px 2px;
         position: relative;
@@ -653,12 +656,93 @@ main {
         width: 100vw;
     }
 
-    // .entry__picker
-    &__picker {
+    // .entry__picker-container
+    &__picker-container {
         left: 50%;
         position: absolute;
         top: 50%;
         transform: translate(-50%, -50%);
+    }
+
+    // .entry__picker
+    &__picker {
+        --picker-border-radius: 4px;
+
+        &#{&} {
+            border-radius: var(--picker-border-radius);
+            box-shadow: var(--shadow-elevation-1);
+            background-color: var(--color-entry);
+        }
+
+        // .entry__picker__slider
+        &__slider {
+            &#{&} {
+                border-radius: var(--input-radius);
+                box-shadow: none;
+            }
+
+            &--alpha {
+                &#{&} {
+                    display: none;
+                }
+            }
+        }
+
+        // .entry__picker__saturation-lightness
+        &__saturation-lightness {
+            &#{&} {
+                border-radius: var(--input-radius);
+                box-shadow: none;
+            }
+        }
+
+        // .entry__picker__editor
+        &__editor {
+            // .entry__picker__editor__input
+            &__input {
+                &#{&} {
+                    background-color: var(--color-entry-input);
+                    border-radius: var(--input-radius);
+                    box-shadow: none;
+                    color: var(--color-text);
+                }
+            }
+        }
+
+        // .entry__picker__sample
+        &__sample {
+            &#{&} {
+                background: transparent;
+                border-radius: var(--input-radius);
+                box-shadow: none;
+                overflow: hidden;
+            }
+        }
+
+        // .entry__picker__button
+        &__button {
+            &#{&} {
+                background: transparent;
+                border-radius: var(--action-radius);
+                box-shadow: none;
+                display: flex;
+                padding: 0;
+
+                &:hover,
+                &:focus,
+                &:active {
+                    background: var(--color-action-highlight);
+                }
+            }
+
+            // .entry__picker__button__icon
+            &__icon {
+                &#{&} {
+                    margin: auto;
+                    fill: var(--color-icon-fill);
+                }
+            }
+        }
     }
 }
 
@@ -790,14 +874,6 @@ main {
         min-height: calc(24px + var(--token-item-spacing) * 2);
         padding: var(--token-item-spacing);
     }
-}
-
-/**
- * Styles for markup provided by the Vanilla Picker library.
- * @see https://github.com/Sphinxxxx/vanilla-picker
- */
-.picker_alpha {
-    display: none;
 }
 
 /**
