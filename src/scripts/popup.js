@@ -1,12 +1,63 @@
 import Sortable from "sortablejs";
+import Tippy from "tippy.js";
 import { workingCopy } from "./addonData";
-import { getUserData, saveTailoringEntries } from "./addonFunctions";
+import {
+    qs,
+    qsa,
+    getUserData,
+    saveTailoringEntries,
+    getRandomTidbit,
+} from "./addonFunctions";
 import TailoringEntry from "./TailoringEntry";
 
 /**
  * Namespace for popup-related properties & methods.
  */
 const popup = {
+    /**
+     * Initializes the tooltips for the popup's title bar actions.
+     */
+    initializeTitleBar() {
+        // Get references to relevant title bar elements.
+        const titleBar = qs(".js-title-bar");
+        const titleLogo = qs(".js-title-logo", titleBar);
+        const titleLogoVersion = qs(".js-logo-tooltip-version", titleLogo);
+        const titleLogoTidbit = qs(".js-logo-tooltip-tidbit", titleLogo);
+        const titleTooltipTargets = qsa("[data-tippy]", titleBar);
+        const openOptionsPageButton = qs(
+            '[data-click-action="openOptionsPage"]',
+            titleBar
+        );
+
+        // Update on-load text content.
+        const extensionVersion = browser.runtime.getManifest().version;
+        titleLogoVersion.textContent = `v${extensionVersion}`;
+        titleLogoTidbit.textContent = getRandomTidbit();
+
+        // Set up all tooltips with HTML contents.
+        Tippy(qsa("[data-tippy-html]"), {
+            content: reference => qs("[data-tippy-contents]", reference),
+            offset: [0, 5],
+            placement: "bottom",
+            onCreate: instance => {
+                qs("[data-tippy-contents]", instance.popper).style.display =
+                    "block";
+            },
+        });
+
+        // Set up all other title bar tooltips.
+        Tippy(titleTooltipTargets, {
+            content: element => element.getAttribute("aria-label"),
+            offset: [0, 5],
+            placement: "bottom",
+        });
+
+        // Open the options page on click.
+        openOptionsPageButton.addEventListener("click", () =>
+            browser.runtime.openOptionsPage()
+        );
+    },
+
     /**
      * Initializes a Tailoring Entry UI for each existing entry setting object
      * in the user data, adding it to the popup.
@@ -20,12 +71,10 @@ const popup = {
     /**
      * Attaches event handlers.
      */
-    bindEvents() {
+    initializeActionBar() {
         // Get the action bar and individual action buttons.
-        const actionBar = document.querySelector(".js-action-bar");
-        const addEntryButton = actionBar.querySelector(
-            '[data-click-action="addEntry"]'
-        );
+        const actionBar = qs(".js-action-bar");
+        const addEntryButton = qs('[data-click-action="addEntry"]', actionBar);
 
         // Add a new Tailoring Entry.
         addEntryButton.addEventListener("click", () => {
@@ -66,9 +115,10 @@ const popup = {
      * Initializes the addon's popup UI.
      */
     initialize() {
+        this.initializeTitleBar();
         this.initializeTailoringEntries();
+        this.initializeActionBar();
         this.enableEntrySorting();
-        this.bindEvents();
     },
 };
 

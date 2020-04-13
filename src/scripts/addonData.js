@@ -110,9 +110,41 @@ const defaultUserData = {
     ],
 };
 
+/**
+ * External links relevant to the extension.
+ */
+const links = {
+    documentation: "https://github.com/nbrombal/search-tailor",
+    issues: "https://github.com/nbrombal/search-tailor/issues",
+    reviews: "#",
+    support: {
+        koFi: "https://ko-fi.com/nbrombal",
+        paypal: "https://www.paypal.me/nbrombal",
+        squareCash: "https://cash.app/$nbrombal",
+    },
+};
+
+/**
+ * Fun facts displayed in the tooltip of logo in the title bar.
+ */
+const tidbits = [
+    `The majority of Canada's population lives south of Seattle.`,
+    `Killer whales are a natural predator of moose.`,
+    `It takes up to three years for a pineapple to grow.`,
+    `There's only one country between Finland and North Korea.`,
+    `The ampersand is a shorthand combination of "et", which is Latin for "and".`,
+    `Oxford University is older than the Aztec civilization.`,
+    `Canada has an island-in-a-lake-on-an-island-in-a-lake-on-an-island.`,
+    `Nobody born after 1935 has walked on the moon.`,
+    `The closest US state to Africa is Maine.`,
+    `The order of a freshly-shuffled deck of cards is likely to only ever exist once.`,
+];
+
 module.exports = {
     workingCopy,
     searchEngines,
     defaultTreatment,
     defaultUserData,
+    links,
+    tidbits,
 };

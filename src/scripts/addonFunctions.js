@@ -1,4 +1,4 @@
-import { workingCopy, defaultUserData } from "./addonData";
+import { workingCopy, defaultUserData, tidbits } from "./addonData";
 
 /**
  * Queries for the first match of a given selector within a given element. A
@@ -174,4 +174,15 @@ export function saveTailoringEntries(changeType, updatedEntryIDs = null) {
     browser.storage.sync
         .set({ tailoringEntries: entrySettings })
         .then(null, logError);
+}
+
+/**
+ * Fetches a random informational tidbit.
+ */
+export function getRandomTidbit() {
+    const randomTidbitIndex = Math.round(
+        Math.random() * Math.floor(tidbits.length)
+    );
+
+    return tidbits[randomTidbitIndex];
 }

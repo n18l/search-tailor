@@ -56,16 +56,128 @@ body {
 }
 
 main {
+    background-color: var(--color-entry-container);
     color: var(--color-text);
     display: flex;
     flex-direction: column;
     height: 100vh;
-    padding-top: 5px;
     position: relative;
 }
 
+.title-bar {
+    --title-bar-height: 40px;
+    --title-bar-action-size: 32px;
+    --title-bar-action-radius: 3px;
+    --title-bar-action-spacing: calc(
+        (var(--title-bar-height) - var(--title-bar-action-size)) / 2
+    );
+    --color-title-bar-background: var(--color-entry);
+    --color-title-bar-accent: hsl(295, 35%, 50%);
+    --color-title-bar-action-highlight: var(--color-action-highlight);
+
+    align-items: center;
+    background-color: var(--color-title-bar-background);
+    border-bottom: 2px solid var(--color-title-bar-accent);
+    box-shadow: var(--shadow-elevation-1);
+    display: flex;
+    height: var(--title-bar-height);
+    padding: 0 var(--title-bar-action-spacing);
+
+    // .title-bar__logo
+    &__logo {
+        height: 32px;
+        padding: 4px 0;
+        width: 32px;
+
+        img {
+            display: block;
+            margin: 0 auto;
+            max-height: 100%;
+            max-width: 100%;
+        }
+    }
+
+    // .title-bar__action-container
+    &__action-container {
+        display: flex;
+        margin-left: auto;
+    }
+
+    // .title-bar__action
+    &__action {
+        $title-bar-action: &;
+
+        align-items: center;
+        border-radius: var(--title-bar-action-radius);
+        display: flex;
+        height: var(--title-bar-action-size);
+        justify-content: center;
+        width: var(--title-bar-action-size);
+        overflow: hidden;
+        position: relative;
+
+        &::before {
+            background-color: var(--color-action-highlight);
+            content: "";
+            height: 100%;
+            left: 50%;
+            opacity: 0;
+            position: absolute;
+            pointer-events: none;
+            top: 50%;
+            transition: opacity 0.35s;
+            translate: -50% -50%;
+            width: 100%;
+            z-index: 0;
+
+            @at-root {
+                #{$title-bar-action}:hover::before,
+                #{$title-bar-action}:focus::before,
+                #{$title-bar-action}:active::before {
+                    opacity: 1;
+                }
+            }
+        }
+
+        &[disabled] {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        & + & {
+            margin-left: 2px;
+        }
+
+        // .title-bar__action__icon
+        &__icon {
+            fill: var(--color-icon-fill);
+            width: 18px;
+        }
+    }
+}
+
+.tooltip-contents {
+    padding-top: 4px;
+    max-width: 75vw;
+
+    // .tooltip-contents__section
+    &__section {
+        & + & {
+            margin-top: 6px;
+        }
+
+        &[data-label]::before {
+            content: attr(data-label);
+            display: block;
+            letter-spacing: 0.05rem;
+            font-size: 0.8rem;
+            font-weight: 300;
+            text-transform: uppercase;
+        }
+    }
+}
+
 .entry-container {
-    background-color: var(--color-entry-container);
     flex: 1 1 auto;
     overflow: scroll;
     position: relative;
@@ -78,7 +190,6 @@ main {
     --entry-height: auto;
 
     background-color: var(--color-entry);
-    border-top: 1px solid var(--color-entry-divider);
     display: flex;
     flex-direction: column;
     height: var(--entry-height);
@@ -153,6 +264,10 @@ main {
         }
     }
 
+    & + & {
+        border-top: 1px solid var(--color-entry-divider);
+    }
+
     // .entry__primary-ui
     &__primary-ui {
         align-items: center;
@@ -215,18 +330,19 @@ main {
         margin: 0 4px;
         padding: 2px;
         position: relative;
+        overflow: hidden;
 
         &::before {
             background-color: var(--color-action-highlight);
-            border-radius: 50%;
             content: "";
             height: 100%;
             left: 50%;
             opacity: 0;
             position: absolute;
+            pointer-events: none;
             top: 50%;
-            transform: translate(-50%, -50%);
             transition: opacity 0.35s;
+            translate: -50% -50%;
             width: 100%;
             z-index: 0;
 
@@ -690,6 +806,10 @@ main {
  */
 .tippy-box {
     font-size: 12px;
+}
+
+[data-tippy-contents] {
+    display: none;
 }
 
 .hidden {
