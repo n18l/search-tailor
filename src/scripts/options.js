@@ -67,6 +67,12 @@ class TailoredSearchOptionsPanel {
                 this.inputs.jsonExport.scrollHeight
             }px`;
 
+            // Set the Export JSON link's download target to an encoded string
+            // of the extension data.
+            this.actionButtons.exportJSON.href = `data:text/json;charset=utf-8,${encodeURIComponent(
+                this.currentJSONExport
+            )}`;
+
             // Create a local copy of the Search Engine settings.
             this.currentSearchEngines = storageData.searchEngines;
 
