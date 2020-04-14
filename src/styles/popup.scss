@@ -31,12 +31,11 @@ main {
         (var(--title-bar-height) - var(--title-bar-action-size)) / 2
     );
     --color-title-bar-background: var(--color-entry);
-    --color-title-bar-accent: hsl(295, 35%, 50%);
     --color-title-bar-action-highlight: var(--color-action-highlight);
 
     align-items: center;
     background-color: var(--color-title-bar-background);
-    border-bottom: 2px solid var(--color-title-bar-accent);
+    border-bottom: 2px solid var(--color-accent);
     box-shadow: var(--shadow-elevation-1);
     display: flex;
     height: var(--title-bar-height);
