@@ -66,20 +66,20 @@ body {
 
 .toggle-switch {
     $this-switch: &;
-    --switch-padding-px: 4px;
+    --switch-padding-px: 0px;
     --switch-margin-px: 0px;
     --switch-height-px: 30px;
-    --switch-width-px: 44px;
+    --switch-width-px: 30px;
     --track-color-off: hsl(0, 0%, 15%);
-    --track-color-on: hsla(210, 100%, 50%);
-    --track-height-px: 24px;
+    --track-color-on: var(--color-accent);
+    --track-height-px: 6px;
     --track-radius-px: 12px;
     --nub-height-px: 16px;
-    --nub-width-px: 20px;
-    --nub-radius-px: 10px;
-    --nub-color-off: hsl(0, 0%, 60%);
-    --nub-color-on: hsl(0, 0%, 90%);
-    --nub-color-focus: hsl(220, 100%, 50%);
+    --nub-width-px: 16px;
+    --nub-radius-px: 8px;
+    --nub-color-off: var(--color-grey-60);
+    --nub-color-on: var(--color-grey-90);
+    --nub-color-focus: var(--color-accent);
     --nub-travel-distance: calc(
         var(--switch-width-px) / 2 - var(--nub-width-px) / 2 -
             var(--switch-padding-px)
