@@ -1,13 +1,12 @@
 @use 'reset';
 @use 'variables';
+@use 'common';
 @use '../../node_modules/tippy.js/dist/tippy';
 
 html,
 body {
     background-color: var(--color-entry);
     border-radius: 2px;
-    font-family: sans-serif;
-    font-size: 10px;
     overflow: hidden;
 }
 
