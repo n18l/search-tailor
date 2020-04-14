@@ -1,6 +1,7 @@
 @use 'reset';
 @use 'variables';
 @use 'common';
+@use '../../node_modules/tippy.js/dist/tippy';
 
 html,
 body {
@@ -47,6 +48,14 @@ body {
             font-size: 1.8rem;
             font-weight: 400;
             margin: 0;
+        }
+
+        &__notice {
+            fill: var(--options-panel-text);
+            font-size: 1.2rem;
+            margin-left: auto;
+            display: flex;
+            align-items: center;
         }
     }
 
@@ -254,4 +263,12 @@ body {
             opacity: 0.5;
         }
     }
+}
+
+/**
+ * Styles for markup provided by the Tippy.js library.
+ * @see https://github.com/atomiks/tippyjs
+ */
+.tippy-box {
+    font-size: 1.2rem;
 }

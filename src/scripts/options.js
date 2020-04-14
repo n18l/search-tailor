@@ -1,5 +1,11 @@
+import Tippy from "tippy.js";
 import { workingCopy, defaultUserData } from "./addonData";
-import { saveSearchEngines, logError, isValidJson } from "./addonFunctions";
+import {
+    qsa,
+    saveSearchEngines,
+    logError,
+    isValidJson,
+} from "./addonFunctions";
 
 /* Class representing the extension options panel. */
 class TailoredSearchOptionsPanel {
@@ -12,6 +18,7 @@ class TailoredSearchOptionsPanel {
         this.defineInputs();
         this.defineActions();
         this.populateOptions();
+        this.initializeTooltips();
         this.bindEvents();
     }
 
@@ -97,6 +104,19 @@ class TailoredSearchOptionsPanel {
         // Get the input's wrapper and update the validation attribute with the custom validity value.
         const inputWrapper = input.closest("[data-validation-message]");
         inputWrapper.dataset.validationMessage = input.validationMessage;
+    }
+
+    /**
+     * Initializes tooltips for the options page.
+     */
+    initializeTooltips() {
+        this.tooltipTargets = qsa("[data-tippy]", this.element);
+
+        Tippy(this.tooltipTargets, {
+            content: reference => reference.getAttribute("aria-label"),
+            offset: [0, 5],
+            placement: "bottom",
+        });
     }
 
     /**
