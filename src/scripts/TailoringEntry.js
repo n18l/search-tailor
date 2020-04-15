@@ -323,17 +323,30 @@ class TailoringEntry {
             }
         );
 
-        // Move focus in and out of this entry's background color picker modal
-        // after its hide/show animation completes.
+        // When the hide/show animation begins for this entry's background color
+        // picker modal, move focus in and out of it and adjust the z-index of
+        // the entry container to prevent conflicts with the action bar.
         this.pickerElements.backgroundModal.addEventListener(
-            "animationend",
+            "animationstart",
             e => {
                 if (e.animationName === "fadeModalIn") {
                     this.pickerElements.backgroundInput.focus();
+                    this.container.style.zIndex = 2;
                 }
 
                 if (e.animationName === "fadeModalOut") {
                     this.actionButtons.showBackgroundColorModal.focus();
+                }
+            }
+        );
+
+        // Readjust the z-index of this entry's container after its background
+        // color picker modal is hidden.
+        this.pickerElements.backgroundModal.addEventListener(
+            "animationend",
+            e => {
+                if (e.animationName === "fadeModalOut") {
+                    this.container.style.zIndex = 1;
                 }
             }
         );
@@ -354,15 +367,28 @@ class TailoringEntry {
             }
         );
 
-        // Move focus in and out of this entry's border color picker modal after
-        // its hide/show animation completes.
-        this.pickerElements.borderModal.addEventListener("animationend", e => {
-            if (e.animationName === "fadeModalIn") {
-                this.pickerElements.borderInput.focus();
-            }
+        // When the hide/show animation begins for this entry's border color
+        // picker modal, move focus in and out of it and adjust the z-index of
+        // the entry container to prevent conflicts with the action bar.
+        this.pickerElements.borderModal.addEventListener(
+            "animationstart",
+            e => {
+                if (e.animationName === "fadeModalIn") {
+                    this.pickerElements.borderInput.focus();
+                    this.container.style.zIndex = 2;
+                }
 
+                if (e.animationName === "fadeModalOut") {
+                    this.actionButtons.showBorderColorModal.focus();
+                }
+            }
+        );
+
+        // Readjust the z-index of this entry's container after its border color
+        // picker modal is hidden.
+        this.pickerElements.borderModal.addEventListener("animationend", e => {
             if (e.animationName === "fadeModalOut") {
-                this.actionButtons.showBorderColorModal.focus();
+                this.container.style.zIndex = 1;
             }
         });
 
