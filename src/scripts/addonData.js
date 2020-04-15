@@ -7,7 +7,6 @@
  */
 const workingCopy = {
     tailoringEntries: [],
-    tailoringEntryObjects: [],
     searchEngines: [],
 };
 

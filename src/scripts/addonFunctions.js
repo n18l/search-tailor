@@ -150,33 +150,6 @@ export function isValidJson(json) {
 }
 
 /**
- * Save the current tailoring entries via the browser storage API.
- */
-export function saveTailoringEntries(changeType, updatedEntryIDs = null) {
-    // Get the settings of all existing entry objects. This is largely to make
-    // sure we get them in the order represented in the popup UI.
-    const entrySettings = workingCopy.tailoringEntryObjects.map(
-        entryObject => entryObject.settings
-    );
-
-    // Record information about this change to communicate to the extension's
-    // other scripts, allowing them to respond accordingly.
-    const changeInfo = {
-        type: `change:${changeType}`,
-        updatedEntryIDs,
-    };
-
-    // Send a message about this change to each tab's content script.
-    browser.tabs.query({}).then(tabs => {
-        tabs.forEach(tab => browser.tabs.sendMessage(tab.id, changeInfo));
-    });
-
-    browser.storage.sync
-        .set({ tailoringEntries: entrySettings })
-        .then(null, logError);
-}
-
-/**
  * Save the current search engine settings via the browser storage API.
  */
 export function saveSearchEngines() {
