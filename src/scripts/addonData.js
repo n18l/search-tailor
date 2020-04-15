@@ -6,7 +6,6 @@
  * A working copy of the addon's loaded data.
  */
 const workingCopy = {
-    tailoringEntries: [],
     searchEngines: [],
 };
 

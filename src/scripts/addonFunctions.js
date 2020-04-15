@@ -1,4 +1,4 @@
-import { workingCopy, defaultUserData, tidbits } from "./addonData";
+import { workingCopy, tidbits } from "./addonData";
 
 /**
  * Queries for the first match of a given selector within a given element. A
@@ -36,40 +36,6 @@ export function generateTailoringEntryID(maxRandomInt = 100000) {
     const randomInt = Math.floor(Math.random() * Math.floor(maxRandomInt));
 
     return `${currentTimestamp}-${randomInt}`;
-}
-
-/**
- * Retrieves the addon's current user data using the browser storage API and
- * saves a local working copy. If the requested data isn't found, it falls
- * back to the addon's defined default values.
- *
- * @param {string[]} requestedStorageData The storage items to retrieve, defaulting to all.
- *
- * @returns {Promise} A Promise resolving to the data saved as the local working copy.
- */
-export function getUserData(
-    requestedStorageData = ["tailoringEntries", "searchEngines"]
-) {
-    const userDataPromise = new Promise((resolve, reject) => {
-        browser.storage.sync
-            .get(requestedStorageData)
-            .then(storageData => {
-                requestedStorageData.forEach(dataType => {
-                    workingCopy[dataType] = [];
-
-                    if (storageData[dataType] && storageData[dataType].length) {
-                        workingCopy[dataType] = storageData[dataType];
-                    } else {
-                        workingCopy[dataType] = defaultUserData[dataType];
-                    }
-                });
-
-                resolve(workingCopy);
-            })
-            .catch(error => reject(error));
-    });
-
-    return userDataPromise;
 }
 
 /**
