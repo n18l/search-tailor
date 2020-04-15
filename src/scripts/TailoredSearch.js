@@ -1,4 +1,4 @@
-import { searchEngines } from "./addonData";
+import { searchEngines, defaultUserData } from "./addonData";
 import { qs, qsa } from "./addonFunctions";
 
 /* Class representing a user's search that is eligible for tailoring. */
@@ -17,12 +17,10 @@ class TailoredSearch {
 
             // Refresh the current user data and re-tailor the appropriate
             // search results.
-            browser.storage.sync
-                .get(["tailoringEntries", "searchEngines"])
-                .then(updatedUserData => {
-                    this.userData = updatedUserData;
-                    this.tailor(message.updatedEntryIDs);
-                });
+            browser.storage.sync.get(defaultUserData).then(updatedUserData => {
+                this.userData = updatedUserData;
+                this.tailor(message.updatedEntryIDs);
+            });
         });
 
         this.cacheData();

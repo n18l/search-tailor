@@ -1,5 +1,6 @@
 import Sortable from "sortablejs";
 import Tippy from "tippy.js";
+import { defaultUserData } from "./addonData";
 import { qs, qsa, getRandomTidbit } from "./addonFunctions";
 import TailoringEntry from "./TailoringEntry";
 
@@ -111,5 +112,5 @@ const popup = {
 
 // Get the current user data, then initialize the popup UI.
 browser.storage.sync
-    .get("tailoringEntries")
+    .get({ tailoringEntries: defaultUserData.tailoringEntries })
     .then(userData => popup.initialize(userData));
