@@ -1,4 +1,4 @@
-import { workingCopy, tidbits } from "./addonData";
+import { tidbits } from "./addonData";
 
 /**
  * Queries for the first match of a given selector within a given element. A
@@ -116,23 +116,30 @@ export function isValidJson(json) {
 }
 
 /**
- * Save the current search engine settings via the browser storage API.
+ * Sends a message to all of the extension's active content scripts notifying
+ * them of a change.
+ *
+ * @param {String}   changeType A simple description of the type of change.
+ * @param {String[]} updatedIDs The IDs of specific tailoring entries to apply updates for, defaulting to all.
  */
-export function saveSearchEngines() {
+export function sendChangeNotification(changeType, updatedIDs = null) {
     // Record information about this change to communicate to the extension's
     // other scripts, allowing them to respond accordingly.
     const changeInfo = {
-        type: `change:search-engines`,
+        type: `change:${changeType}`,
+        updatedIDs,
     };
 
-    // Send a message about this change to each tab's content script.
-    browser.tabs.query({}).then(tabs => {
+    // Identify any tabs where a content script should be running based on the
+    // matches defined in the manifest.
+    const manifest = browser.runtime.getManifest();
+    const { matches } = manifest.content_scripts[0];
+    const getContentScriptTabs = browser.tabs.query({ url: matches });
+
+    // Send the change message to any active content scripts.
+    getContentScriptTabs.then(tabs => {
         tabs.forEach(tab => browser.tabs.sendMessage(tab.id, changeInfo));
     });
-
-    browser.storage.sync
-        .set({ searchEngines: workingCopy.searchEngines })
-        .then(null, logError);
 }
 
 /**

@@ -3,13 +3,6 @@
  */
 
 /**
- * A working copy of the addon's loaded data.
- */
-const workingCopy = {
-    searchEngines: [],
-};
-
-/**
  * Search engine-specific data to guide the application of tailoring
  * templates to search results pages.
  */
@@ -139,7 +132,6 @@ const tidbits = [
 ];
 
 module.exports = {
-    workingCopy,
     searchEngines,
     defaultTreatment,
     defaultUserData,

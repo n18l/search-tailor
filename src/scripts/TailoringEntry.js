@@ -8,6 +8,7 @@ import {
     generateTailoringEntryID,
     getCustomPropertyValue,
     parseHSLAString,
+    sendChangeNotification,
 } from "./addonFunctions";
 
 /**
@@ -639,23 +640,12 @@ class TailoringEntry {
      * @param {String[]} updatedIDs The IDs of specific tailoring entries to apply updates for, defaulting to all.
      */
     static save(changeType, updatedIDs = null) {
-        // Record information about this change to communicate to the
-        // extension's other scripts, allowing them to respond accordingly.
-        const changeInfo = {
-            type: `change:${changeType}`,
-            updatedIDs,
-        };
-
         browser.storage.sync
             .set({ tailoringEntries: TailoringEntry.rawValues })
-            .then(() => {
-                // Send a message about this change to each tab's content script.
-                browser.tabs.query({}).then(tabs => {
-                    tabs.forEach(tab =>
-                        browser.tabs.sendMessage(tab.id, changeInfo)
-                    );
-                });
-            }, logError);
+            .then(
+                () => sendChangeNotification(changeType, updatedIDs),
+                logError
+            );
     }
 
     /**
