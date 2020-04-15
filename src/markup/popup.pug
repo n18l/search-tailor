@@ -14,6 +14,35 @@ html
     body
         include includes/tailoring-entry
 
+        template(id="picker")
+            div.picker_wrapper(class="entry__picker" tabindex=-1)
+
+                div.picker_arrow(class="entry__picker__arrow")
+
+                div.picker_hue.picker_slider(class="entry__picker__slider entry__picker__slider--hue")
+                    div.picker_selector(class="entry__picker__selector")
+
+                div.picker_sl(class="entry__picker__saturation-lightness")
+                    div.picker_selector(class="entry__picker__selector")
+
+                div.picker_alpha.picker_slider(class="entry__picker__slider entry__picker__slider--alpha")
+                    div.picker_selector(class="entry__picker__selector")
+
+                div.picker_editor(class="entry__picker__editor")
+                    input(class="entry__picker__editor__input" aria-label="Type a color name or hex value")
+
+                div.picker_sample(class="entry__picker__sample")
+
+                div.picker_done(class="entry__picker__control")
+                    button(class="entry__picker__button entry__picker__button--done" aria-label="Confirm change")
+                        svg(class="entry__picker__button__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24")
+                            path(d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z")
+
+                div.picker_cancel(class="entry__picker__control")
+                    button(class="entry__picker__button entry__picker__button--cancel" aria-label="Cancel change")
+                        svg(class="entry__picker__button__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24")
+                            path(d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z")
+
         main(id="popup-content")
             div(class="title-bar js-title-bar")
                 div(class="title-bar__logo js-title-logo" data-tippy-html)

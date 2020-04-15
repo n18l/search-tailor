@@ -1,25 +1,85 @@
-@import "reset";
+@use 'reset';
+@use 'variables';
+@use 'common';
+@use '../../node_modules/tippy.js/dist/tippy';
 
-#search-tailor-options-panel {
-    margin: 10px;
+html,
+body {
+    background-color: var(--options-page-background);
+    color: var(--color-text);
+    min-height: 100vh;
+}
+
+#search-tailor-options-page {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.options-title {
+    font-size: 2.6rem;
+    font-weight: 300;
+    margin: 0 0 20px 0;
+}
+
+.options-panel {
+    background-color: var(--options-panel-background);
+    border-radius: var(--options-panel-radius);
+    box-shadow: var(--shadow-elevation-1);
+    color: var(--options-panel-text);
+    display: flex;
+    flex-direction: column;
+    max-width: 768px;
+    width: 100%;
+
+    & + & {
+        margin-block-start: 20px;
+    }
+
+    &__header {
+        display: flex;
+        padding: 12px 20px;
+        border-bottom: 2px solid var(--color-accent);
+
+        &__title {
+            font-size: 1.8rem;
+            font-weight: 400;
+            margin: 0;
+        }
+
+        &__notice {
+            fill: var(--options-panel-text);
+            font-size: 1.2rem;
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+        }
+    }
+
+    &__body {
+        padding: 20px;
+    }
 }
 
 .toggle-switch {
     $this-switch: &;
-    --switch-padding-px: 4px;
+    --switch-padding-px: 0px;
     --switch-margin-px: 0px;
     --switch-height-px: 30px;
-    --switch-width-px: 44px;
-    --track-color-off: hsl(0, 0%, 90%);
-    --track-color-on: hsla(210, 100%, 50%, 0.2);
-    --track-height-px: 24px;
+    --switch-width-px: 30px;
+    --track-color-off: hsl(0, 0%, 15%);
+    --track-color-on: var(--color-accent);
+    --track-height-px: 6px;
     --track-radius-px: 12px;
     --nub-height-px: 16px;
-    --nub-width-px: 20px;
-    --nub-radius-px: 10px;
-    --nub-color-off: hsl(0, 0%, 60%);
-    --nub-color-on: hsl(210, 100%, 50%);
-    --nub-color-focus: hsl(0, 0%, 100%);
+    --nub-width-px: 16px;
+    --nub-radius-px: 8px;
+    --nub-color-off: var(--color-grey-60);
+    --nub-color-on: var(--color-grey-90);
+    --nub-color-focus: var(--color-accent);
     --nub-travel-distance: calc(
         var(--switch-width-px) / 2 - var(--nub-width-px) / 2 -
             var(--switch-padding-px)
@@ -81,18 +141,23 @@
     }
 }
 
-.search-tailor-option {
-    &:not(:first-child) {
-        margin-top: 10px;
+.option {
+    & + & {
+        margin-block-start: 10px;
     }
 
-    // &__label {
-    //
-    // }
+    &__label {
+        font-size: 1.4rem;
+        margin: 0 0 10px 0;
+    }
 
     &__input-wrapper {
-        margin-top: 5px;
+        font-size: 1.3rem;
         position: relative;
+
+        & + & {
+            margin-top: 6px;
+        }
 
         &--toggle {
             display: flex;
@@ -152,43 +217,37 @@
             width: 100%;
             border: 0;
             background-color: transparent;
-            color: hsl(0, 0%, 90%);
+            color: var(--options-panel-text);
             margin: 0;
             padding: 10px;
             min-height: 100%;
             position: relative;
+            white-space: pre;
         }
     }
 
     &__action-container {
-        margin-top: 10px;
         display: flex;
+        flex-wrap: wrap;
         justify-content: flex-end;
     }
 
     &__action {
         all: unset;
-        border: 1px solid hsl(0, 0%, 88%);
+        border: 1px solid var(--options-action-border);
         border-radius: 4px;
         cursor: pointer;
-        color: hsl(0, 0%, 30%);
         font-size: 1.2rem;
-        font-weight: 600;
-        letter-spacing: 0.05rem;
+        font-weight: 400;
+        letter-spacing: 0.08rem;
+        margin-top: 8px;
         padding: 8px 14px;
         text-transform: uppercase;
 
-        &:hover {
-            background-color: hsl(0, 0%, 88%);
-        }
-
-        &:focus {
-            border-color: hsl(200, 100%, 75%);
-        }
-
+        &:hover,
+        &:focus,
         &:active {
-            background-color: hsl(0, 0%, 75%);
-            border-color: hsl(0, 0%, 75%);
+            background-color: var(--options-action-highlight);
         }
 
         &::-moz-focus-inner {
@@ -196,7 +255,7 @@
         }
 
         & + & {
-            margin-left: 6px;
+            margin-left: 8px;
         }
 
         &[disabled] {
@@ -205,4 +264,12 @@
             opacity: 0.5;
         }
     }
+}
+
+/**
+ * Styles for markup provided by the Tippy.js library.
+ * @see https://github.com/atomiks/tippyjs
+ */
+.tippy-box {
+    font-size: 1.2rem;
 }

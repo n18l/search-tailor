@@ -6,57 +6,79 @@ html
         link(rel="stylesheet" href="../styles/options.css")
 
     body
-        main(id="search-tailor-options-panel")
+        main(id="search-tailor-options-page")
 
-            div(class="search-tailor-option")
-                span(class="search-tailor-option__label") Search Engines
-                    mixin searchEngineToggle(searchEngine)
-                        label(class=[
-                            `search-tailor-option__input-wrapper`,
-                            `search-tailor-option__input-wrapper--toggle`,
-                        ])
-                            input(
-                                id= searchEngine.id
-                                class=[
-                                    `search-tailor-option__input`,
-                                    `search-tailor-option__input--toggle`,
-                                    `js-option-input`,
-                                ]
-                                type="checkbox"
-                                name= searchEngine.label
-                                data-input-group="enableSearchEngine"
+            h1(class="options-title") Search Tailor Options
+
+            section(class="options-panel")
+
+                div(class="options-panel__header")
+                    h2(class="options-panel__header__title") General
+
+                div(class="options-panel__body")
+                    div(class="option")
+                        h3(class="option__label") Enabled Search Engines
+
+                        div(class="option__container")
+                            mixin searchEngineToggle(searchEngine)
+                                label(class=[
+                                    `option__input-wrapper`,
+                                    `option__input-wrapper--toggle`,
+                                ])
+                                    input(
+                                        id= searchEngine.id
+                                        class=[
+                                            `option__input`,
+                                            `option__input--toggle`,
+                                            `js-option-input`,
+                                        ]
+                                        type="checkbox"
+                                        name= searchEngine.label
+                                        data-input-group="enableSearchEngine"
+                                        checked
+                                    )
+                                    span(class="toggle-switch")
+                                        span(class="toggle-switch__track")
+                                        span(class="toggle-switch__nub")
+                                    span(class="option__input--toggle__label")= searchEngine.label
+
+                            each searchEngine in defaultUserData.searchEngines
+                                +searchEngineToggle(searchEngine)
+
+            section(class="options-panel")
+
+                div(class="options-panel__header")
+                    h2(class="options-panel__header__title") Extension Data
+
+                    div(class="options-panel__header__notice" aria-label="Be careful! Changes to this section cannot be undone." data-tippy)
+                        svg(class="options-panel__header__notice__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24")
+                            path(d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z")
+
+                div(class="options-panel__body")
+                    div(class="option")
+                        h3(class="option__label") JSON Export
+                        div(class="option__input-wrapper option__input-wrapper--raw-json")
+                            textarea(
+                                class="option__input option__input--raw-json js-option-input"
+                                name="jsonExport"
+                                spellcheck="false"
+                                readonly
                             )
-                            span(class="toggle-switch")
-                                span(class="toggle-switch__track")
-                                span(class="toggle-switch__nub")
-                            span(class="search-tailor-option__input--toggle__label")= searchEngine.label
+                        div(class="option__action-container")
+                            button(class="option__action" data-click-action="copyJSON") Copy
+                            a(class="option__action" data-click-action="exportJSON" href="#" download="search_tailor.json") Export
+                            button(class="option__action" data-click-action="resetData") Reset to Default
 
-                    each searchEngine in defaultUserData.searchEngines
-                        +searchEngineToggle(searchEngine)
-
-            div(class="search-tailor-option")
-                span(class="search-tailor-option__label") JSON Export
-                div(class="search-tailor-option__input-wrapper search-tailor-option__input-wrapper--raw-json")
-                    textarea(
-                        class="search-tailor-option__input search-tailor-option__input--raw-json js-option-input"
-                        name="jsonExport"
-                        spellcheck="false"
-                        readonly
-                    )
-                div(class="search-tailor-option__action-container")
-                    button(class="search-tailor-option__action" data-click-action="copyJSON") Copy
-                    button(class="search-tailor-option__action" data-click-action="resetData") Reset to Default
-
-            form(class="search-tailor-option")
-                span(class="search-tailor-option__label") JSON Import
-                div(class="search-tailor-option__input-wrapper search-tailor-option__input-wrapper--raw-json" data-validation-message="")
-                    textarea(
-                        class="search-tailor-option__input search-tailor-option__input--raw-json js-option-input"
-                        name="jsonImport"
-                        spellcheck="false"
-                    )
-                div(class="search-tailor-option__action-container")
-                    button(type="button" class="search-tailor-option__action" data-click-action="clearJSON") Clear
-                    button(type="button" class="search-tailor-option__action" data-click-action="importJSON") Import
+                    form(class="option")
+                        h3(class="option__label") JSON Import
+                        div(class="option__input-wrapper option__input-wrapper--raw-json" data-validation-message="")
+                            textarea(
+                                class="option__input option__input--raw-json js-option-input"
+                                name="jsonImport"
+                                spellcheck="false"
+                            )
+                        div(class="option__action-container")
+                            button(type="button" class="option__action" data-click-action="clearJSON") Clear
+                            button(type="button" class="option__action" data-click-action="importJSON") Import
 
         script(src="../scripts/options.js")

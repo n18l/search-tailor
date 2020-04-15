@@ -39,6 +39,7 @@
     ],
 
     "options_ui": {
-        "page": "markup/options.html"
+        "page": "markup/options.html",
+        "open_in_tab": true
     }
 }

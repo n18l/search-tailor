@@ -1,57 +1,12 @@
+@use 'reset';
+@use 'variables';
+@use 'common';
 @use '../../node_modules/tippy.js/dist/tippy';
-@import "reset";
-
-:root {
-    --color-text: hsl(0, 0%, 100%);
-
-    --color-entry-container: hsla(240, 3%, 25%, 1);
-    --color-entry: hsla(240, 3%, 30%, 1);
-    --color-entry-divider: hsl(240, 3%, 37%);
-    --color-entry-input: hsl(240, 3%, 37%);
-
-    --color-icon-fill: hsl(240, 0%, 85%);
-    --color-icon-fill-background-picker: var(--color-icon-fill);
-    --color-icon-fill-border-picker: var(--color-icon-fill);
-    --color-picker-scrim: hsla(0, 0%, 0%, 0.5);
-
-    --color-input-highlight: hsla(200, 100%, 50%, 1);
-    --color-action-highlight: hsla(0, 0%, 100%, 0.25);
-    --color-action-highlight-warning: hsla(0, 55%, 60%, 0.75);
-
-    --color-button: hsl(240, 3%, 37%);
-    --color-button-text: hsl(0, 0%, 100%);
-    --color-button-highlight-1: hsl(240, 2%, 44%);
-    --color-button-highlight-2: hsl(240, 2%, 49%);
-
-    --color-button-highlight-settings: hsl(240, 3%, 53%);
-    --color-button-highlight-warning: hsl(0, 30%, 50%);
-
-    --color-domain-token-active: hsla(215, 65%, 50%, 0.5);
-    --color-domain-token-border: hsla(0, 0%, 70%, 1);
-    --color-domain-token-text: hsla(0, 0%, 100%, 1);
-    --color-domain-token-remove-active: hsla(0, 45%, 60%, 1);
-    --color-domain-token-remove-text: hsla(0, 0%, 100%, 1);
-
-    --action-bar-height: 40px;
-    --action-bar-padding: 10px;
-
-    --color-action-bar: hsl(240, 3%, 18%);
-    --color-action-bar-highlight: hsl(240, 3%, 22%);
-
-    --shadow-elevation-1: 0 1px 3px hsla(0, 0%, 0%, 0.12),
-        0 1px 2px hsla(0, 0%, 0%, 0.24);
-    --shadow-elevation-2: 0 3px 6px hsla(0, 0%, 0%, 0.16),
-        0 3px 6px hsla(0, 0%, 0%, 0.23);
-    --shadow-elevation-3: 0 10px 20px hsla(0, 0%, 0%, 0.19),
-        0 6px 6px hsla(0, 0%, 0%, 0.23);
-}
 
 html,
 body {
     background-color: var(--color-entry);
     border-radius: 2px;
-    font-family: sans-serif;
-    font-size: 10px;
     overflow: hidden;
 }
 
@@ -76,12 +31,11 @@ main {
         (var(--title-bar-height) - var(--title-bar-action-size)) / 2
     );
     --color-title-bar-background: var(--color-entry);
-    --color-title-bar-accent: hsl(295, 35%, 50%);
     --color-title-bar-action-highlight: var(--color-action-highlight);
 
     align-items: center;
     background-color: var(--color-title-bar-background);
-    border-bottom: 2px solid var(--color-title-bar-accent);
+    border-bottom: 2px solid var(--color-accent);
     box-shadow: var(--shadow-elevation-1);
     display: flex;
     height: var(--title-bar-height);
@@ -279,7 +233,7 @@ main {
         $input-container: &;
 
         background-color: var(--color-entry-input);
-        border-radius: 2px;
+        border-radius: var(--input-radius);
         flex: 1 1 100%;
         margin: 15px 0 15px 2px;
         position: relative;
@@ -653,12 +607,93 @@ main {
         width: 100vw;
     }
 
-    // .entry__picker
-    &__picker {
+    // .entry__picker-container
+    &__picker-container {
         left: 50%;
         position: absolute;
         top: 50%;
         transform: translate(-50%, -50%);
+    }
+
+    // .entry__picker
+    &__picker {
+        --picker-border-radius: 4px;
+
+        &#{&} {
+            border-radius: var(--picker-border-radius);
+            box-shadow: var(--shadow-elevation-1);
+            background-color: var(--color-entry);
+        }
+
+        // .entry__picker__slider
+        &__slider {
+            &#{&} {
+                border-radius: var(--input-radius);
+                box-shadow: none;
+            }
+
+            &--alpha {
+                &#{&} {
+                    display: none;
+                }
+            }
+        }
+
+        // .entry__picker__saturation-lightness
+        &__saturation-lightness {
+            &#{&} {
+                border-radius: var(--input-radius);
+                box-shadow: none;
+            }
+        }
+
+        // .entry__picker__editor
+        &__editor {
+            // .entry__picker__editor__input
+            &__input {
+                &#{&} {
+                    background-color: var(--color-entry-input);
+                    border-radius: var(--input-radius);
+                    box-shadow: none;
+                    color: var(--color-text);
+                }
+            }
+        }
+
+        // .entry__picker__sample
+        &__sample {
+            &#{&} {
+                background: transparent;
+                border-radius: var(--input-radius);
+                box-shadow: none;
+                overflow: hidden;
+            }
+        }
+
+        // .entry__picker__button
+        &__button {
+            &#{&} {
+                background: transparent;
+                border-radius: var(--action-radius);
+                box-shadow: none;
+                display: flex;
+                padding: 0;
+
+                &:hover,
+                &:focus,
+                &:active {
+                    background: var(--color-action-highlight);
+                }
+            }
+
+            // .entry__picker__button__icon
+            &__icon {
+                &#{&} {
+                    margin: auto;
+                    fill: var(--color-icon-fill);
+                }
+            }
+        }
     }
 }
 
@@ -793,19 +828,11 @@ main {
 }
 
 /**
- * Styles for markup provided by the Vanilla Picker library.
- * @see https://github.com/Sphinxxxx/vanilla-picker
- */
-.picker_alpha {
-    display: none;
-}
-
-/**
  * Styles for markup provided by the Tippy.js library.
  * @see https://github.com/atomiks/tippyjs
  */
 .tippy-box {
-    font-size: 12px;
+    font-size: 1.2rem;
 }
 
 /**

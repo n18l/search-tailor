@@ -1,5 +1,11 @@
-import { defaultUserData } from "./addonData";
-import { logError, isValidJson } from "./addonFunctions";
+import Tippy from "tippy.js";
+import { workingCopy, defaultUserData } from "./addonData";
+import {
+    qsa,
+    saveSearchEngines,
+    logError,
+    isValidJson,
+} from "./addonFunctions";
 
 /* Class representing the extension options panel. */
 class TailoredSearchOptionsPanel {
@@ -12,6 +18,7 @@ class TailoredSearchOptionsPanel {
         this.defineInputs();
         this.defineActions();
         this.populateOptions();
+        this.initializeTooltips();
         this.bindEvents();
     }
 
@@ -67,6 +74,12 @@ class TailoredSearchOptionsPanel {
                 this.inputs.jsonExport.scrollHeight
             }px`;
 
+            // Set the Export JSON link's download target to an encoded string
+            // of the extension data.
+            this.actionButtons.exportJSON.href = `data:text/json;charset=utf-8,${encodeURIComponent(
+                this.currentJSONExport
+            )}`;
+
             // Create a local copy of the Search Engine settings.
             this.currentSearchEngines = storageData.searchEngines;
 
@@ -94,6 +107,19 @@ class TailoredSearchOptionsPanel {
     }
 
     /**
+     * Initializes tooltips for the options page.
+     */
+    initializeTooltips() {
+        this.tooltipTargets = qsa("[data-tippy]", this.element);
+
+        Tippy(this.tooltipTargets, {
+            content: reference => reference.getAttribute("aria-label"),
+            offset: [0, 5],
+            placement: "bottom",
+        });
+    }
+
+    /**
      * Attach event handlers.
      */
     bindEvents() {
@@ -104,9 +130,9 @@ class TailoredSearchOptionsPanel {
                     engine => engine.id === e.target.id
                 ).enabled = e.target.checked;
 
-                browser.storage.sync
-                    .set({ searchEngines: this.currentSearchEngines })
-                    .then(null, logError);
+                workingCopy.searchEngines = this.currentSearchEngines;
+
+                saveSearchEngines();
             });
         });
 
@@ -164,7 +190,7 @@ class TailoredSearchOptionsPanel {
 }
 
 const optionsPanelElement = document.querySelector(
-    "#search-tailor-options-panel"
+    "#search-tailor-options-page"
 );
 
 const currentOptionsPanel = (function initOptionsPanel() {
