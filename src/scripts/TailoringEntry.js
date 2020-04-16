@@ -347,6 +347,7 @@ class TailoringEntry {
             e => {
                 if (e.animationName === "fadeModalOut") {
                     this.container.style.zIndex = 1;
+                    delete e.target.dataset.animate;
                 }
             }
         );
@@ -389,6 +390,7 @@ class TailoringEntry {
         this.pickerElements.borderModal.addEventListener("animationend", e => {
             if (e.animationName === "fadeModalOut") {
                 this.container.style.zIndex = 1;
+                delete e.target.dataset.animate;
             }
         });
 
@@ -468,14 +470,18 @@ class TailoringEntry {
      * The current state of this entry's border color modal.
      */
     set backgroundColorModalIsVisible(newModalState) {
-        this.pickerElements.backgroundModal.dataset.isVisible = !!newModalState;
+        this.pickerElements.backgroundModal.dataset.animate = newModalState
+            ? "in"
+            : "out";
     }
 
     /**
      * The current state of this entry's background color modal.
      */
     set borderColorModalIsVisible(newModalState) {
-        this.pickerElements.borderModal.dataset.isVisible = !!newModalState;
+        this.pickerElements.borderModal.dataset.animate = newModalState
+            ? "in"
+            : "out";
     }
 
     /**

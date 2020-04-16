@@ -2,8 +2,10 @@ doctype html
 
 html
     head
+        title Search Tailor Options
         meta(charset="utf-8")
         link(rel="stylesheet" href="../styles/options.css")
+        link(rel="icon" href="../assets/icons/icon.svg")
 
     body
         main(id="search-tailor-options-page")
@@ -21,19 +23,12 @@ html
 
                         div(class="option__container")
                             mixin searchEngineToggle(searchEngine)
-                                label(class=[
-                                    `option__input-wrapper`,
-                                    `option__input-wrapper--toggle`,
-                                ])
+                                label(class="option__input-wrapper option__input-wrapper--toggle")
                                     input(
-                                        id= searchEngine.id
-                                        class=[
-                                            `option__input`,
-                                            `option__input--toggle`,
-                                            `js-option-input`,
-                                        ]
+                                        id=searchEngine.id
+                                        class="option__input option__input--toggle js-option-input"
                                         type="checkbox"
-                                        name= searchEngine.label
+                                        name=searchEngine.label
                                         data-input-group="enableSearchEngine"
                                         checked
                                     )
