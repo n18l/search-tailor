@@ -1,7 +1,7 @@
 import TokenField from "tokenfield";
 import Tippy from "tippy.js";
 import ColorPicker from "vanilla-picker";
-import { logError, defaultTreatment } from "./addonData";
+import { logError, defaultTreatment } from "../addon/data";
 import {
     qs,
     qsa,
@@ -9,7 +9,7 @@ import {
     getCustomPropertyValue,
     parseHSLAString,
     sendChangeNotification,
-} from "./addonFunctions";
+} from "../addon/functions";
 
 /**
  * The interactive representation of a tailoring entry.

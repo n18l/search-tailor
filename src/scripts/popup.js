@@ -1,8 +1,8 @@
 import Sortable from "sortablejs";
 import Tippy from "tippy.js";
-import { defaultUserData } from "./addonData";
-import { qs, qsa, getRandomTidbit } from "./addonFunctions";
-import TailoringEntry from "./TailoringEntry";
+import { defaultUserData } from "./addon/data";
+import { qs, qsa, getRandomTidbit } from "./addon/functions";
+import TailoringEntry from "./classes/TailoringEntry";
 
 /**
  * Namespace for popup-related properties & methods.

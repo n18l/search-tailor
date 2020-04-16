@@ -1,5 +1,5 @@
-import { defaultUserData } from "./addonData";
-import TailoredSearch from "./TailoredSearch";
+import { defaultUserData } from "./addon/data";
+import TailoredSearch from "./classes/TailoredSearch";
 
 let currentTailoredSearch = null;
 

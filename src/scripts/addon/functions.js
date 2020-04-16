@@ -1,4 +1,4 @@
-import { tidbits } from "./addonData";
+import { tidbits } from "./data";
 
 /**
  * Queries for the first match of a given selector within a given element. A

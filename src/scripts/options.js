@@ -1,11 +1,11 @@
 import Tippy from "tippy.js";
-import { defaultUserData } from "./addonData";
+import { defaultUserData } from "./addon/data";
 import {
     qsa,
     sendChangeNotification,
     logError,
     isValidJson,
-} from "./addonFunctions";
+} from "./addon/functions";
 
 /* Class representing the extension options panel. */
 class TailoredSearchOptionsPanel {
