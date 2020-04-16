@@ -232,6 +232,7 @@ main {
     &__sort-handle {
         cursor: move;
         flex: 0 0 auto;
+        margin: 0 2px;
 
         // .entry__sort-handle__icon
         &__icon {
@@ -246,7 +247,7 @@ main {
         background-color: var(--color-entry-input);
         border-radius: var(--input-radius);
         flex: 1 1 100%;
-        margin: 15px 0 15px 2px;
+        margin: 15px 0;
         position: relative;
         overflow: hidden;
 
