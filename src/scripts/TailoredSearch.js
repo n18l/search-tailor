@@ -1,24 +1,11 @@
-import { workingCopy, searchEngines } from "./addonData";
-import { qs, qsa, getUserData } from "./addonFunctions";
+import { searchEngines } from "./addonData";
+import { qs, qsa } from "./addonFunctions";
 
 /* Class representing a user's search that is eligible for tailoring. */
 class TailoredSearch {
-    constructor() {
-        // Reapply tailoring when sent a targeted change message. The message
-        // denotes which entry IDs to apply changes for, allowing patch updates.
-        browser.runtime.onMessage.addListener(message => {
-            // Only proceed if this is a change message.
-            if (!message.type.startsWith("change")) {
-                return;
-            }
-
-            // Refresh the current user data and re-tailor the appropriate
-            // search results.
-            getUserData().then(() => {
-                this.tailor(message.updatedEntryIDs);
-            });
-        });
-
+    constructor(userData) {
+        // Store a copy of the current user data.
+        this.userData = userData;
         this.cacheData();
 
         // Only proceed if this is a supported search engine.
@@ -84,7 +71,7 @@ class TailoredSearch {
         }
 
         // Check the user's settings for this engine's enabled status.
-        const searchEngineIsEnabled = workingCopy.searchEngines.find(
+        const searchEngineIsEnabled = this.userData.searchEngines.find(
             searchEngine => searchEngine.id === this.searchEngine.id
         ).enabled;
 
@@ -136,7 +123,7 @@ class TailoredSearch {
      */
     applyEntryIdAttributes(tailoringEntryIDs = null) {
         // Apply IDs for all entries by default.
-        let entriesToApply = workingCopy.tailoringEntries;
+        let entriesToApply = this.userData.tailoringEntries;
 
         // Apply IDs only to a specific entry if an ID is provided.
         if (tailoringEntryIDs) {
@@ -233,7 +220,7 @@ class TailoredSearch {
             const thisResult = searchResult;
 
             // Identify the tailoring entry that applies to this result.
-            const tailoringEntry = workingCopy.tailoringEntries.find(
+            const tailoringEntry = this.userData.tailoringEntries.find(
                 entry => entry.id === thisResult.dataset.tailoringEntryId
             );
 

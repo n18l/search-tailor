@@ -1,13 +1,7 @@
 import Sortable from "sortablejs";
 import Tippy from "tippy.js";
-import { workingCopy } from "./addonData";
-import {
-    qs,
-    qsa,
-    getUserData,
-    saveTailoringEntries,
-    getRandomTidbit,
-} from "./addonFunctions";
+import { defaultUserData } from "./addonData";
+import { qs, qsa, getRandomTidbit } from "./addonFunctions";
 import TailoringEntry from "./TailoringEntry";
 
 /**
@@ -62,8 +56,8 @@ const popup = {
      * Initializes a Tailoring Entry UI for each existing entry setting object
      * in the user data, adding it to the popup.
      */
-    initializeTailoringEntries() {
-        workingCopy.tailoringEntryObjects = workingCopy.tailoringEntries.map(
+    initializeTailoringEntries(userData) {
+        TailoringEntry.objects = userData.tailoringEntries.map(
             entrySettings => new TailoringEntry(entrySettings)
         );
     },
@@ -78,9 +72,7 @@ const popup = {
 
         // Add a new Tailoring Entry.
         addEntryButton.addEventListener("click", () => {
-            workingCopy.tailoringEntryObjects.push(
-                new TailoringEntry(null, true, true)
-            );
+            TailoringEntry.objects.push(new TailoringEntry(null, true, true));
         });
     },
 
@@ -94,19 +86,15 @@ const popup = {
             onUpdate(event) {
                 // Remove the entry from it's old position in the object array,
                 // capturing a copy of it as we do so.
-                const movedEntry = workingCopy.tailoringEntryObjects.splice(
+                const movedEntry = TailoringEntry.objects.splice(
                     event.oldIndex,
                     1
                 )[0];
 
                 // Add the entry back into the object array at its new position.
-                workingCopy.tailoringEntryObjects.splice(
-                    event.newIndex,
-                    0,
-                    movedEntry
-                );
+                TailoringEntry.objects.splice(event.newIndex, 0, movedEntry);
 
-                saveTailoringEntries("entry-order");
+                TailoringEntry.save("entry-order");
             },
         });
     },
@@ -114,13 +102,15 @@ const popup = {
     /**
      * Initializes the addon's popup UI.
      */
-    initialize() {
+    initialize(userData) {
         this.initializeTitleBar();
-        this.initializeTailoringEntries();
+        this.initializeTailoringEntries(userData);
         this.initializeActionBar();
         this.enableEntrySorting();
     },
 };
 
 // Get the current user data, then initialize the popup UI.
-getUserData().then(() => popup.initialize());
+browser.storage.sync
+    .get({ tailoringEntries: defaultUserData.tailoringEntries })
+    .then(userData => popup.initialize(userData));
