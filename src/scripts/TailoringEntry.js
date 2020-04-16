@@ -1,14 +1,14 @@
 import TokenField from "tokenfield";
 import Tippy from "tippy.js";
 import ColorPicker from "vanilla-picker";
-import { workingCopy, defaultTreatment } from "./addonData";
+import { logError, defaultTreatment } from "./addonData";
 import {
     qs,
     qsa,
     generateTailoringEntryID,
     getCustomPropertyValue,
     parseHSLAString,
-    saveTailoringEntries,
+    sendChangeNotification,
 } from "./addonFunctions";
 
 /**
@@ -224,7 +224,7 @@ class TailoringEntry {
             const domainArray = this.tokenField.getItems().map(i => i.name);
             this.settings.domains = domainArray;
 
-            saveTailoringEntries("entry-domains");
+            TailoringEntry.save("entry-domains");
         });
 
         // Respond to keyboard events in the TokenField.
@@ -299,7 +299,7 @@ class TailoringEntry {
             // Update the toggle button to display an appropriate icon.
             this.opacityToggle.dataset.opacityOn = +e.target.value > 0;
 
-            saveTailoringEntries("entry-opacity", [this.settings.id]);
+            TailoringEntry.save("entry-opacity", [this.settings.id]);
         });
 
         // Toggle this entry's colorization setting on click.
@@ -402,7 +402,7 @@ class TailoringEntry {
      * The index of this entry among all current entries.
      */
     get index() {
-        return workingCopy.tailoringEntryObjects.indexOf(this);
+        return TailoringEntry.objects.indexOf(this);
     }
 
     /**
@@ -513,7 +513,7 @@ class TailoringEntry {
             this.updateColoredIcons(["backgroundColor"]);
         }
 
-        saveTailoringEntries(`entry-${property}`, [this.settings.id]);
+        TailoringEntry.save(`entry-${property}`, [this.settings.id]);
     }
 
     /**
@@ -620,22 +620,49 @@ class TailoringEntry {
         this.element.dataset.isBeingDeleted = true;
 
         // Delete this entry's data and save the update to storage.
-        workingCopy.tailoringEntries.splice(this.index, 1);
-        workingCopy.tailoringEntryObjects.splice(this.index, 1);
+        TailoringEntry.objects.splice(this.index, 1);
+        TailoringEntry.save("entry-deletion");
+    }
 
-        saveTailoringEntries("entry-removed");
+    /**
+     * Retrieves an array of settings objects for all the current Tailoring
+     * Entry objects that make up the popup UI.
+     */
+    static get rawValues() {
+        return TailoringEntry.objects.map(o => o.settings);
+    }
+
+    /**
+     * Saves the raw values of all current tailoring entries in the popup UI
+     * back to the extension's storage.
+     *
+     * @param {String}   changeType A simple description of the type of change.
+     * @param {String[]} updatedIDs The IDs of specific tailoring entries to apply updates for, defaulting to all.
+     */
+    static save(changeType, updatedIDs = null) {
+        browser.storage.sync
+            .set({ tailoringEntries: TailoringEntry.rawValues })
+            .then(
+                () => sendChangeNotification(changeType, updatedIDs),
+                logError
+            );
     }
 
     /**
      * Closes all settings drawers.
      */
     static closeAllSettingsDrawers() {
-        workingCopy.tailoringEntryObjects.forEach(entryObject => {
+        TailoringEntry.objects.forEach(entryObject => {
             const thisEntry = entryObject;
 
             thisEntry.settingsDrawerIsOpen = false;
         });
     }
 }
+
+/**
+ * Represents a static list of all current Tailoring Entry objects.
+ */
+TailoringEntry.objects = [];
 
 module.exports = TailoringEntry;

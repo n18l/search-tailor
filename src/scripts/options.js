@@ -1,8 +1,8 @@
 import Tippy from "tippy.js";
-import { workingCopy, defaultUserData } from "./addonData";
+import { defaultUserData } from "./addonData";
 import {
     qsa,
-    saveSearchEngines,
+    sendChangeNotification,
     logError,
     isValidJson,
 } from "./addonFunctions";
@@ -123,16 +123,20 @@ class TailoredSearchOptionsPanel {
      * Attach event handlers.
      */
     bindEvents() {
-        // Update and sync the search engine settings when checking/unchecking a search engine.
+        // Update and sync the search engine settings when checking/unchecking a
+        // search engine.
         this.inputs.enableSearchEngine.forEach(input => {
             input.addEventListener("input", e => {
                 this.currentSearchEngines.find(
                     engine => engine.id === e.target.id
                 ).enabled = e.target.checked;
 
-                workingCopy.searchEngines = this.currentSearchEngines;
-
-                saveSearchEngines();
+                browser.storage.sync
+                    .set({ searchEngines: this.currentSearchEngines })
+                    .then(
+                        () => sendChangeNotification("search-engine-update"),
+                        logError
+                    );
             });
         });
 
@@ -157,9 +161,11 @@ class TailoredSearchOptionsPanel {
 
         // Reset extension data to the default values.
         this.actionButtons.resetData.addEventListener("click", () => {
-            browser.storage.sync
-                .set(JSON.parse(JSON.stringify(defaultUserData)))
-                .then(null, logError);
+            const confirmationMessage = `Are you sure you want to reset all data for the Search Tailor extension?`;
+            // eslint-disable-next-line no-alert
+            if (window.confirm(confirmationMessage)) {
+                browser.storage.sync.clear();
+            }
         });
 
         // Clear the contents of the JSON Import textarea.
@@ -184,7 +190,7 @@ class TailoredSearchOptionsPanel {
             // Otherwise, update the current extension data with the valid JSON.
             browser.storage.sync
                 .set(JSON.parse(this.inputs.jsonImport.value))
-                .then(null, logError);
+                .then(() => sendChangeNotification("json-import"), logError);
         });
     }
 }

@@ -1,4 +1,4 @@
-import { workingCopy, defaultUserData, tidbits } from "./addonData";
+import { tidbits } from "./addonData";
 
 /**
  * Queries for the first match of a given selector within a given element. A
@@ -36,40 +36,6 @@ export function generateTailoringEntryID(maxRandomInt = 100000) {
     const randomInt = Math.floor(Math.random() * Math.floor(maxRandomInt));
 
     return `${currentTimestamp}-${randomInt}`;
-}
-
-/**
- * Retrieves the addon's current user data using the browser storage API and
- * saves a local working copy. If the requested data isn't found, it falls
- * back to the addon's defined default values.
- *
- * @param {string[]} requestedStorageData The storage items to retrieve, defaulting to all.
- *
- * @returns {Promise} A Promise resolving to the data saved as the local working copy.
- */
-export function getUserData(
-    requestedStorageData = ["tailoringEntries", "searchEngines"]
-) {
-    const userDataPromise = new Promise((resolve, reject) => {
-        browser.storage.sync
-            .get(requestedStorageData)
-            .then(storageData => {
-                requestedStorageData.forEach(dataType => {
-                    workingCopy[dataType] = [];
-
-                    if (storageData[dataType] && storageData[dataType].length) {
-                        workingCopy[dataType] = storageData[dataType];
-                    } else {
-                        workingCopy[dataType] = defaultUserData[dataType];
-                    }
-                });
-
-                resolve(workingCopy);
-            })
-            .catch(error => reject(error));
-    });
-
-    return userDataPromise;
 }
 
 /**
@@ -150,50 +116,30 @@ export function isValidJson(json) {
 }
 
 /**
- * Save the current tailoring entries via the browser storage API.
+ * Sends a message to all of the extension's active content scripts notifying
+ * them of a change.
+ *
+ * @param {String}   changeType A simple description of the type of change.
+ * @param {String[]} updatedIDs The IDs of specific tailoring entries to apply updates for, defaulting to all.
  */
-export function saveTailoringEntries(changeType, updatedEntryIDs = null) {
-    // Get the settings of all existing entry objects. This is largely to make
-    // sure we get them in the order represented in the popup UI.
-    const entrySettings = workingCopy.tailoringEntryObjects.map(
-        entryObject => entryObject.settings
-    );
-
+export function sendChangeNotification(changeType, updatedIDs = null) {
     // Record information about this change to communicate to the extension's
     // other scripts, allowing them to respond accordingly.
     const changeInfo = {
         type: `change:${changeType}`,
-        updatedEntryIDs,
+        updatedIDs,
     };
 
-    // Send a message about this change to each tab's content script.
-    browser.tabs.query({}).then(tabs => {
+    // Identify any tabs where a content script should be running based on the
+    // matches defined in the manifest.
+    const manifest = browser.runtime.getManifest();
+    const { matches } = manifest.content_scripts[0];
+    const getContentScriptTabs = browser.tabs.query({ url: matches });
+
+    // Send the change message to any active content scripts.
+    getContentScriptTabs.then(tabs => {
         tabs.forEach(tab => browser.tabs.sendMessage(tab.id, changeInfo));
     });
-
-    browser.storage.sync
-        .set({ tailoringEntries: entrySettings })
-        .then(null, logError);
-}
-
-/**
- * Save the current search engine settings via the browser storage API.
- */
-export function saveSearchEngines() {
-    // Record information about this change to communicate to the extension's
-    // other scripts, allowing them to respond accordingly.
-    const changeInfo = {
-        type: `change:search-engines`,
-    };
-
-    // Send a message about this change to each tab's content script.
-    browser.tabs.query({}).then(tabs => {
-        tabs.forEach(tab => browser.tabs.sendMessage(tab.id, changeInfo));
-    });
-
-    browser.storage.sync
-        .set({ searchEngines: workingCopy.searchEngines })
-        .then(null, logError);
 }
 
 /**
