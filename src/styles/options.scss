@@ -189,6 +189,7 @@ body {
                 color: hsl(0, 100%, 100%);
                 opacity: 0;
                 transition: opacity 0.25s;
+                pointer-events: none;
 
                 @at-root #{$this-validation-wrapper}:not([data-validation-message=""])::after {
                     opacity: 1;
