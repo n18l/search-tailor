@@ -1,10 +1,31 @@
 {
     "name": "search-tailor",
-    "version": "1.0.0",
-    "description": "A browser extension for tailoring your search results.",
+    "description": "Customizes your search results so you can find what you need with style.",
+    "version": "0.2.4",
     "author": "Nick Brombal",
     "license": "MIT",
-    "main": "index.js",
+    "homepage": "https://github.com/nbrombal/search-tailor",
+    "repository": {
+        "type": "git",
+        "url": "github:nbrombal/search-tailor.git"
+    },
+    "contributors": [
+        {
+            "name": "Nick Brombal",
+            "url": "https://nickbrombal.codes"
+        },
+        {
+            "name": "Alex Brombal",
+            "url": "https://www.brombal.com"
+        }
+    ],
+    "bugs": {
+        "url": "https://github.com/nbrombal/search-tailor/issues",
+        "email": "search-tailor@nbrombal.com"
+    },
+    "engines": {
+        "node": ">=13.3.0"
+    },
     "scripts": {
         "build:manifest:chrome": "cp src/manifest-chrome.json dist/chrome/manifest.json",
         "build:manifest:firefox": "cp src/manifest-firefox.json dist/firefox/manifest.json",
