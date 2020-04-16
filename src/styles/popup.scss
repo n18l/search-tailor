@@ -839,21 +839,22 @@ main {
  * The HTML contents for a tooltip.
  */
 .tooltip-contents {
-    padding-top: 4px;
     max-width: 75vw;
+    padding: 4px 0;
 
     // .tooltip-contents__section
     &__section {
         & + & {
-            margin-top: 6px;
+            margin-top: 8px;
         }
 
         &[data-label]::before {
             content: attr(data-label);
             display: block;
-            letter-spacing: 0.05rem;
             font-size: 0.8rem;
             font-weight: 300;
+            letter-spacing: 0.05rem;
+            margin-bottom: 2px;
             text-transform: uppercase;
         }
     }
