@@ -23,19 +23,12 @@ html
 
                         div(class="option__container")
                             mixin searchEngineToggle(searchEngine)
-                                label(class=[
-                                    `option__input-wrapper`,
-                                    `option__input-wrapper--toggle`,
-                                ])
+                                label(class="option__input-wrapper option__input-wrapper--toggle")
                                     input(
-                                        id= searchEngine.id
-                                        class=[
-                                            `option__input`,
-                                            `option__input--toggle`,
-                                            `js-option-input`,
-                                        ]
+                                        id=searchEngine.id
+                                        class="option__input option__input--toggle js-option-input"
                                         type="checkbox"
-                                        name= searchEngine.label
+                                        name=searchEngine.label
                                         data-input-group="enableSearchEngine"
                                         checked
                                     )
