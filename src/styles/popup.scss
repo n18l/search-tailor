@@ -554,11 +554,11 @@ main {
         width: 100vw;
         z-index: 1;
 
-        &[data-is-visible="true"] {
+        &[data-animate="in"] {
             animation-name: fadeModalIn;
         }
 
-        &[data-is-visible="false"] {
+        &[data-animate="out"] {
             animation-name: fadeModalOut;
         }
 
