@@ -217,6 +217,17 @@ main {
         display: flex;
     }
 
+    //. entry__color-hint
+    &__color-hint {
+        background-image: linear-gradient(
+            var(--color-treatment-background) 50%,
+            var(--color-treatment-border) 50%
+        );
+        border-radius: 0 4px 4px 0;
+        flex: 0 0 4px;
+        height: 40px;
+    }
+
     // .entry__sort-handle
     &__sort-handle {
         cursor: move;
