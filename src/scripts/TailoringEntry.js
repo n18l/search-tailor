@@ -530,15 +530,15 @@ class TailoringEntry {
      */
     updateColoredIcons(iconsToUpdate = ["backgroundColor", "borderColor"]) {
         if (iconsToUpdate.includes("backgroundColor")) {
-            this.actionButtons.showBackgroundColorModal.style.setProperty(
-                "--color-icon-fill-background-picker",
+            this.element.style.setProperty(
+                "--color-treatment-background",
                 this.settings.treatment.backgroundColor
             );
         }
 
         if (iconsToUpdate.includes("borderColor")) {
-            this.actionButtons.showBorderColorModal.style.setProperty(
-                "--color-icon-fill-border-picker",
+            this.element.style.setProperty(
+                "--color-treatment-border",
                 this.settings.treatment.borderColor
             );
         }

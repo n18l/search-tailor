@@ -531,11 +531,11 @@ main {
 
                 button:not([disabled]) & {
                     #{$entry-setting}--background-color & {
-                        fill: var(--color-icon-fill-background-picker);
+                        fill: var(--color-treatment-background);
                     }
 
                     #{$entry-setting}--border-color & {
-                        fill: var(--color-icon-fill-border-picker);
+                        fill: var(--color-treatment-border);
                     }
                 }
             }
