@@ -43,7 +43,6 @@ class TailoringEntry {
 
         this.cacheData();
         this.defineActions();
-        this.initializeDomainInput();
         this.initializeOpacityInput();
         this.initializeColorInputs();
         this.initializeTooltips();
@@ -117,8 +116,26 @@ class TailoringEntry {
             addItemOnBlur: true,
         });
 
+        // Save all entries when the domain tokens change. Note that this uses
+        // the NodeJS Event API as implemented by the TokenField library.
+        // @see https://nodejs.org/api/events.html#events_emitter_on_eventname_listener
+        this.tokenField.on("change", () => {
+            // Get the raw TokenField values as an array of strings and apply it
+            // to this entry's settings object.
+            const domainArray = this.tokenField.getItems().map(i => i.name);
+            this.settings.domains = domainArray;
+
+            TailoringEntry.save("entry-domains");
+        });
+
         // Save a reference to the TokenField's actual text input element.
         this.tokenFieldInput = qs(".tokenfield-input", this.element);
+
+        // Respond to keyboard events in the TokenField.
+        this.tokenFieldInput.addEventListener("keydown", e => {
+            // Disallow spaces within the TokenField's input.
+            if (e.key === " ") e.preventDefault();
+        });
     }
 
     /**
@@ -226,24 +243,6 @@ class TailoringEntry {
      * Attaches event handlers.
      */
     bindEvents() {
-        // Save all entries when the domain tokens change. Note that this uses
-        // the NodeJS Event API as implemented by the TokenField library.
-        // @see https://nodejs.org/api/events.html#events_emitter_on_eventname_listener
-        this.tokenField.on("change", () => {
-            // Get the raw TokenField values as an array of strings and apply it
-            // to this entry's settings object.
-            const domainArray = this.tokenField.getItems().map(i => i.name);
-            this.settings.domains = domainArray;
-
-            TailoringEntry.save("entry-domains");
-        });
-
-        // Respond to keyboard events in the TokenField.
-        this.tokenFieldInput.addEventListener("keydown", e => {
-            // Disallow spaces within the TokenField's input.
-            if (e.key === " ") e.preventDefault();
-        });
-
         // Open and close this entry's settings drawer.
         this.actionButtons.toggleSettingsDrawer.addEventListener("click", () =>
             this.toggleSettingsDrawer()
@@ -590,6 +589,10 @@ class TailoringEntry {
 
         // Add this entry's UI to the container element.
         this.container.appendChild(this.element);
+
+        // Initialize the domain input and bind its events after insertion to
+        // avoid issues with its automatic resizing in Chrome.
+        this.initializeDomainInput();
 
         // Focus this entry's domain input if desired.
         if (focusInput) {
