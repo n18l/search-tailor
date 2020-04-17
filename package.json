@@ -159,6 +159,7 @@
         "sass": "^1.26.2"
     },
     "dependencies": {
+        "lodash.throttle": "^4.1.1",
         "sortablejs": "^1.10.2",
         "tippy.js": "^6.1.1",
         "tokenfield": "^1.2.2",

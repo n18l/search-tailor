@@ -2,6 +2,7 @@ import browser from "webextension-polyfill";
 import TokenField from "tokenfield";
 import Tippy from "tippy.js";
 import ColorPicker from "vanilla-picker";
+import throttle from "lodash.throttle";
 import { logError, defaultTreatment } from "../addon/data";
 import {
     qs,
@@ -164,8 +165,14 @@ class TailoringEntry {
             template: this.pickerElements.template,
         });
 
-        this.backgroundPicker.onChange = newColor =>
-            this.setTreatmentProperty("backgroundColor", newColor.hslaString);
+        this.backgroundPicker.onChange = throttle(
+            newColor =>
+                this.setTreatmentProperty(
+                    "backgroundColor",
+                    newColor.hslaString
+                ),
+            500
+        );
 
         this.backgroundPicker.onDone = () => {
             this.backgroundColorModalIsVisible = false;
@@ -185,8 +192,11 @@ class TailoringEntry {
             template: this.pickerElements.template,
         });
 
-        this.borderPicker.onChange = newColor =>
-            this.setTreatmentProperty("borderColor", newColor.hslaString);
+        this.borderPicker.onChange = throttle(
+            newColor =>
+                this.setTreatmentProperty("borderColor", newColor.hslaString),
+            500
+        );
 
         this.borderPicker.onDone = () => {
             this.borderColorModalIsVisible = false;
@@ -291,17 +301,20 @@ class TailoringEntry {
         });
 
         // Update the opacity setting for this entry's treatment on input.
-        this.opacityRange.addEventListener("input", e => {
-            this.settings.treatment.opacity = +e.target.value;
+        this.opacityRange.addEventListener(
+            "input",
+            throttle(e => {
+                this.settings.treatment.opacity = +e.target.value;
 
-            // Insert the current value into the input's tooltip.
-            this.opacityRangeTooltip.setContent(this.opacityTooltipValue);
+                // Insert the current value into the input's tooltip.
+                this.opacityRangeTooltip.setContent(this.opacityTooltipValue);
 
-            // Update the toggle button to display an appropriate icon.
-            this.opacityToggle.dataset.opacityOn = +e.target.value > 0;
+                // Update the toggle button to display an appropriate icon.
+                this.opacityToggle.dataset.opacityOn = +e.target.value > 0;
 
-            TailoringEntry.save("entry-opacity", [this.settings.id]);
-        });
+                TailoringEntry.save("entry-opacity", [this.settings.id]);
+            }, 500)
+        );
 
         // Toggle this entry's colorization setting on click.
         this.actionButtons.toggleColorization.addEventListener("click", () => {
