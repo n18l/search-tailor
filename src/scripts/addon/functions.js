@@ -139,11 +139,8 @@ export function sendChangeNotification(changeType, updatedIDs = null) {
 
     // Send the change message to any active content scripts.
     getContentScriptTabs
-        .then(tabs =>
-            tabs.forEach(tab =>
-                browser.tabs.sendMessage(tab.id, changeInfo).catch(logError)
-            )
-        )
+        .then(tabs => tabs.map(tab => browser.tabs.connect(tab.id)))
+        .then(ports => ports.forEach(port => port.postMessage(changeInfo)))
         .catch(logError);
 }
 

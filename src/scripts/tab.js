@@ -13,21 +13,23 @@ browser.storage.sync
     })
     .catch(logError);
 
-// Reapply tailoring when sent a targeted change message. The message denotes
-// which entry IDs to apply changes for, allowing patch updates.
-browser.runtime.onMessage.addListener(message => {
-    // Only proceed if this is a change message.
-    if (!message.type.startsWith("change")) {
-        return;
-    }
+browser.runtime.onConnect.addListener(port => {
+    // Reapply tailoring when sent a change request message. The message denotes
+    // which entry IDs to apply changes for, allowing patch updates.
+    port.onMessage.addListener(message => {
+        // Only proceed if this is a change message.
+        if (!message.type.startsWith("change")) {
+            return;
+        }
 
-    // Refresh the current user data and reapply tailoring for the appropriate
-    // search results.
-    browser.storage.sync
-        .get(defaultUserData)
-        .then(updatedUserData => {
-            currentTailoredSearch.userData = updatedUserData;
-            currentTailoredSearch.tailor(message.updatedEntryIDs);
-        })
-        .catch(logError);
+        // Refresh the current user data and reapply tailoring for the
+        // appropriate search results.
+        browser.storage.sync
+            .get(defaultUserData)
+            .then(updatedUserData => {
+                currentTailoredSearch.userData = updatedUserData;
+                currentTailoredSearch.tailor(message.updatedEntryIDs);
+            })
+            .catch(logError);
+    });
 });
