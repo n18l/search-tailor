@@ -84,7 +84,7 @@ main {
             pointer-events: none;
             top: 50%;
             transition: opacity 0.35s;
-            translate: -50% -50%;
+            transform: translate(-50%, -50%);
             width: 100%;
             z-index: 0;
 
@@ -185,7 +185,7 @@ main {
             height: var(--entry-height);
             opacity: 1;
             overflow: visible;
-            translate: 0;
+            transform: translate(0);
         }
 
         // Slide the entry out to the right and set its overflow to hidden to
@@ -194,7 +194,7 @@ main {
             height: var(--entry-height);
             opacity: 1;
             overflow: hidden;
-            translate: 100%;
+            transform: translate(100%);
         }
 
         // Shrink the entry down to nothing. JavaScript will listen for the
@@ -203,7 +203,7 @@ main {
             height: 0;
             opacity: 0;
             overflow: hidden;
-            translate: 100%;
+            transform: translate(100%);
         }
     }
 
@@ -247,12 +247,12 @@ main {
             left: 0;
             pointer-events: none;
             position: absolute;
-            scale: 0 1;
-            transition: scale 0.35s;
+            transform: scaleX(0);
+            transition: transform 0.35s;
             width: 100%;
 
             @at-root #{$input-container}:focus-within::before {
-                scale: 1 1;
+                transform: scaleX(1);
             }
         }
     }
@@ -286,7 +286,7 @@ main {
             pointer-events: none;
             top: 50%;
             transition: opacity 0.35s;
-            translate: -50% -50%;
+            transform: translate(-50%, -50%);
             width: 100%;
             z-index: 0;
 
@@ -370,7 +370,7 @@ main {
             pointer-events: none;
             position: absolute;
             top: 50%;
-            translate: -50% -50%;
+            transform: translate(-50%, -50%);
             transition: opacity 0.35s;
             width: 100%;
 
@@ -450,7 +450,7 @@ main {
             pointer-events: none;
             position: absolute;
             top: 50%;
-            translate: -50% -50%;
+            transform: translate(-50%, -50%);
             transition: opacity 0.35s;
             width: 100%;
             z-index: 0;
@@ -708,7 +708,7 @@ main {
     display: flex;
     height: 40px;
     left: 50%;
-    translate: -50%;
+    transform: translate(-50%);
     overflow: hidden;
     position: fixed;
     z-index: 1;
