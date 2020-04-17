@@ -842,9 +842,17 @@ main {
     // .tokenfield-input
     &-input {
         float: left;
+        font-family: "Open Sans", sans-serif;
         font-size: 1.2rem;
         min-height: calc(24px + var(--token-item-spacing) * 2);
-        padding: var(--token-item-spacing);
+        margin-left: var(--token-item-spacing);
+    }
+
+    // Ensure the tokenfield's resizer (which controls when the input wraps to
+    // the next line) uses the same font as the input.
+    [id^="tokenfield-sizer"] {
+        font-family: "Open Sans", sans-serif;
+        font-size: 1.2rem;
     }
 }
 
