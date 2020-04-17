@@ -64,35 +64,38 @@ class TailoredSearchOptionsPanel {
      * Populate the option fields with current extension data.
      */
     populateOptions() {
-        browser.storage.sync.get(defaultUserData).then(storageData => {
-            // Create a local, formatted copy of the current tailoring entry
-            // settings.
-            this.currentJSONExport = JSON.stringify(storageData, null, 4);
+        browser.storage.sync
+            .get(defaultUserData)
+            .then(storageData => {
+                // Create a local, formatted copy of the current tailoring entry
+                // settings.
+                this.currentJSONExport = JSON.stringify(storageData, null, 4);
 
-            // Populate the JSON Export field and resize it so it can be scrolled cleanly.
-            this.inputs.jsonExport.value = this.currentJSONExport;
-            this.inputs.jsonExport.style.height = `${
-                this.inputs.jsonExport.scrollHeight
-            }px`;
+                // Populate the JSON Export field and resize it so it can be scrolled cleanly.
+                this.inputs.jsonExport.value = this.currentJSONExport;
+                this.inputs.jsonExport.style.height = `${
+                    this.inputs.jsonExport.scrollHeight
+                }px`;
 
-            // Set the Export JSON link's download target to an encoded string
-            // of the extension data.
-            this.actionButtons.exportJSON.href = `data:text/json;charset=utf-8,${encodeURIComponent(
-                this.currentJSONExport
-            )}`;
+                // Set the Export JSON link's download target to an encoded string
+                // of the extension data.
+                this.actionButtons.exportJSON.href = `data:text/json;charset=utf-8,${encodeURIComponent(
+                    this.currentJSONExport
+                )}`;
 
-            // Create a local copy of the Search Engine settings.
-            this.currentSearchEngines = storageData.searchEngines;
+                // Create a local copy of the Search Engine settings.
+                this.currentSearchEngines = storageData.searchEngines;
 
-            // Set each Search Engine checkbox to match its "enabled" setting.
-            this.inputs.enableSearchEngine.forEach((input, index) => {
-                this.inputs.enableSearchEngine[
-                    index
-                ].checked = this.currentSearchEngines.find(
-                    engine => engine.id === input.id
-                ).enabled;
-            });
-        }, logError);
+                // Set each Search Engine checkbox to match its "enabled" setting.
+                this.inputs.enableSearchEngine.forEach((input, index) => {
+                    this.inputs.enableSearchEngine[
+                        index
+                    ].checked = this.currentSearchEngines.find(
+                        engine => engine.id === input.id
+                    ).enabled;
+                });
+            })
+            .catch(logError);
     }
 
     /**
@@ -134,10 +137,8 @@ class TailoredSearchOptionsPanel {
 
                 browser.storage.sync
                     .set({ searchEngines: this.currentSearchEngines })
-                    .then(
-                        () => sendChangeNotification("search-engine-update"),
-                        logError
-                    );
+                    .then(() => sendChangeNotification("search-engine-update"))
+                    .catch(logError);
             });
         });
 
@@ -191,7 +192,8 @@ class TailoredSearchOptionsPanel {
             // Otherwise, update the current extension data with the valid JSON.
             browser.storage.sync
                 .set(JSON.parse(this.inputs.jsonImport.value))
-                .then(() => sendChangeNotification("json-import"), logError);
+                .then(() => sendChangeNotification("json-import"))
+                .catch(logError);
         });
     }
 }

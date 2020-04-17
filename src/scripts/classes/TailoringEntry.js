@@ -649,10 +649,8 @@ class TailoringEntry {
     static save(changeType, updatedIDs = null) {
         browser.storage.sync
             .set({ tailoringEntries: TailoringEntry.rawValues })
-            .then(
-                () => sendChangeNotification(changeType, updatedIDs),
-                logError
-            );
+            .then(() => sendChangeNotification(changeType, updatedIDs))
+            .catch(logError);
     }
 
     /**

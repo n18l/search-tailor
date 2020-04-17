@@ -138,9 +138,13 @@ export function sendChangeNotification(changeType, updatedIDs = null) {
     const getContentScriptTabs = browser.tabs.query({ url: matches });
 
     // Send the change message to any active content scripts.
-    getContentScriptTabs.then(tabs => {
-        tabs.forEach(tab => browser.tabs.sendMessage(tab.id, changeInfo));
-    });
+    getContentScriptTabs
+        .then(tabs =>
+            tabs.forEach(tab =>
+                browser.tabs.sendMessage(tab.id, changeInfo).catch(logError)
+            )
+        )
+        .catch(logError);
 }
 
 /**

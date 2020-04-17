@@ -2,7 +2,7 @@ import browser from "webextension-polyfill";
 import Sortable from "sortablejs";
 import Tippy from "tippy.js";
 import { defaultUserData } from "./addon/data";
-import { qs, qsa, getRandomTidbit } from "./addon/functions";
+import { qs, qsa, getRandomTidbit, logError } from "./addon/functions";
 import TailoringEntry from "./classes/TailoringEntry";
 
 /**
@@ -114,4 +114,5 @@ const popup = {
 // Get the current user data, then initialize the popup UI.
 browser.storage.sync
     .get({ tailoringEntries: defaultUserData.tailoringEntries })
-    .then(userData => popup.initialize(userData));
+    .then(userData => popup.initialize(userData))
+    .catch(logError);
