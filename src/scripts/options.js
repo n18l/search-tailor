@@ -1,3 +1,4 @@
+import browser from "webextension-polyfill";
 import Tippy from "tippy.js";
 import { defaultUserData } from "./addon/data";
 import {

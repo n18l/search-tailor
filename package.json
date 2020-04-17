@@ -114,9 +114,6 @@
             "airbnb-base",
             "prettier"
         ],
-        "globals": {
-            "browser": "readonly"
-        },
         "parserOptions": {
             "ecmaVersion": 2018,
             "sourceType": "module"
@@ -165,6 +162,7 @@
         "sortablejs": "^1.10.2",
         "tippy.js": "^6.1.1",
         "tokenfield": "^1.2.2",
-        "vanilla-picker": "^2.10.1"
+        "vanilla-picker": "^2.10.1",
+        "webextension-polyfill": "^0.6.0"
     }
 }

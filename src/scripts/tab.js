@@ -1,3 +1,4 @@
+import browser from "webextension-polyfill";
 import { defaultUserData } from "./addon/data";
 import TailoredSearch from "./classes/TailoredSearch";
 

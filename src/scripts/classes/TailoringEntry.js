@@ -1,3 +1,4 @@
+import browser from "webextension-polyfill";
 import TokenField from "tokenfield";
 import Tippy from "tippy.js";
 import ColorPicker from "vanilla-picker";

@@ -1,3 +1,4 @@
+import browser from "webextension-polyfill";
 import Sortable from "sortablejs";
 import Tippy from "tippy.js";
 import { defaultUserData } from "./addon/data";
