@@ -82,6 +82,10 @@
             "babelify"
         ]
     },
+    "browserslist": [
+        "last 2 Chrome versions",
+        "last 2 Firefox versions"
+    ],
     "husky": {
         "hooks": {
             "pre-commit": "lint-staged"
