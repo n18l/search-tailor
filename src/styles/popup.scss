@@ -217,10 +217,22 @@ main {
         display: flex;
     }
 
+    //. entry__color-hint
+    &__color-hint {
+        background-image: linear-gradient(
+            var(--color-treatment-background) 50%,
+            var(--color-treatment-border) 50%
+        );
+        border-radius: 0 4px 4px 0;
+        flex: 0 0 4px;
+        height: 40px;
+    }
+
     // .entry__sort-handle
     &__sort-handle {
         cursor: move;
         flex: 0 0 auto;
+        margin: 0 2px;
 
         // .entry__sort-handle__icon
         &__icon {
@@ -235,7 +247,7 @@ main {
         background-color: var(--color-entry-input);
         border-radius: var(--input-radius);
         flex: 1 1 100%;
-        margin: 15px 0 15px 2px;
+        margin: 15px 0;
         position: relative;
         overflow: hidden;
 
@@ -531,11 +543,11 @@ main {
 
                 button:not([disabled]) & {
                     #{$entry-setting}--background-color & {
-                        fill: var(--color-icon-fill-background-picker);
+                        fill: var(--color-treatment-background);
                     }
 
                     #{$entry-setting}--border-color & {
-                        fill: var(--color-icon-fill-border-picker);
+                        fill: var(--color-treatment-border);
                     }
                 }
             }
