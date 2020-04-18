@@ -791,6 +791,7 @@ main {
 
         // .tokenfield-set-item
         &-item {
+            --token-height: 20px;
             --token-border-width: 2px;
             --token-border-radius: 3px;
 
@@ -802,7 +803,7 @@ main {
             display: flex;
             float: left;
             font-size: 1.2rem;
-            height: 24px;
+            height: calc(var(--token-height) + var(--token-border-width) * 2);
             margin: var(--token-item-spacing) 0 0 var(--token-item-spacing);
             max-width: calc(100% - var(--token-item-spacing) * 2);
 
@@ -812,6 +813,7 @@ main {
 
             .item-label {
                 cursor: pointer;
+                line-height: var(--token-height);
                 overflow: hidden;
                 padding: 0 8px;
                 text-overflow: ellipsis;
@@ -827,7 +829,9 @@ main {
                 flex: 0 0 auto;
                 font-size: 1.6rem;
                 font-weight: 300;
-                height: calc(100% + var(--token-border-width) * 2);
+                height: calc(
+                    var(--token-height) + var(--token-border-width) * 2
+                );
                 justify-content: center;
                 margin-right: calc(var(--token-border-width) * -1);
                 text-decoration: none;
