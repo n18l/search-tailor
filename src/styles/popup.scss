@@ -123,6 +123,10 @@ main {
     position: relative;
     scrollbar-width: none;
     z-index: 1;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
 }
 
 /**
