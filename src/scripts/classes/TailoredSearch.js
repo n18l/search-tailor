@@ -1,5 +1,5 @@
-import { searchEngines } from "./addonData";
-import { qs, qsa } from "./addonFunctions";
+import { searchEngines } from "../addon/data";
+import { qs, qsa } from "../addon/functions";
 
 /* Class representing a user's search that is eligible for tailoring. */
 class TailoredSearch {

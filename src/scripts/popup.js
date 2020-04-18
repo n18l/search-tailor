@@ -1,8 +1,9 @@
+import browser from "webextension-polyfill";
 import Sortable from "sortablejs";
 import Tippy from "tippy.js";
-import { defaultUserData } from "./addonData";
-import { qs, qsa, getRandomTidbit } from "./addonFunctions";
-import TailoringEntry from "./TailoringEntry";
+import { defaultUserData } from "./addon/data";
+import { qs, qsa, getRandomTidbit, logError } from "./addon/functions";
+import TailoringEntry from "./classes/TailoringEntry";
 
 /**
  * Namespace for popup-related properties & methods.
@@ -83,6 +84,7 @@ const popup = {
         return new Sortable(document.querySelector(".js-entry-container"), {
             handle: ".js-sort-handle",
             animation: 150,
+            forceFallback: true,
             onUpdate(event) {
                 // Remove the entry from it's old position in the object array,
                 // capturing a copy of it as we do so.
@@ -113,4 +115,5 @@ const popup = {
 // Get the current user data, then initialize the popup UI.
 browser.storage.sync
     .get({ tailoringEntries: defaultUserData.tailoringEntries })
-    .then(userData => popup.initialize(userData));
+    .then(userData => popup.initialize(userData))
+    .catch(logError);

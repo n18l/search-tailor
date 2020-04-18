@@ -1,4 +1,5 @@
-import { tidbits } from "./addonData";
+import browser from "webextension-polyfill";
+import { tidbits } from "./data";
 
 /**
  * Queries for the first match of a given selector within a given element. A
@@ -137,9 +138,10 @@ export function sendChangeNotification(changeType, updatedIDs = null) {
     const getContentScriptTabs = browser.tabs.query({ url: matches });
 
     // Send the change message to any active content scripts.
-    getContentScriptTabs.then(tabs => {
-        tabs.forEach(tab => browser.tabs.sendMessage(tab.id, changeInfo));
-    });
+    getContentScriptTabs
+        .then(tabs => tabs.map(tab => browser.tabs.connect(tab.id)))
+        .then(ports => ports.forEach(port => port.postMessage(changeInfo)))
+        .catch(logError);
 }
 
 /**

@@ -1,7 +1,9 @@
+import browser from "webextension-polyfill";
 import TokenField from "tokenfield";
 import Tippy from "tippy.js";
 import ColorPicker from "vanilla-picker";
-import { logError, defaultTreatment } from "./addonData";
+import throttle from "lodash.throttle";
+import { logError, defaultTreatment } from "../addon/data";
 import {
     qs,
     qsa,
@@ -9,7 +11,7 @@ import {
     getCustomPropertyValue,
     parseHSLAString,
     sendChangeNotification,
-} from "./addonFunctions";
+} from "../addon/functions";
 
 /**
  * The interactive representation of a tailoring entry.
@@ -41,7 +43,6 @@ class TailoringEntry {
 
         this.cacheData();
         this.defineActions();
-        this.initializeDomainInput();
         this.initializeOpacityInput();
         this.initializeColorInputs();
         this.initializeTooltips();
@@ -115,8 +116,26 @@ class TailoringEntry {
             addItemOnBlur: true,
         });
 
+        // Save all entries when the domain tokens change. Note that this uses
+        // the NodeJS Event API as implemented by the TokenField library.
+        // @see https://nodejs.org/api/events.html#events_emitter_on_eventname_listener
+        this.tokenField.on("change", () => {
+            // Get the raw TokenField values as an array of strings and apply it
+            // to this entry's settings object.
+            const domainArray = this.tokenField.getItems().map(i => i.name);
+            this.settings.domains = domainArray;
+
+            TailoringEntry.save("entry-domains");
+        });
+
         // Save a reference to the TokenField's actual text input element.
         this.tokenFieldInput = qs(".tokenfield-input", this.element);
+
+        // Respond to keyboard events in the TokenField.
+        this.tokenFieldInput.addEventListener("keydown", e => {
+            // Disallow spaces within the TokenField's input.
+            if (e.key === " ") e.preventDefault();
+        });
     }
 
     /**
@@ -163,8 +182,14 @@ class TailoringEntry {
             template: this.pickerElements.template,
         });
 
-        this.backgroundPicker.onChange = newColor =>
-            this.setTreatmentProperty("backgroundColor", newColor.hslaString);
+        this.backgroundPicker.onChange = throttle(
+            newColor =>
+                this.setTreatmentProperty(
+                    "backgroundColor",
+                    newColor.hslaString
+                ),
+            500
+        );
 
         this.backgroundPicker.onDone = () => {
             this.backgroundColorModalIsVisible = false;
@@ -184,8 +209,11 @@ class TailoringEntry {
             template: this.pickerElements.template,
         });
 
-        this.borderPicker.onChange = newColor =>
-            this.setTreatmentProperty("borderColor", newColor.hslaString);
+        this.borderPicker.onChange = throttle(
+            newColor =>
+                this.setTreatmentProperty("borderColor", newColor.hslaString),
+            500
+        );
 
         this.borderPicker.onDone = () => {
             this.borderColorModalIsVisible = false;
@@ -215,24 +243,6 @@ class TailoringEntry {
      * Attaches event handlers.
      */
     bindEvents() {
-        // Save all entries when the domain tokens change. Note that this uses
-        // the NodeJS Event API as implemented by the TokenField library.
-        // @see https://nodejs.org/api/events.html#events_emitter_on_eventname_listener
-        this.tokenField.on("change", () => {
-            // Get the raw TokenField values as an array of strings and apply it
-            // to this entry's settings object.
-            const domainArray = this.tokenField.getItems().map(i => i.name);
-            this.settings.domains = domainArray;
-
-            TailoringEntry.save("entry-domains");
-        });
-
-        // Respond to keyboard events in the TokenField.
-        this.tokenFieldInput.addEventListener("keydown", e => {
-            // Disallow spaces within the TokenField's input.
-            if (e.key === " ") e.preventDefault();
-        });
-
         // Open and close this entry's settings drawer.
         this.actionButtons.toggleSettingsDrawer.addEventListener("click", () =>
             this.toggleSettingsDrawer()
@@ -290,17 +300,20 @@ class TailoringEntry {
         });
 
         // Update the opacity setting for this entry's treatment on input.
-        this.opacityRange.addEventListener("input", e => {
-            this.settings.treatment.opacity = +e.target.value;
+        this.opacityRange.addEventListener(
+            "input",
+            throttle(e => {
+                this.settings.treatment.opacity = +e.target.value;
 
-            // Insert the current value into the input's tooltip.
-            this.opacityRangeTooltip.setContent(this.opacityTooltipValue);
+                // Insert the current value into the input's tooltip.
+                this.opacityRangeTooltip.setContent(this.opacityTooltipValue);
 
-            // Update the toggle button to display an appropriate icon.
-            this.opacityToggle.dataset.opacityOn = +e.target.value > 0;
+                // Update the toggle button to display an appropriate icon.
+                this.opacityToggle.dataset.opacityOn = +e.target.value > 0;
 
-            TailoringEntry.save("entry-opacity", [this.settings.id]);
-        });
+                TailoringEntry.save("entry-opacity", [this.settings.id]);
+            }, 500)
+        );
 
         // Toggle this entry's colorization setting on click.
         this.actionButtons.toggleColorization.addEventListener("click", () => {
@@ -577,6 +590,10 @@ class TailoringEntry {
         // Add this entry's UI to the container element.
         this.container.appendChild(this.element);
 
+        // Initialize the domain input and bind its events after insertion to
+        // avoid issues with its automatic resizing in Chrome.
+        this.initializeDomainInput();
+
         // Focus this entry's domain input if desired.
         if (focusInput) {
             this.tokenFieldInput.focus({ preventScroll: true });
@@ -648,10 +665,8 @@ class TailoringEntry {
     static save(changeType, updatedIDs = null) {
         browser.storage.sync
             .set({ tailoringEntries: TailoringEntry.rawValues })
-            .then(
-                () => sendChangeNotification(changeType, updatedIDs),
-                logError
-            );
+            .then(() => sendChangeNotification(changeType, updatedIDs))
+            .catch(logError);
     }
 
     /**

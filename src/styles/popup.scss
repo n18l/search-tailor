@@ -84,7 +84,7 @@ main {
             pointer-events: none;
             top: 50%;
             transition: opacity 0.35s;
-            translate: -50% -50%;
+            transform: translate(-50%, -50%);
             width: 100%;
             z-index: 0;
 
@@ -123,6 +123,10 @@ main {
     position: relative;
     scrollbar-width: none;
     z-index: 1;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
 }
 
 /**
@@ -185,7 +189,7 @@ main {
             height: var(--entry-height);
             opacity: 1;
             overflow: visible;
-            translate: 0;
+            transform: translate(0);
         }
 
         // Slide the entry out to the right and set its overflow to hidden to
@@ -194,7 +198,7 @@ main {
             height: var(--entry-height);
             opacity: 1;
             overflow: hidden;
-            translate: 100%;
+            transform: translate(100%);
         }
 
         // Shrink the entry down to nothing. JavaScript will listen for the
@@ -203,7 +207,7 @@ main {
             height: 0;
             opacity: 0;
             overflow: hidden;
-            translate: 100%;
+            transform: translate(100%);
         }
     }
 
@@ -259,12 +263,12 @@ main {
             left: 0;
             pointer-events: none;
             position: absolute;
-            scale: 0 1;
-            transition: scale 0.35s;
+            transform: scaleX(0);
+            transition: transform 0.35s;
             width: 100%;
 
             @at-root #{$input-container}:focus-within::before {
-                scale: 1 1;
+                transform: scaleX(1);
             }
         }
     }
@@ -298,7 +302,7 @@ main {
             pointer-events: none;
             top: 50%;
             transition: opacity 0.35s;
-            translate: -50% -50%;
+            transform: translate(-50%, -50%);
             width: 100%;
             z-index: 0;
 
@@ -382,7 +386,7 @@ main {
             pointer-events: none;
             position: absolute;
             top: 50%;
-            translate: -50% -50%;
+            transform: translate(-50%, -50%);
             transition: opacity 0.35s;
             width: 100%;
 
@@ -431,6 +435,8 @@ main {
             &--opacity-range {
                 cursor: pointer;
                 padding: 0 8px;
+                width: 100%;
+                -webkit-appearance: none;
 
                 // Remove Firefox-specific focus border in favour of our own
                 // styles.
@@ -446,8 +452,27 @@ main {
                     width: 6px;
                 }
 
+                &::-webkit-slider-thumb {
+                    -webkit-appearance: none;
+                    background-color: var(--color-icon-fill);
+                    border: 0;
+                    border-radius: 2px;
+                    height: 20px;
+                    width: 6px;
+                }
+
                 &::-moz-range-track {
                     background-color: var(--color-entry);
+                    border-radius: 2px;
+                    height: 4px;
+                }
+
+                &::-webkit-slider-runnable-track {
+                    -webkit-appearance: none;
+                    align-items: center;
+                    border-radius: 2px;
+                    background-color: var(--color-entry);
+                    display: flex;
                     height: 4px;
                 }
             }
@@ -462,7 +487,7 @@ main {
             pointer-events: none;
             position: absolute;
             top: 50%;
-            translate: -50% -50%;
+            transform: translate(-50%, -50%);
             transition: opacity 0.35s;
             width: 100%;
             z-index: 0;
@@ -720,7 +745,7 @@ main {
     display: flex;
     height: 40px;
     left: 50%;
-    translate: -50%;
+    transform: translate(-50%);
     overflow: hidden;
     position: fixed;
     z-index: 1;
@@ -778,6 +803,7 @@ main {
 
         // .tokenfield-set-item
         &-item {
+            --token-height: 20px;
             --token-border-width: 2px;
             --token-border-radius: 3px;
 
@@ -789,7 +815,7 @@ main {
             display: flex;
             float: left;
             font-size: 1.2rem;
-            height: 24px;
+            height: calc(var(--token-height) + var(--token-border-width) * 2);
             margin: var(--token-item-spacing) 0 0 var(--token-item-spacing);
             max-width: calc(100% - var(--token-item-spacing) * 2);
 
@@ -799,6 +825,7 @@ main {
 
             .item-label {
                 cursor: pointer;
+                line-height: var(--token-height);
                 overflow: hidden;
                 padding: 0 6px;
                 text-overflow: ellipsis;
@@ -814,7 +841,9 @@ main {
                 flex: 0 0 auto;
                 font-size: 1.6rem;
                 font-weight: 300;
-                height: calc(100% + var(--token-border-width) * 2);
+                height: calc(
+                    var(--token-height) + var(--token-border-width) * 2
+                );
                 justify-content: center;
                 margin-right: calc(var(--token-border-width) * -1);
                 text-decoration: none;
@@ -833,9 +862,17 @@ main {
     // .tokenfield-input
     &-input {
         float: left;
+        font-family: "Open Sans", sans-serif;
         font-size: 1.2rem;
         min-height: calc(24px + var(--token-item-spacing) * 2);
-        padding: var(--token-item-spacing);
+        margin-left: var(--token-item-spacing);
+    }
+
+    // Ensure the tokenfield's resizer (which controls when the input wraps to
+    // the next line) uses the same font as the input.
+    [id^="tokenfield-sizer"] {
+        font-family: "Open Sans", sans-serif;
+        font-size: 1.2rem;
     }
 }
 

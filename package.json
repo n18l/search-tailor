@@ -1,50 +1,80 @@
 {
     "name": "search-tailor",
-    "version": "1.0.0",
-    "description": "A browser extension for tailoring your search results.",
+    "description": "Customizes your search results so you can find what you need with style.",
+    "version": "0.2.4",
     "author": "Nick Brombal",
     "license": "MIT",
-    "main": "index.js",
+    "homepage": "https://github.com/nbrombal/search-tailor",
+    "repository": {
+        "type": "git",
+        "url": "github:nbrombal/search-tailor.git"
+    },
+    "contributors": [
+        {
+            "name": "Nick Brombal",
+            "url": "https://nickbrombal.codes"
+        },
+        {
+            "name": "Alex Brombal",
+            "url": "https://www.brombal.com"
+        }
+    ],
+    "bugs": {
+        "url": "https://github.com/nbrombal/search-tailor/issues",
+        "email": "search-tailor@nbrombal.com"
+    },
+    "engines": {
+        "node": ">=13.3.0"
+    },
     "scripts": {
-        "build:manifest": "cp src/manifest.json dist/",
-        "watch:manifest": "chokidar \"src/manifest.json\" -c \"npm run build:manifest\" --initial",
-        "build:html": "pug -O src/scripts/addonData.js src/markup/*.pug --out dist/markup",
-        "watch:html": "chokidar \"src/markup/*.pug\" -c \"pug -O src/scripts/addonData.js {path} --out dist/markup\" --initial",
-        "build:css": "sass --update src/styles:dist/styles --style compressed",
-        "watch:css": "sass --watch src/styles:dist/styles --style compressed",
+        "build:manifest:chrome": "cp src/manifest-chrome.json dist/chrome/manifest.json",
+        "build:manifest:firefox": "cp src/manifest-firefox.json dist/firefox/manifest.json",
+        "build:manifest": "run-p build:manifest:*",
+        "watch:manifest": "chokidar \"src/manifest-*.json\" -c \"npm run build:manifest\" --initial",
+        "build:html:chrome": "pug -O src/scripts/addon/data.js src/markup/*.pug --out dist/chrome/markup",
+        "build:html:firefox": "pug -O src/scripts/addon/data.js src/markup/*.pug --out dist/firefox/markup",
+        "build:html": "run-p build:html:*",
+        "watch:html": "chokidar \"src/markup/**/*.pug\" -c \"npm run build:html\" --initial",
+        "build:css:chrome": "sass --update src/styles:dist/chrome/styles --style expanded",
+        "build:css:firefox": "sass --update src/styles:dist/firefox/styles --style expanded",
+        "build:css": "run-p build:css:*",
+        "watch:css": "chokidar \"src/styles/**/*.scss\" -c \"npm run build:css\" --initial",
         "lint:js": "eslint src/scripts/*.js; exit 0",
-        "bundle:js:tab": "browserify src/scripts/tab.js > dist/scripts/tab.js",
-        "bundle:js:popup": "browserify src/scripts/popup.js > dist/scripts/popup.js",
-        "bundle:js:options": "browserify src/scripts/options.js > dist/scripts/options.js",
+        "bundle:js:chrome": "for i in src/scripts/*.js; do browserify src/scripts/$(basename $i) > dist/chrome/scripts/$(basename $i); done",
+        "bundle:js:firefox": "for i in src/scripts/*.js; do browserify src/scripts/$(basename $i) > dist/firefox/scripts/$(basename $i); done",
         "bundle:js": "run-p bundle:js:*",
         "build:js": "run-s lint:js bundle:js",
-        "watch:js": "chokidar \"src/scripts/*.js\" -c \"npm run build:js; if [[ '{path}' == 'src/scripts/addonData.js' ]]; then npm run build:html; fi;\" --initial",
-        "build:assets": "cp -r src/assets dist",
+        "watch:js": "chokidar \"src/scripts/**/*.js\" -c \"npm run build:js; if [[ '{path}' == 'src/scripts/addon/data.js' ]]; then npm run build:html; fi;\" --initial",
+        "build:assets:chrome": "cp -r src/assets dist/chrome",
+        "build:assets:firefox": "cp -r src/assets dist/firefox",
+        "build:assets": "run-p build:assets:*",
         "watch:assets": "chokidar \"src/assets\" -c \"npm run build:assets\" --initial",
-        "clean": "rimraf dist/** && mkdir -p dist/{assets,markup,scripts,styles}",
-        "build": "run-s clean build:*",
-        "watch": "npm-run-all build -p watch:*",
+        "clean": "rimraf dist/** && mkdir -p dist/{chrome,firefox}/{assets,markup,scripts,styles}",
+        "build": "npm-run-all clean -p build:*",
+        "watch": "npm-run-all clean -p watch:*",
         "reinstall": "rimraf node_modules && npm cache verify && npm install"
     },
     "script-documentation": {
-        "build:manifest": "Directly copies the manifest file to the dist/ folder.",
-        "watch:manifest": "Watches the manifest file, running build:manifest on change.",
-        "build:html": "Compiles .pug files to .html files, passing src/scripts/addonData.js for template data.",
-        "watch:html": "Watches .pug files, recompiling specific files on change.",
-        "build:css": "Compiles .scss files to .css files.",
-        "watch:css": "Watches .scss files, recompiling all such files on change.",
+        "build:manifest:*": "Directly copies a manifest file to the appropriate `dist/` folder.",
+        "build:manifest": "Runs all manifest build tasks in parallel.",
+        "watch:manifest": "Builds and then watches all manifest files, rebuilding on changes.",
+        "build:html:*": "Compiles .pug files to .html files, passing `src/scripts/addonData.js` for template data.",
+        "build:html": "Runs all HTML build tasks in parallel.",
+        "watch:html": "Builds and then watches .pug files, rebuilding on changes.",
+        "build:css:*": "Compiles .scss files to .css files.",
+        "build:css": "Runs all CSS build tasks in parallel.",
+        "watch:css": "Builds and then watches .scss files, rebuilding on changes.",
         "lint:js": "Lints all .js files without exiting, so as not to interrupt watching.",
-        "bundle:js:tab": "Bundles the tab script and its requirements into a single dist/ file.",
-        "bundle:js:popup": "Bundles the popup script and its requirements into a single dist/ file.",
-        "bundle:js:options": "Bundles the options script and its requirements into a single dist/ file.",
-        "bundle:js": "Performs all bundling tasks in parallel.",
+        "bundle:js:*": "Bundles dependencies and transpiles each .js file directly within `src/scripts/`.",
+        "bundle:js": "Runs all JS bundling tasks in parallel.",
         "build:js": "Lints and then bundles all .js files.",
-        "watch:js": "Watches .js files, rebuilding all such files on change. Conditionally rebuilds .pug files if src/scripts/addonData.js changes.",
-        "build:assets": "Directly copies all src assets to dist assets.",
-        "watch:assets": "Watches assets, rebuilding all such files on change.",
-        "clean": "Removes and recreates the dist folder and its subfolders.",
-        "build": "Cleans and then builds all project files.",
-        "watch": "Cleans and then builds all project files, and then initiates all watches parallel.",
+        "watch:js": "Builds and then watches .js files, rebuilding on changes. Conditionally rebuilds .pug files if `src/scripts/addon/data.js` changes.",
+        "build:assets:*": "Directly copies all assets to the appropriate `dist/` folder.",
+        "build:assets": "Runs all asset build tasks in parallel.",
+        "watch:assets": "Builds and then watches assets, rebuilding on changes.",
+        "clean": "Removes and recreates `dist/` and its subdirectories.",
+        "build": "Cleans all project files, and then runs all build tasks in parallel.",
+        "watch": "Cleans all project files, and then runs all watch tasks in parallel.",
         "reinstall": "Removes and reinstalls all npm dependencies."
     },
     "browserify": {
@@ -52,6 +82,10 @@
             "babelify"
         ]
     },
+    "browserslist": [
+        "last 2 Chrome versions",
+        "last 2 Firefox versions"
+    ],
     "husky": {
         "hooks": {
             "pre-commit": "lint-staged"
@@ -84,9 +118,6 @@
             "airbnb-base",
             "prettier"
         ],
-        "globals": {
-            "browser": "readonly"
-        },
         "parserOptions": {
             "ecmaVersion": 2018,
             "sourceType": "module"
@@ -103,8 +134,8 @@
         }
     },
     "webExt": {
-        "sourceDir": "dist/",
-        "artifactsDir": "artifacts/",
+        "sourceDir": "dist/firefox",
+        "artifactsDir": "artifacts/firefox",
         "build": {
             "overwriteDest": true
         },
@@ -132,9 +163,11 @@
         "sass": "^1.26.2"
     },
     "dependencies": {
+        "lodash.throttle": "^4.1.1",
         "sortablejs": "^1.10.2",
         "tippy.js": "^6.1.1",
         "tokenfield": "^1.2.2",
-        "vanilla-picker": "^2.10.1"
+        "vanilla-picker": "^2.10.1",
+        "webextension-polyfill": "^0.6.0"
     }
 }

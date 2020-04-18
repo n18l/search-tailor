@@ -28,14 +28,19 @@ button {
     background-color: initial;
     padding: 0;
     cursor: pointer;
-}
 
-button:active {
-    outline: 0;
+    &:focus,
+    &:active {
+        outline: 0;
+    }
 }
 
 input {
     background-color: initial;
     border: 0;
     color: inherit;
+
+    &:focus {
+        outline: 0;
+    }
 }
