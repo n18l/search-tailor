@@ -637,7 +637,10 @@ class TailoringEntry {
 
         // Get and apply this entry's height in-line for animation purposes.
         const entryHeight = this.element.getBoundingClientRect().height;
-        this.element.style.setProperty("--entry-height", `${entryHeight}px`);
+        this.element.style.setProperty(
+            "--popup-entry-height",
+            `${entryHeight}px`
+        );
 
         // Apply a data attribute to trigger the deletion animation.
         this.element.dataset.isBeingDeleted = true;

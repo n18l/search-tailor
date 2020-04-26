@@ -10,9 +10,15 @@
     --color-grey-60: hsla(240, 3%, 60%, 1);
     --color-grey-90: hsla(240, 3%, 90%, 1);
 
+    --color-blue-grey-20: hsl(230, 10%, 20%);
+    --color-blue-grey-28: hsl(230, 10%, 28%);
+    --color-blue-grey-38: hsl(230, 10%, 38%);
+    --color-blue-grey-50: hsl(230, 10%, 50%);
+
     --radius-outer: 4px;
     --radius-inner: 2px;
 
+    // Options page
     --options-page-background: var(--color-grey-15);
     --options-panel-background: var(--color-grey-25);
     --options-panel-radius: var(--radius-outer);
@@ -20,10 +26,25 @@
     --options-action-border: var(--color-grey-90);
     --options-action-highlight: var(--color-grey-35);
 
-    --color-entry-container: hsla(240, 3%, 25%, 1);
-    --color-entry: hsla(240, 3%, 30%, 1);
-    --color-entry-divider: hsl(240, 3%, 37%);
-    --color-entry-input: hsl(240, 3%, 37%);
+    // Popup interface
+    // Spacing & Sizing
+    --popup-header-height: 40px;
+    --popup-header-action-size: 32px;
+    --popup-header-action-radius: 3px;
+    --popup-header-action-spacing: calc(
+        (var(--popup-header-height) - var(--popup-header-action-size)) / 2
+    );
+    --popup-entry-height: auto;
+    --popup-entry-width: 350px;
+    --popup-entry-padding: calc((100vw - var(--popup-entry-width)) / 2);
+
+    // Coloring
+    --popup-header-background: var(--color-blue-grey-28);
+    --popup-header-action-highlight: var(--color-blue-grey-38);
+    --popup-entry-container-background: var(--color-blue-grey-20);
+    --popup-entry-background: var(--color-blue-grey-28);
+    --popup-entry-input-background: var(--color-blue-grey-38);
+    --popup-entry-action-highlight: var(--color-blue-grey-50);
 
     --color-icon-fill: hsl(240, 0%, 85%);
     --color-treatment-background: var(--color-icon-fill);
@@ -51,7 +72,7 @@
     --action-bar-height: 40px;
     --action-bar-padding: 10px;
 
-    --color-action-bar: hsl(240, 3%, 18%);
+    --color-action-bar: hsl(230, 10%, 28%);
     --color-action-bar-highlight: hsl(240, 3%, 22%);
 
     --shadow-elevation-1: 0 1px 3px hsla(0, 0%, 0%, 0.12),
