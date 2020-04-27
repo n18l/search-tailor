@@ -42,11 +42,13 @@
     --popup-header-background: var(--color-blue-grey-28);
     --popup-header-action-highlight: var(--color-blue-grey-38);
     --popup-entry-container-background: var(--color-blue-grey-20);
+    --popup-entry-header-background: var(--color-blue-grey-38);
     --popup-entry-background: var(--color-blue-grey-28);
     --popup-entry-input-background: var(--color-blue-grey-38);
     --popup-entry-action-highlight: var(--color-blue-grey-50);
 
     --color-icon-fill: hsl(240, 0%, 85%);
+    --color-treatment-base: hsl(0, 0%, 100%);
     --color-treatment-background: var(--color-icon-fill);
     --color-treatment-border: var(--color-icon-fill);
     --color-picker-scrim: hsla(0, 0%, 0%, 0.5);

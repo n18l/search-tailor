@@ -192,6 +192,7 @@ main {
         }
     }
 
+    // .entry__ui-container
     &__ui-container {
         background-color: var(--popup-entry-background);
         border-radius: var(--radius-outer);
@@ -202,33 +203,74 @@ main {
         position: relative;
     }
 
-    // .entry__primary-ui
-    &__primary-ui {
+    // .entry__header
+    &__header {
         align-items: center;
+        background-color: var(--popup-entry-header-background);
         display: flex;
-    }
-
-    //. entry__color-hint
-    &__color-hint {
-        background-image: linear-gradient(
-            var(--color-treatment-background) 50%,
-            var(--color-treatment-border) 50%
-        );
-        border-radius: 0 4px 4px 0;
-        flex: 0 0 4px;
-        height: 40px;
+        height: 22px;
+        padding: 0 4px;
     }
 
     // .entry__sort-handle
     &__sort-handle {
         cursor: move;
-        flex: 0 0 auto;
-        margin: 0 2px;
+        flex: 1 0 auto;
 
         // .entry__sort-handle__icon
         &__icon {
             display: block;
+            transform: rotate(90deg);
         }
+    }
+
+    // .entry__color-hint
+    &__color-hint {
+        $color-hint: &;
+        --color-hint-size: 14px;
+        --color-hint-padding: 1px;
+        --color-hint-radius-outer: calc(var(--color-hint-size) / 2);
+        --color-hint-radius-inner: calc(
+            var(--color-hint-radius-outer) - var(--color-hint-padding)
+        );
+        --color-hint-spacing: 4px;
+
+        align-items: center;
+        background-color: var(--color-treatment-base);
+        border-radius: var(--color-hint-radius-outer);
+        display: flex;
+        flex: 0 0 auto;
+        height: var(--color-hint-size);
+        padding: var(--color-hint-padding);
+        width: var(--color-hint-size);
+
+        &::before {
+            background-color: var(--color-treatment-background);
+            border-radius: var(--color-hint-radius-inner);
+            content: "";
+            height: 100%;
+            width: 100%;
+
+            @at-root {
+                #{$color-hint}--background::before {
+                    background-color: var(--color-treatment-background);
+                }
+
+                #{$color-hint}--border::before {
+                    background-color: var(--color-treatment-border);
+                }
+            }
+        }
+
+        & + & {
+            margin-left: var(--color-hint-spacing);
+        }
+    }
+
+    // .entry__primary-ui
+    &__primary-ui {
+        align-items: center;
+        display: flex;
     }
 
     // .entry__input-container
@@ -238,7 +280,7 @@ main {
         background-color: var(--popup-entry-input-background);
         border-radius: var(--input-radius);
         flex: 1 1 100%;
-        margin: 15px 0;
+        margin: 10px 0 10px 8px;
         position: relative;
         overflow: hidden;
 
