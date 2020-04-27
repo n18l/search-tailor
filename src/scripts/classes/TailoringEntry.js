@@ -544,14 +544,14 @@ class TailoringEntry {
     updateColoredIcons(iconsToUpdate = ["backgroundColor", "borderColor"]) {
         if (iconsToUpdate.includes("backgroundColor")) {
             this.element.style.setProperty(
-                "--color-treatment-background",
+                "--popup-entry-treatment-background",
                 this.settings.treatment.backgroundColor
             );
         }
 
         if (iconsToUpdate.includes("borderColor")) {
             this.element.style.setProperty(
-                "--color-treatment-border",
+                "--popup-entry-treatment-border",
                 this.settings.treatment.borderColor
             );
         }

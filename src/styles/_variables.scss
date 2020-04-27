@@ -49,8 +49,9 @@
 
     --color-icon-fill: hsl(240, 0%, 85%);
     --color-treatment-base: hsl(0, 0%, 100%);
-    --color-treatment-background: var(--color-icon-fill);
-    --color-treatment-border: var(--color-icon-fill);
+    --popup-entry-treatment-background: var(--color-icon-fill);
+    --popup-entry-treatment-border: var(--color-icon-fill);
+    --popup-entry-treatment-opacity: 1;
     --color-picker-scrim: hsla(0, 0%, 0%, 0.5);
 
     --color-input-highlight: hsla(200, 100%, 50%, 1);

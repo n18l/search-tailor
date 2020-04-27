@@ -245,7 +245,7 @@ main {
         width: var(--color-hint-size);
 
         &::before {
-            background-color: var(--color-treatment-background);
+            background-color: var(--popup-entry-treatment-background);
             border-radius: var(--color-hint-radius-inner);
             content: "";
             height: 100%;
@@ -253,11 +253,11 @@ main {
 
             @at-root {
                 #{$color-hint}--background::before {
-                    background-color: var(--color-treatment-background);
+                    background-color: var(--popup-entry-treatment-background);
                 }
 
                 #{$color-hint}--border::before {
-                    background-color: var(--color-treatment-border);
+                    background-color: var(--popup-entry-treatment-border);
                 }
             }
         }
@@ -597,11 +597,11 @@ main {
 
                 button:not([disabled]) & {
                     #{$entry-setting}--background-color & {
-                        fill: var(--color-treatment-background);
+                        fill: var(--popup-entry-treatment-background);
                     }
 
                     #{$entry-setting}--border-color & {
-                        fill: var(--color-treatment-border);
+                        fill: var(--popup-entry-treatment-border);
                     }
                 }
             }
