@@ -97,7 +97,7 @@ main {
 
         // .title-bar__action__icon
         &__icon {
-            fill: var(--color-icon-fill);
+            fill: var(--popup-icon-fill);
             position: relative;
             width: 18px;
         }
@@ -124,7 +124,10 @@ main {
     &::after {
         content: "";
         flex: 0 0
-            calc(var(--action-bar-height) + (var(--action-bar-padding) * 2));
+            calc(
+                var(--popup-action-bar-height) +
+                    (var(--popup-action-bar-padding) * 2)
+            );
         width: 100%;
     }
 }
@@ -236,7 +239,7 @@ main {
         --color-hint-spacing: 4px;
 
         align-items: center;
-        background-color: var(--color-treatment-base);
+        background-color: var(--popup-entry-treatment-base);
         border-radius: var(--color-hint-radius-outer);
         display: flex;
         flex: 0 0 auto;
@@ -285,7 +288,7 @@ main {
         overflow: hidden;
 
         &::before {
-            background-color: var(--color-input-highlight);
+            background-color: var(--popup-entry-input-accent);
             bottom: 0;
             content: "";
             height: 2px;
@@ -322,7 +325,7 @@ main {
         overflow: hidden;
 
         &::before {
-            background-color: var(--color-action-highlight);
+            background-color: var(--popup-entry-action-highlight);
             content: "";
             height: 100%;
             left: 50%;
@@ -336,21 +339,24 @@ main {
             z-index: 0;
 
             @at-root {
-                #{$settings-toggle}:hover::before,
-                #{$settings-toggle}:focus::before,
-                #{$settings-toggle}:active::before {
-                    opacity: 1;
+                #{$settings-toggle}:not([data-action-active="true"]) {
+                    &:hover::before,
+                    &:focus::before,
+                    &:active::before {
+                        opacity: 1;
+                    }
                 }
             }
         }
 
         &[data-action-active="true"] {
-            background-color: var(--color-icon-fill);
+            background-color: var(--popup-icon-fill);
         }
 
         // .entry__settings-toggle__icon
         &__icon {
             display: block;
+            position: relative;
             transition: transform 0.35s;
 
             #{$settings-toggle}[data-action-active="true"] & {
@@ -359,7 +365,7 @@ main {
 
             // .entry__settings-toggle__icon__path-1
             &__path-1 {
-                fill: var(--color-icon-fill);
+                fill: var(--popup-icon-fill);
 
                 #{$settings-toggle}[data-action-active="true"] & {
                     fill: var(--popup-entry-background);
@@ -474,7 +480,7 @@ main {
                 }
 
                 &::-moz-range-thumb {
-                    background-color: var(--color-icon-fill);
+                    background-color: var(--popup-icon-fill);
                     border: 0;
                     border-radius: 2px;
                     height: 20px;
@@ -483,7 +489,7 @@ main {
 
                 &::-webkit-slider-thumb {
                     -webkit-appearance: none;
-                    background-color: var(--color-icon-fill);
+                    background-color: var(--popup-icon-fill);
                     border: 0;
                     border-radius: 2px;
                     height: 20px;
@@ -522,7 +528,7 @@ main {
             z-index: 0;
 
             #{$entry-setting}--delete & {
-                background-color: var(--color-button-highlight-warning);
+                background-color: var(--popup-entry-action-warning);
             }
 
             #{$entry-setting}:first-child & {
@@ -588,12 +594,12 @@ main {
 
             // .entry__setting__icon__path-1
             &__path-1 {
-                fill: var(--color-icon-fill);
+                fill: var(--popup-icon-fill);
             }
 
             // .entry__setting__icon__path-2
             &__path-2 {
-                fill: var(--color-icon-fill);
+                fill: var(--popup-icon-fill);
 
                 button:not([disabled]) & {
                     #{$entry-setting}--background-color & {
@@ -665,7 +671,7 @@ main {
 
     // .entry__picker-scrim
     &__picker-scrim {
-        background-color: var(--color-picker-scrim);
+        background-color: var(--popup-modal-scrim);
         height: 100vh;
         left: 0;
         position: absolute;
@@ -748,7 +754,7 @@ main {
                 &:hover,
                 &:focus,
                 &:active {
-                    background: var(--color-action-highlight);
+                    background: var(--popup-entry-action-highlight);
                 }
             }
 
@@ -756,7 +762,7 @@ main {
             &__icon {
                 &#{&} {
                     margin: auto;
-                    fill: var(--color-icon-fill);
+                    fill: var(--popup-icon-fill);
                 }
             }
         }
@@ -767,9 +773,9 @@ main {
  * The action bar near the bottom of the popup window.
  */
 .action-bar {
-    background-color: var(--color-action-bar);
-    border-radius: calc(var(--action-bar-height) / 2);
-    bottom: var(--action-bar-padding);
+    background-color: var(--popup-action-bar-background);
+    border-radius: calc(var(--popup-action-bar-height) / 2);
+    bottom: var(--popup-action-bar-padding);
     display: flex;
     height: 40px;
     left: 50%;
@@ -795,17 +801,17 @@ main {
         &:hover,
         &:focus,
         &:active {
-            background-color: var(--color-action-bar-highlight);
+            background-color: var(--popup-action-bar-highlight);
         }
 
         // .action-bar__action__icon
         &__icon {
-            fill: var(--color-icon-fill);
+            fill: var(--popup-icon-fill);
         }
 
         // .action-bar__action__label
         &__label {
-            color: var(--color-button-text);
+            color: var(--popup-action-bar-text);
             font-size: 1.2rem;
             font-weight: 300;
             letter-spacing: 0.05rem;
@@ -837,9 +843,9 @@ main {
 
             align-items: center;
             border: var(--token-border-width) solid
-                var(--color-domain-token-border);
+                var(--popup-entry-domain-token-border);
             border-radius: var(--token-border-radius);
-            color: var(--color-domain-token-text);
+            color: var(--popup-entry-domain-token-text);
             display: flex;
             float: left;
             font-size: 1.2rem;
@@ -848,7 +854,7 @@ main {
             max-width: calc(100% - var(--token-item-spacing) * 2);
 
             &.focused {
-                background-color: var(--color-domain-token-active);
+                background-color: var(--popup-entry-domain-token-active);
             }
 
             .item-label {
@@ -861,7 +867,7 @@ main {
 
             .item-remove {
                 align-items: center;
-                background-color: var(--color-domain-token-border);
+                background-color: var(--popup-entry-domain-token-border);
                 border-radius: 0 var(--token-border-radius)
                     var(--token-border-radius) 0;
                 color: var(--popup-entry-input-background);
@@ -880,8 +886,8 @@ main {
                 &:hover,
                 &:active,
                 &:focus {
-                    background-color: var(--color-domain-token-remove-active);
-                    color: var(--color-domain-token-remove-text);
+                    background-color: var(--popup-entry-action-warning);
+                    color: var(--popup-entry-domain-token-remove-text);
                 }
             }
         }

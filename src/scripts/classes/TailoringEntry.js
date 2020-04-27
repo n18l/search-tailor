@@ -268,11 +268,11 @@ class TailoringEntry {
             const distanceToContainerBottom =
                 this.container.clientHeight - drawerBottom;
             const actionBarHeight = getCustomPropertyValue(
-                "--action-bar-height",
+                "--popup-action-bar-height",
                 "px"
             );
             const actionBarPadding = getCustomPropertyValue(
-                "--action-bar-padding",
+                "--popup-action-bar-padding",
                 "px"
             );
             const actionBarOffset = actionBarHeight + actionBarPadding * 2;
