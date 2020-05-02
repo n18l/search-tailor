@@ -218,7 +218,6 @@ main {
     // .entry__header
     &__header {
         align-items: center;
-        background-color: var(--popup-entry-header-background);
         display: flex;
         height: 22px;
         padding: 0 4px;
@@ -282,6 +281,7 @@ main {
     // .entry__primary-ui
     &__primary-ui {
         align-items: center;
+        border-top: 1px solid var(--popup-entry-header-border);
         display: flex;
     }
 
