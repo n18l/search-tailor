@@ -67,8 +67,9 @@
     --popup-entry-treatment-border: var(--color-white);
     --popup-entry-treatment-opacity: 1;
 
-    --popup-action-bar-background: hsl(230, 10%, 28%);
-    --popup-action-bar-highlight: hsl(230, 10%, 38%);
+    --popup-action-bar-background: var(--popup-entry-background);
+    --popup-action-bar-border: var(--popup-entry-container-background);
+    --popup-action-bar-highlight: var(--popup-entry-input-background);
     --popup-action-bar-text: var(--color-white);
 
     --shadow-elevation-1: 0 1px 3px hsla(0, 0%, 0%, 0.12),

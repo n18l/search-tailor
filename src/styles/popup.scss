@@ -783,6 +783,7 @@ main {
  */
 .action-bar {
     background-color: var(--popup-action-bar-background);
+    border: 2px solid var(--popup-action-bar-border);
     border-radius: calc(var(--popup-action-bar-height) / 2);
     bottom: var(--popup-action-bar-padding);
     display: flex;
@@ -792,11 +793,6 @@ main {
     overflow: hidden;
     position: fixed;
     z-index: 1;
-
-    &:hover,
-    &:focus-within {
-        box-shadow: var(--shadow-elevation-2);
-    }
 
     // .action-bar__action
     &__action {
