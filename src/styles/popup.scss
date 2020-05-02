@@ -17,6 +17,10 @@ main {
     flex-direction: column;
     height: 100vh;
     position: relative;
+
+    &[data-dragging-active] * {
+        cursor: grabbing;
+    }
 }
 
 /**
@@ -195,6 +199,11 @@ main {
         }
     }
 
+    // Prevent hover effects on inner elements while dragging.
+    [data-dragging-active] & * {
+        pointer-events: none;
+    }
+
     // .entry__ui-container
     &__ui-container {
         background-color: var(--popup-entry-background);
@@ -217,7 +226,7 @@ main {
 
     // .entry__sort-handle
     &__sort-handle {
-        cursor: move;
+        cursor: grab;
         flex: 1 0 auto;
 
         // .entry__sort-handle__icon

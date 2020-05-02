@@ -9,6 +9,8 @@ import TailoringEntry from "./classes/TailoringEntry";
  * Namespace for popup-related properties & methods.
  */
 const popup = {
+    element: qs("main#popup-content"),
+
     /**
      * Initializes the tooltips for the popup's title bar actions.
      */
@@ -78,6 +80,22 @@ const popup = {
     },
 
     /**
+     * Whether one of the popup's entries is currently being dragged.
+     */
+    get draggingActive() {
+        return !!this.element.dataset.draggingActive;
+    },
+
+    set draggingActive(newDraggingState) {
+        if (newDraggingState) {
+            this.element.dataset.draggingActive = true;
+            return;
+        }
+
+        delete this.element.dataset.draggingActive;
+    },
+
+    /**
      * Enables drag & drop sorting of Tailoring Entries within this popup UI.
      */
     enableEntrySorting() {
@@ -97,6 +115,19 @@ const popup = {
                 TailoringEntry.objects.splice(event.newIndex, 0, movedEntry);
 
                 TailoringEntry.save("entry-order");
+            },
+            // Indicate dragging state on the body element for styling purposes.
+            onStart: () => {
+                this.draggingActive = true;
+            },
+            onChoose: () => {
+                this.draggingActive = true;
+            },
+            onEnd: () => {
+                this.draggingActive = false;
+            },
+            onUnchoose: () => {
+                this.draggingActive = false;
             },
         });
     },
