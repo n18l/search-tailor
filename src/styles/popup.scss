@@ -235,46 +235,58 @@ main {
         }
     }
 
-    // .entry__color-hint
-    &__color-hint {
-        $color-hint: &;
-        --color-hint-size: 14px;
-        --color-hint-padding: 1px;
-        --color-hint-radius-outer: calc(var(--color-hint-size) / 2);
-        --color-hint-radius-inner: calc(
-            var(--color-hint-radius-outer) - var(--color-hint-padding)
-        );
-        --color-hint-spacing: 4px;
+    // .entry__setting-hint-container
+    &__setting-hint-container {
+        align-items: center;
+        display: flex;
+        height: 100%;
+    }
+
+    // .entry__setting-hint
+    &__setting-hint {
+        $this-setting-hint: &;
+        --setting-hint-spacing: 4px;
 
         align-items: center;
-        background-color: var(--popup-entry-treatment-base);
-        border-radius: var(--color-hint-radius-outer);
         display: flex;
         flex: 0 0 auto;
-        height: var(--color-hint-size);
-        padding: var(--color-hint-padding);
-        width: var(--color-hint-size);
 
-        &::before {
-            background-color: var(--popup-entry-treatment-background);
-            border-radius: var(--color-hint-radius-inner);
-            content: "";
-            height: 100%;
-            width: 100%;
+        &--treatment-color {
+            --setting-hint-size: 14px;
+            --setting-hint-padding: 1px;
+            --setting-hint-radius-outer: calc(var(--setting-hint-size) / 2);
+            --setting-hint-radius-inner: calc(
+                var(--setting-hint-radius-outer) - var(--setting-hint-padding)
+            );
 
-            @at-root {
-                #{$color-hint}--background::before {
-                    background-color: var(--popup-entry-treatment-background);
-                }
+            background-color: var(--popup-entry-treatment-base);
+            border-radius: var(--setting-hint-radius-outer);
+            height: var(--setting-hint-size);
+            padding: var(--setting-hint-padding);
+            width: var(--setting-hint-size);
 
-                #{$color-hint}--border::before {
-                    background-color: var(--popup-entry-treatment-border);
+            &::before {
+                border-radius: var(--setting-hint-radius-inner);
+                content: "";
+                height: 100%;
+                width: 100%;
+
+                @at-root {
+                    #{$this-setting-hint}--background::before {
+                        background-color: var(
+                            --popup-entry-treatment-background
+                        );
+                    }
+
+                    #{$this-setting-hint}--border::before {
+                        background-color: var(--popup-entry-treatment-border);
+                    }
                 }
             }
         }
 
         & + & {
-            margin-left: var(--color-hint-spacing);
+            margin-left: var(--setting-hint-spacing);
         }
     }
 
