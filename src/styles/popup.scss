@@ -801,12 +801,16 @@ main {
         cursor: pointer;
         display: flex;
         flex: 1 1 auto;
-        padding: 0 20px;
+        padding: 0 10px;
 
         &:hover,
         &:focus,
         &:active {
             background-color: var(--popup-action-bar-highlight);
+        }
+
+        & + & {
+            border-left: 1px solid var(--popup-action-bar-border);
         }
 
         // .action-bar__action__icon
@@ -820,7 +824,8 @@ main {
             font-size: 1.2rem;
             font-weight: 300;
             letter-spacing: 0.05rem;
-            margin: 0 6px;
+            margin: 0 6px 0 3px;
+            white-space: nowrap;
         }
     }
 }
