@@ -148,9 +148,7 @@ export function sendChangeNotification(changeType, updatedIDs = null) {
  * Fetches a random informational tidbit.
  */
 export function getRandomTidbit() {
-    const randomTidbitIndex = Math.round(
-        Math.random() * Math.floor(tidbits.length)
-    );
+    const randomTidbitIndex = Math.floor(Math.random() * tidbits.length);
 
     return tidbits[randomTidbitIndex];
 }
