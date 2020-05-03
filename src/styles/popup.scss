@@ -577,17 +577,27 @@ main {
             margin: auto;
             position: relative;
 
-            // .entry__setting__icon--opacity-on
-            &--opacity-on {
+            // .entry__setting__icon--opacity-full
+            &--opacity-full {
+                display: none;
+
+                [data-opacity="1"] & {
+                    display: block;
+                }
+            }
+
+            // .entry__setting__icon--opacity-partial
+            &--opacity-partial {
                 display: block;
 
-                [data-opacity="0"] & {
+                [data-opacity="0"] &,
+                [data-opacity="1"] & {
                     display: none;
                 }
             }
 
-            // .entry__setting__icon--opacity-off
-            &--opacity-off {
+            // .entry__setting__icon--opacity-none
+            &--opacity-none {
                 display: none;
 
                 [data-opacity="0"] & {
