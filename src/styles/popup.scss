@@ -251,6 +251,12 @@ main {
         display: flex;
         flex: 0 0 auto;
 
+        // .entry__setting-hint--opacity
+        &--opacity {
+            height: 18px;
+        }
+
+        // .entry__setting-hint--treatment-color
         &--treatment-color {
             --setting-hint-size: 14px;
             --setting-hint-padding: 1px;
@@ -287,6 +293,32 @@ main {
 
         & + & {
             margin-left: var(--setting-hint-spacing);
+        }
+
+        // .entry__setting-hint__icon
+        &__icon {
+            fill: var(--popup-header-hint-icon);
+            height: 100%;
+            width: auto;
+
+            // .entry__setting__icon--opacity-partial
+            &--opacity-partial {
+                display: block;
+
+                [data-opacity="0"] &,
+                [data-opacity="1"] & {
+                    display: none;
+                }
+            }
+
+            // .entry__setting__icon--opacity-none
+            &--opacity-none {
+                display: none;
+
+                [data-opacity="0"] & {
+                    display: block;
+                }
+            }
         }
     }
 
