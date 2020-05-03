@@ -581,7 +581,7 @@ main {
             &--opacity-on {
                 display: block;
 
-                [data-opacity-on="false"] & {
+                [data-opacity="0"] & {
                     display: none;
                 }
             }
@@ -590,7 +590,7 @@ main {
             &--opacity-off {
                 display: none;
 
-                [data-opacity-on="false"] & {
+                [data-opacity="0"] & {
                     display: block;
                 }
             }

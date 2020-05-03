@@ -47,7 +47,7 @@ class TailoringEntry {
         this.initializeColorInputs();
         this.initializeTooltips();
         this.bindEvents();
-        this.updateColoredIcons();
+        this.updateDynamicIcons();
         this.insert(focusInput, showSettings, this.isNew);
     }
 
@@ -302,17 +302,10 @@ class TailoringEntry {
         // Update the opacity setting for this entry's treatment on input.
         this.opacityRange.addEventListener(
             "input",
-            throttle(e => {
-                this.settings.treatment.opacity = +e.target.value;
-
-                // Insert the current value into the input's tooltip.
-                this.opacityRangeTooltip.setContent(this.opacityTooltipValue);
-
-                // Update the toggle button to display an appropriate icon.
-                this.opacityToggle.dataset.opacityOn = +e.target.value > 0;
-
-                TailoringEntry.save("entry-opacity", [this.settings.id]);
-            }, 500)
+            throttle(
+                e => this.setTreatmentProperty("opacity", +e.target.value),
+                500
+            )
         );
 
         // Toggle this entry's colorization setting on click.
@@ -525,23 +518,31 @@ class TailoringEntry {
         this.settings.treatment[property] = newValue;
 
         if (property === "borderColor") {
-            this.updateColoredIcons(["borderColor"]);
+            this.updateDynamicIcons(["borderColor"]);
         }
 
         if (property === "backgroundColor") {
-            this.updateColoredIcons(["backgroundColor"]);
+            this.updateDynamicIcons(["backgroundColor"]);
+        }
+
+        if (property === "opacity") {
+            // Insert the current value into the input's tooltip.
+            this.opacityRangeTooltip.setContent(this.opacityTooltipValue);
+
+            this.updateDynamicIcons(["opacity"]);
         }
 
         TailoringEntry.save(`entry-${property}`, [this.settings.id]);
     }
 
     /**
-     * Synchronizes any dynamically-colored icons with the appropriate entry
-     * setting.
+     * Synchronizes any dynamic icons with the appropriate entry setting.
      *
      * @param {array} iconsToUpdate - The colorized icons to update.
      */
-    updateColoredIcons(iconsToUpdate = ["backgroundColor", "borderColor"]) {
+    updateDynamicIcons(
+        iconsToUpdate = ["backgroundColor", "borderColor", "opacity"]
+    ) {
         if (iconsToUpdate.includes("backgroundColor")) {
             this.element.style.setProperty(
                 "--popup-entry-treatment-background",
@@ -554,6 +555,10 @@ class TailoringEntry {
                 "--popup-entry-treatment-border",
                 this.settings.treatment.borderColor
             );
+        }
+
+        if (iconsToUpdate.includes("opacity")) {
+            this.element.dataset.opacity = this.settings.treatment.opacity;
         }
     }
 
