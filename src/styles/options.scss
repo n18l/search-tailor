@@ -1,7 +1,7 @@
 @use 'reset';
 @use 'variables';
 @use 'common';
-@use '../../node_modules/tippy.js/dist/tippy';
+@use 'tooltips';
 
 html,
 body {
@@ -264,12 +264,4 @@ body {
             opacity: 0.5;
         }
     }
-}
-
-/**
- * Styles for markup provided by the Tippy.js library.
- * @see https://github.com/atomiks/tippyjs
- */
-.tippy-box {
-    font-size: 1.2rem;
 }
