@@ -1007,7 +1007,15 @@ main {
  * @see https://github.com/atomiks/tippyjs
  */
 .tippy-box {
+    background-color: var(--tooltip-background);
+    color: var(--tooltip-text);
     font-size: 1.2rem;
+
+    @each $position in (top, bottom, left, right) {
+        &[data-placement^="#{$position}"] > .tippy-arrow::before {
+            border-#{$position}-color: var(--tooltip-background);
+        }
+    }
 }
 
 /**

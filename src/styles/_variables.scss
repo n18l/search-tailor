@@ -10,6 +10,7 @@
     --color-grey-60: hsla(240, 3%, 60%, 1);
     --color-grey-90: hsla(240, 3%, 90%, 1);
 
+    --color-blue-grey-12: hsl(230, 10%, 12%);
     --color-blue-grey-20: hsl(230, 10%, 20%);
     --color-blue-grey-28: hsl(230, 10%, 28%);
     --color-blue-grey-38: hsl(230, 10%, 38%);
@@ -72,6 +73,10 @@
     --popup-action-bar-border: var(--popup-entry-container-background);
     --popup-action-bar-highlight: var(--popup-entry-input-background);
     --popup-action-bar-text: var(--color-white);
+
+    // Tooltips
+    --tooltip-background: var(--color-blue-grey-12);
+    --tooltip-text: var(--color-blue-grey-85);
 
     --shadow-elevation-1: 0 1px 3px hsla(0, 0%, 0%, 0.12),
         0 1px 2px hsla(0, 0%, 0%, 0.24);
