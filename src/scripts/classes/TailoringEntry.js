@@ -432,14 +432,11 @@ class TailoringEntry {
      * the HSL values so they can be reenabled later.
      */
     get colorizationEnabled() {
-        return (
-            this.actionButtons.toggleColorization.dataset
-                .colorizationEnabled === "true"
-        );
+        return this.element.dataset.colorizationEnabled === "true";
     }
 
     set colorizationEnabled(newState) {
-        this.actionButtons.toggleColorization.dataset.colorizationEnabled = newState;
+        this.element.dataset.colorizationEnabled = !!newState;
 
         // Disable the background/border color picker buttons.
         this.actionButtons.showBackgroundColorModal.disabled = !newState;
