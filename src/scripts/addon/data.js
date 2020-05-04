@@ -66,6 +66,8 @@ const defaultTreatment = {
  * The default user data to apply to users who have no preexisting settings.
  */
 const defaultUserData = {
+    _dataFormat: "v1",
+    colorPreviewBackground: "#ffffff",
     tailoringEntries: [
         {
             id: "1577836800000-00001",

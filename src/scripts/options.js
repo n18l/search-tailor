@@ -1,4 +1,5 @@
 import browser from "webextension-polyfill";
+import throttle from "lodash.throttle";
 import Tippy from "tippy.js";
 import { defaultUserData } from "./addon/data";
 import {
@@ -94,6 +95,11 @@ class TailoredSearchOptionsPanel {
                         engine => engine.id === input.id
                     ).enabled;
                 });
+
+                // Set the color preview background input value to match the
+                // user's saved setting.
+                this.inputs.colorPreviewBackground.value =
+                    storageData.colorPreviewBackground;
             })
             .catch(logError);
     }
@@ -141,6 +147,20 @@ class TailoredSearchOptionsPanel {
                     .catch(logError);
             });
         });
+
+        // Update and sync the preferred background colour for each entry's
+        // treatment colour previews in the popup interface.
+        this.inputs.colorPreviewBackground.addEventListener(
+            "input",
+            throttle(e => {
+                browser.storage.sync
+                    .set({ colorPreviewBackground: e.target.value })
+                    .then(() =>
+                        sendChangeNotification("color-preview-bg-update")
+                    )
+                    .catch(logError);
+            }, 500)
+        );
 
         // Automatically adjust the JSON Export textarea's height.
         this.inputs.jsonExport.addEventListener("input", () => {

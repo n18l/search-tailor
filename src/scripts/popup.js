@@ -12,6 +12,20 @@ const popup = {
     element: qs("main#popup-content"),
 
     /**
+     * Initializes the background colour of the treatment colour hints to the
+     * user's currently saved value. This value is set as a custom property on
+     * the popup since it's shared among all entries.
+     *
+     * @param {Object} userData The user's current data.
+     */
+    initializeColorPreviewBackground(userData) {
+        this.element.style.setProperty(
+            "--popup-entry-treatment-base",
+            userData.colorPreviewBackground
+        );
+    },
+
+    /**
      * Initializes the tooltips for the popup's title bar actions.
      */
     initializeTitleBar() {
@@ -58,6 +72,8 @@ const popup = {
     /**
      * Initializes a Tailoring Entry UI for each existing entry setting object
      * in the user data, adding it to the popup.
+     *
+     * @param {Object} userData The user's current data.
      */
     initializeTailoringEntries(userData) {
         TailoringEntry.objects = userData.tailoringEntries.map(
@@ -136,6 +152,7 @@ const popup = {
      * Initializes the addon's popup UI.
      */
     initialize(userData) {
+        this.initializeColorPreviewBackground(userData);
         this.initializeTitleBar();
         this.initializeTailoringEntries(userData);
         this.initializeActionBar();
@@ -145,6 +162,9 @@ const popup = {
 
 // Get the current user data, then initialize the popup UI.
 browser.storage.sync
-    .get({ tailoringEntries: defaultUserData.tailoringEntries })
+    .get({
+        tailoringEntries: defaultUserData.tailoringEntries,
+        colorPreviewBackground: defaultUserData.colorPreviewBackground,
+    })
     .then(userData => popup.initialize(userData))
     .catch(logError);

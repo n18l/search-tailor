@@ -40,6 +40,18 @@ html
                             each searchEngine in defaultUserData.searchEngines
                                 +searchEngineToggle(searchEngine)
 
+                    div(class="option")
+                        h3(class="option__label") Color Hint Background
+
+                        div(class="option__container")
+                            label(class="option__input-wrapper option__input-wrapper--color")
+                                input(
+                                    class="option__input option__input--color js-option-input"
+                                    type="color"
+                                    name="colorPreviewBackground"
+                                    value="#ffffff"
+                                )
+
             section(class="options-panel")
 
                 div(class="options-panel__header")

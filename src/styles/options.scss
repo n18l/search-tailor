@@ -142,7 +142,7 @@ body {
 
 .option {
     & + & {
-        margin-block-start: 10px;
+        margin-block-start: 20px;
     }
 
     &__label {
@@ -208,6 +208,31 @@ body {
 
             &__label {
                 margin-left: 10px;
+            }
+        }
+
+        &--color {
+            border-radius: 2px;
+            display: block;
+            height: 30px;
+            overflow: hidden;
+            padding: 0;
+            width: 60px;
+
+            &::-moz-color-swatch-wrapper {
+                padding: 0;
+            }
+
+            &::-webkit-color-swatch-wrapper {
+                padding: 0;
+            }
+
+            &::-moz-color-swatch {
+                border: none;
+            }
+
+            &::-webkit-color-swatch {
+                border: none;
             }
         }
 
