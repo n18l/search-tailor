@@ -43,13 +43,24 @@ html
                     div(class="option")
                         h3(class="option__label") Color Hint Background
 
-                        div(class="option__container")
+                        div(class="option__container option__container--color-hint-background")
                             label(class="option__input-wrapper option__input-wrapper--color")
                                 input(
                                     class="option__input option__input--color js-option-input"
                                     type="color"
-                                    name="colorPreviewBackground"
+                                    name="colorHintBackgroundSwatch"
                                     value="#ffffff"
+                                )
+
+                            label(class="option__input-wrapper option__input-wrapper--color-value")
+                                input(
+                                    class="option__input option__input--color-value js-option-input"
+                                    type="text"
+                                    name="colorHintBackgroundHex"
+                                    value="#ffffff"
+                                    pattern="#[a-fA-F0-9]{6}"
+                                    maxlength="7"
+                                    minlength="7"
                                 )
 
             section(class="options-panel")

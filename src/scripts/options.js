@@ -96,10 +96,13 @@ class TailoredSearchOptionsPanel {
                     ).enabled;
                 });
 
-                // Set the color preview background input value to match the
+                // Set the color hint background input values to match the
                 // user's saved setting.
-                this.inputs.colorPreviewBackground.value =
-                    storageData.colorPreviewBackground;
+                this.inputs.colorHintBackgroundSwatch.value =
+                    storageData.colorHintBackground;
+
+                this.inputs.colorHintBackgroundHex.value =
+                    storageData.colorHintBackground;
             })
             .catch(logError);
     }
@@ -149,12 +152,33 @@ class TailoredSearchOptionsPanel {
         });
 
         // Update and sync the preferred background colour for each entry's
-        // treatment colour previews in the popup interface.
-        this.inputs.colorPreviewBackground.addEventListener(
+        // treatment colour hints in the popup interface when selecting a colour
+        // from the colour picker.
+        this.inputs.colorHintBackgroundSwatch.addEventListener(
             "input",
             throttle(e => {
                 browser.storage.sync
-                    .set({ colorPreviewBackground: e.target.value })
+                    .set({ colorHintBackground: e.target.value })
+                    .then(() =>
+                        sendChangeNotification("color-preview-bg-update")
+                    )
+                    .catch(logError);
+            }, 500)
+        );
+
+        // Update and sync the preferred background colour for each entry's
+        // treatment colour hints in the popup interface when typing a hex value
+        // into the colour input field.
+        this.inputs.colorHintBackgroundHex.addEventListener(
+            "change",
+            throttle(e => {
+                // Only proceed for valid hex color values.
+                if (!e.target.value.match(/^#[a-fA-F0-9]{6}$/)) {
+                    return;
+                }
+
+                browser.storage.sync
+                    .set({ colorHintBackground: e.target.value })
                     .then(() =>
                         sendChangeNotification("color-preview-bg-update")
                     )

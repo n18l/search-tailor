@@ -150,17 +150,25 @@ body {
         margin: 0 0 10px 0;
     }
 
+    &__container {
+        &--color-hint-background {
+            border-radius: 2px;
+            display: inline-flex;
+            overflow: hidden;
+        }
+    }
+
     &__input-wrapper {
         font-size: 1.3rem;
         position: relative;
 
-        & + & {
-            margin-top: 6px;
-        }
-
         &--toggle {
             display: flex;
             align-items: center;
+
+            & + & {
+                margin-top: 6px;
+            }
         }
 
         &--raw-json {
@@ -212,12 +220,11 @@ body {
         }
 
         &--color {
-            border-radius: 2px;
+            cursor: pointer;
             display: block;
             height: 30px;
-            overflow: hidden;
             padding: 0;
-            width: 60px;
+            width: 40px;
 
             &::-moz-color-swatch-wrapper {
                 padding: 0;
@@ -233,6 +240,19 @@ body {
 
             &::-webkit-color-swatch {
                 border: none;
+            }
+        }
+
+        &--color-value {
+            background-color: var(--options-color-hex-input);
+            font: 1.2rem "Fira Code", monospace;
+            height: 100%;
+            padding: 0;
+            text-align: center;
+            width: 80px;
+
+            &:invalid {
+                color: var(--color-error);
             }
         }
 

@@ -18,10 +18,10 @@ const popup = {
      *
      * @param {Object} userData The user's current data.
      */
-    initializeColorPreviewBackground(userData) {
+    initializeColorHintBackground(userData) {
         this.element.style.setProperty(
             "--popup-entry-treatment-base",
-            userData.colorPreviewBackground
+            userData.colorHintBackground
         );
     },
 
@@ -152,7 +152,7 @@ const popup = {
      * Initializes the addon's popup UI.
      */
     initialize(userData) {
-        this.initializeColorPreviewBackground(userData);
+        this.initializeColorHintBackground(userData);
         this.initializeTitleBar();
         this.initializeTailoringEntries(userData);
         this.initializeActionBar();
@@ -164,7 +164,7 @@ const popup = {
 browser.storage.sync
     .get({
         tailoringEntries: defaultUserData.tailoringEntries,
-        colorPreviewBackground: defaultUserData.colorPreviewBackground,
+        colorHintBackground: defaultUserData.colorHintBackground,
     })
     .then(userData => popup.initialize(userData))
     .catch(logError);

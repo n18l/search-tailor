@@ -67,7 +67,7 @@ const defaultTreatment = {
  */
 const defaultUserData = {
     _dataFormat: "v1",
-    colorPreviewBackground: "#ffffff",
+    colorHintBackground: "#ffffff",
     tailoringEntries: [
         {
             id: "1577836800000-00001",

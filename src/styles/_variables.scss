@@ -1,6 +1,7 @@
 :root {
     --color-text: hsl(0, 0%, 100%);
     --color-accent: hsl(295, 35%, 50%);
+    --color-error: hsl(0, 45%, 60%);
 
     --color-white: hsla(0, 0%, 100%, 1);
     --color-grey-15: hsla(240, 3%, 15%, 1);
@@ -28,6 +29,7 @@
     --options-panel-text: var(--color-blue-grey-85);
     --options-action-border: var(--color-blue-grey-85);
     --options-action-highlight: var(--color-blue-grey-38);
+    --options-color-hex-input: var(--color-blue-grey-12);
     --options-json-input: var(--color-blue-grey-12);
 
     // Popup interface
@@ -64,7 +66,7 @@
     --popup-entry-domain-token-text: var(--color-white);
     --popup-entry-domain-token-remove-text: var(--color-white);
     --popup-entry-action-highlight: var(--color-blue-grey-50);
-    --popup-entry-action-warning: hsl(0, 45%, 60%);
+    --popup-entry-action-warning: var(--color-error);
     --popup-entry-treatment-base: var(--color-white);
     --popup-entry-treatment-background: var(--color-white);
     --popup-entry-treatment-border: var(--color-white);
