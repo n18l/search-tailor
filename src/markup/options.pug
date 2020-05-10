@@ -15,7 +15,7 @@ html
             section(class="options-panel")
 
                 div(class="options-panel__header")
-                    h2(class="options-panel__header__title") General
+                    h2(class="options-panel__header__title") Functionality
 
                 div(class="options-panel__body")
                     div(class="option")
@@ -40,6 +40,12 @@ html
                             each searchEngine in defaultUserData.searchEngines
                                 +searchEngineToggle(searchEngine)
 
+            section(class="options-panel")
+
+                div(class="options-panel__header")
+                    h2(class="options-panel__header__title") Display
+
+                div(class="options-panel__body")
                     div(class="option")
                         h3(class="option__label") Color Hint Background
 
