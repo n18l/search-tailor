@@ -18,15 +18,16 @@ html
                     h2(class="options-panel__header__title") Functionality
 
                 div(class="options-panel__body")
-                    div(class="option")
-                        h3(class="option__label") Enabled Search Engines
+                    fieldset(class="option-group")
+                        legend(class="option-group__title") Enabled Search Engines
 
-                        div(class="option__container")
-                            mixin searchEngineToggle(searchEngine)
-                                label(class="option__input-wrapper option__input-wrapper--toggle")
+                        mixin searchEngineToggle(searchEngine)
+                            label(class="option option--search-engine-toggle")
+                                span(class="option__label")= searchEngine.label
+                                div(class="option__control")
                                     input(
                                         id=searchEngine.id
-                                        class="option__input option__input--toggle js-option-input"
+                                        class="option__input option__input--search-engine-toggle js-option-input"
                                         type="checkbox"
                                         name=searchEngine.label
                                         data-input-group="enableSearchEngine"
@@ -35,10 +36,9 @@ html
                                     span(class="toggle-switch")
                                         span(class="toggle-switch__track")
                                         span(class="toggle-switch__nub")
-                                    span(class="option__input--toggle__label")= searchEngine.label
 
-                            each searchEngine in defaultUserData.searchEngines
-                                +searchEngineToggle(searchEngine)
+                        each searchEngine in defaultUserData.searchEngines
+                            +searchEngineToggle(searchEngine)
 
             section(class="options-panel")
 
@@ -46,28 +46,26 @@ html
                     h2(class="options-panel__header__title") Display
 
                 div(class="options-panel__body")
-                    div(class="option")
-                        h3(class="option__label") Color Hint Background
+                    div(class="option option--color-hint-background" role="group")
+                        div(class="option__label") Color hint background
 
-                        div(class="option__container option__container--color-hint-background")
-                            label(class="option__input-wrapper option__input-wrapper--color")
-                                input(
-                                    class="option__input option__input--color js-option-input"
-                                    type="color"
-                                    name="colorHintBackgroundSwatch"
-                                    value="#ffffff"
-                                )
+                        div(class="option__control")
+                            input(
+                                class="option__input option__input--color-hint-background-swatch js-option-input"
+                                type="color"
+                                name="colorHintBackgroundSwatch"
+                                value="#ffffff"
+                            )
 
-                            label(class="option__input-wrapper option__input-wrapper--color-value")
-                                input(
-                                    class="option__input option__input--color-value js-option-input"
-                                    type="text"
-                                    name="colorHintBackgroundHex"
-                                    value="#ffffff"
-                                    pattern="#[a-fA-F0-9]{6}"
-                                    maxlength="7"
-                                    minlength="7"
-                                )
+                            input(
+                                class="option__input option__input--color-hint-background-hex js-option-input"
+                                type="text"
+                                name="colorHintBackgroundHex"
+                                value="#ffffff"
+                                pattern="#[a-fA-F0-9]{6}"
+                                maxlength="7"
+                                minlength="7"
+                            )
 
             section(class="options-panel")
 
@@ -79,30 +77,30 @@ html
                             path(d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z")
 
                 div(class="options-panel__body")
-                    div(class="option")
-                        h3(class="option__label") JSON Export
-                        div(class="option__input-wrapper option__input-wrapper--raw-json")
+                    fieldset(class="option-group")
+                        legend(class="option-group__title") JSON Export
+                        div(class="option option--raw-json")
                             textarea(
                                 class="option__input option__input--raw-json js-option-input"
                                 name="jsonExport"
                                 spellcheck="false"
                                 readonly
                             )
-                        div(class="option__action-container")
-                            button(class="option__action" data-click-action="copyJSON") Copy
-                            a(class="option__action" data-click-action="exportJSON" href="#" download="search_tailor.json") Export
-                            button(class="option__action" data-click-action="resetData") Reset to Default
+                        div(class="option-group__action-container")
+                            button(class="option-group__action" data-click-action="copyJSON") Copy
+                            a(class="option-group__action" data-click-action="exportJSON" href="#" download="search_tailor.json") Export
+                            button(class="option-group__action" data-click-action="resetData") Reset to Default
 
-                    form(class="option")
-                        h3(class="option__label") JSON Import
-                        div(class="option__input-wrapper option__input-wrapper--raw-json" data-validation-message="")
+                    form(class="option-group")
+                        div(class="option-group__title") JSON Import
+                        div(class="option option--raw-json" data-validation-message="")
                             textarea(
                                 class="option__input option__input--raw-json js-option-input"
                                 name="jsonImport"
                                 spellcheck="false"
                             )
-                        div(class="option__action-container")
-                            button(type="button" class="option__action" data-click-action="clearJSON") Clear
-                            button(type="button" class="option__action" data-click-action="importJSON") Import
+                        div(class="option-group__action-container")
+                            button(type="button" class="option-group__action" data-click-action="clearJSON") Clear
+                            button(type="button" class="option-group__action" data-click-action="importJSON") Import
 
         script(src="../scripts/options.js")
