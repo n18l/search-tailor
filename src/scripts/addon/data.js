@@ -109,7 +109,7 @@ const links = {
     issues: "https://github.com/nbrombal/search-tailor/issues",
     reviews: "#",
     support: {
-        koFi: "https://ko-fi.com/nbrombal",
+        githubSponsors: "https://github.com/sponsors/nbrombal",
         paypal: "https://www.paypal.me/nbrombal",
         squareCash: "https://cash.app/$nbrombal",
     },
