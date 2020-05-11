@@ -131,6 +131,7 @@ const tidbits = [
     `Nobody born after 1935 has walked on the moon.`,
     `The closest US state to Africa is Maine.`,
     `The order of a freshly-shuffled deck of cards is likely to only ever exist once.`,
+    `The term for a stegosaurus' tail spikes, "thagomizer", was coined by cartoonist Gary Larson in his comic The Far Side.`,
 ];
 
 module.exports = {
