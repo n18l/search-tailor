@@ -1,6 +1,7 @@
 :root {
     --color-text: hsl(0, 0%, 100%);
     --color-accent: hsl(295, 35%, 50%);
+    --color-error: hsl(0, 45%, 60%);
 
     --color-white: hsla(0, 0%, 100%, 1);
     --color-grey-15: hsla(240, 3%, 15%, 1);
@@ -10,49 +11,76 @@
     --color-grey-60: hsla(240, 3%, 60%, 1);
     --color-grey-90: hsla(240, 3%, 90%, 1);
 
+    --color-blue-grey-12: hsl(230, 10%, 12%);
+    --color-blue-grey-20: hsl(230, 10%, 20%);
+    --color-blue-grey-28: hsl(230, 10%, 28%);
+    --color-blue-grey-38: hsl(230, 10%, 38%);
+    --color-blue-grey-50: hsl(230, 10%, 50%);
+    --color-blue-grey-70: hsl(230, 10%, 70%);
+    --color-blue-grey-85: hsl(230, 10%, 85%);
+
     --radius-outer: 4px;
     --radius-inner: 2px;
 
-    --options-page-background: var(--color-grey-15);
-    --options-panel-background: var(--color-grey-25);
+    // Options page
     --options-panel-radius: var(--radius-outer);
-    --options-panel-text: var(--color-grey-90);
-    --options-action-border: var(--color-grey-90);
-    --options-action-highlight: var(--color-grey-35);
+    --options-page-background: var(--color-blue-grey-20);
+    --options-panel-background: var(--color-blue-grey-28);
+    --options-panel-text: var(--color-blue-grey-85);
+    --options-action-border: var(--color-blue-grey-85);
+    --options-action-highlight: var(--color-blue-grey-38);
+    --options-option-border: var(--color-blue-grey-38);
+    --options-color-hex-input: var(--color-blue-grey-12);
+    --options-json-input: var(--color-blue-grey-12);
 
-    --color-entry-container: hsla(240, 3%, 25%, 1);
-    --color-entry: hsla(240, 3%, 30%, 1);
-    --color-entry-divider: hsl(240, 3%, 37%);
-    --color-entry-input: hsl(240, 3%, 37%);
+    // Popup interface
+    // Spacing & Sizing
+    --popup-header-height: 40px;
+    --popup-header-action-size: 32px;
+    --popup-header-action-radius: 3px;
+    --popup-header-action-spacing: calc(
+        (var(--popup-header-height) - var(--popup-header-action-size)) / 2
+    );
 
-    --color-icon-fill: hsl(240, 0%, 85%);
-    --color-treatment-background: var(--color-icon-fill);
-    --color-treatment-border: var(--color-icon-fill);
-    --color-picker-scrim: hsla(0, 0%, 0%, 0.5);
+    --popup-entry-height: auto;
+    --popup-entry-width: 350px;
+    --popup-entry-padding: calc((100vw - var(--popup-entry-width)) / 2);
 
-    --color-input-highlight: hsla(200, 100%, 50%, 1);
-    --color-action-highlight: hsla(0, 0%, 100%, 0.25);
-    --color-action-highlight-warning: hsla(0, 55%, 60%, 0.75);
+    --popup-action-bar-height: 40px;
+    --popup-action-bar-padding: 10px;
 
-    --color-button: hsl(240, 3%, 37%);
-    --color-button-text: hsl(0, 0%, 100%);
-    --color-button-highlight-1: hsl(240, 2%, 44%);
-    --color-button-highlight-2: hsl(240, 2%, 49%);
+    // Coloring
+    --popup-icon-fill: var(--color-blue-grey-85);
+    --popup-modal-scrim: hsla(0, 0%, 0%, 0.5);
 
-    --color-button-highlight-settings: hsl(240, 3%, 53%);
-    --color-button-highlight-warning: hsl(0, 30%, 50%);
+    --popup-header-background: var(--color-blue-grey-28);
+    --popup-header-action-highlight: var(--color-blue-grey-38);
+    --popup-header-hint-icon: var(--color-blue-grey-85);
 
-    --color-domain-token-active: hsla(215, 65%, 50%, 0.5);
-    --color-domain-token-border: hsla(0, 0%, 70%, 1);
-    --color-domain-token-text: hsla(0, 0%, 100%, 1);
-    --color-domain-token-remove-active: hsla(0, 45%, 60%, 1);
-    --color-domain-token-remove-text: hsla(0, 0%, 100%, 1);
+    --popup-entry-container-background: var(--color-blue-grey-20);
+    --popup-entry-header-border: var(--color-blue-grey-38);
+    --popup-entry-background: var(--color-blue-grey-28);
+    --popup-entry-input-background: var(--color-blue-grey-38);
+    --popup-entry-input-accent: hsla(200, 100%, 50%, 1);
+    --popup-entry-domain-token-active: hsla(215, 65%, 50%, 0.5);
+    --popup-entry-domain-token-border: var(--color-blue-grey-70);
+    --popup-entry-domain-token-text: var(--color-white);
+    --popup-entry-domain-token-remove-text: var(--color-white);
+    --popup-entry-action-highlight: var(--color-blue-grey-50);
+    --popup-entry-action-warning: var(--color-error);
+    --popup-entry-treatment-base: var(--color-white);
+    --popup-entry-treatment-background: var(--color-white);
+    --popup-entry-treatment-border: var(--color-white);
+    --popup-entry-treatment-opacity: 1;
 
-    --action-bar-height: 40px;
-    --action-bar-padding: 10px;
+    --popup-action-bar-background: var(--popup-entry-background);
+    --popup-action-bar-border: var(--popup-entry-container-background);
+    --popup-action-bar-highlight: var(--popup-entry-input-background);
+    --popup-action-bar-text: var(--color-white);
 
-    --color-action-bar: hsl(240, 3%, 18%);
-    --color-action-bar-highlight: hsl(240, 3%, 22%);
+    // Tooltips
+    --tooltip-background: var(--color-blue-grey-12);
+    --tooltip-text: var(--color-blue-grey-85);
 
     --shadow-elevation-1: 0 1px 3px hsla(0, 0%, 0%, 0.12),
         0 1px 2px hsla(0, 0%, 0%, 0.24);

@@ -47,7 +47,7 @@ class TailoringEntry {
         this.initializeColorInputs();
         this.initializeTooltips();
         this.bindEvents();
-        this.updateColoredIcons();
+        this.updateDynamicIcons();
         this.insert(focusInput, showSettings, this.isNew);
     }
 
@@ -268,11 +268,11 @@ class TailoringEntry {
             const distanceToContainerBottom =
                 this.container.clientHeight - drawerBottom;
             const actionBarHeight = getCustomPropertyValue(
-                "--action-bar-height",
+                "--popup-action-bar-height",
                 "px"
             );
             const actionBarPadding = getCustomPropertyValue(
-                "--action-bar-padding",
+                "--popup-action-bar-padding",
                 "px"
             );
             const actionBarOffset = actionBarHeight + actionBarPadding * 2;
@@ -302,17 +302,10 @@ class TailoringEntry {
         // Update the opacity setting for this entry's treatment on input.
         this.opacityRange.addEventListener(
             "input",
-            throttle(e => {
-                this.settings.treatment.opacity = +e.target.value;
-
-                // Insert the current value into the input's tooltip.
-                this.opacityRangeTooltip.setContent(this.opacityTooltipValue);
-
-                // Update the toggle button to display an appropriate icon.
-                this.opacityToggle.dataset.opacityOn = +e.target.value > 0;
-
-                TailoringEntry.save("entry-opacity", [this.settings.id]);
-            }, 500)
+            throttle(
+                e => this.setTreatmentProperty("opacity", +e.target.value),
+                500
+            )
         );
 
         // Toggle this entry's colorization setting on click.
@@ -439,14 +432,11 @@ class TailoringEntry {
      * the HSL values so they can be reenabled later.
      */
     get colorizationEnabled() {
-        return (
-            this.actionButtons.toggleColorization.dataset
-                .colorizationEnabled === "true"
-        );
+        return this.element.dataset.colorizationEnabled === "true";
     }
 
     set colorizationEnabled(newState) {
-        this.actionButtons.toggleColorization.dataset.colorizationEnabled = newState;
+        this.element.dataset.colorizationEnabled = !!newState;
 
         // Disable the background/border color picker buttons.
         this.actionButtons.showBackgroundColorModal.disabled = !newState;
@@ -525,35 +515,47 @@ class TailoringEntry {
         this.settings.treatment[property] = newValue;
 
         if (property === "borderColor") {
-            this.updateColoredIcons(["borderColor"]);
+            this.updateDynamicIcons(["borderColor"]);
         }
 
         if (property === "backgroundColor") {
-            this.updateColoredIcons(["backgroundColor"]);
+            this.updateDynamicIcons(["backgroundColor"]);
+        }
+
+        if (property === "opacity") {
+            // Insert the current value into the input's tooltip.
+            this.opacityRangeTooltip.setContent(this.opacityTooltipValue);
+
+            this.updateDynamicIcons(["opacity"]);
         }
 
         TailoringEntry.save(`entry-${property}`, [this.settings.id]);
     }
 
     /**
-     * Synchronizes any dynamically-colored icons with the appropriate entry
-     * setting.
+     * Synchronizes any dynamic icons with the appropriate entry setting.
      *
      * @param {array} iconsToUpdate - The colorized icons to update.
      */
-    updateColoredIcons(iconsToUpdate = ["backgroundColor", "borderColor"]) {
+    updateDynamicIcons(
+        iconsToUpdate = ["backgroundColor", "borderColor", "opacity"]
+    ) {
         if (iconsToUpdate.includes("backgroundColor")) {
             this.element.style.setProperty(
-                "--color-treatment-background",
+                "--popup-entry-treatment-background",
                 this.settings.treatment.backgroundColor
             );
         }
 
         if (iconsToUpdate.includes("borderColor")) {
             this.element.style.setProperty(
-                "--color-treatment-border",
+                "--popup-entry-treatment-border",
                 this.settings.treatment.borderColor
             );
+        }
+
+        if (iconsToUpdate.includes("opacity")) {
+            this.element.dataset.opacity = this.settings.treatment.opacity;
         }
     }
 
@@ -637,7 +639,10 @@ class TailoringEntry {
 
         // Get and apply this entry's height in-line for animation purposes.
         const entryHeight = this.element.getBoundingClientRect().height;
-        this.element.style.setProperty("--entry-height", `${entryHeight}px`);
+        this.element.style.setProperty(
+            "--popup-entry-height",
+            `${entryHeight}px`
+        );
 
         // Apply a data attribute to trigger the deletion animation.
         this.element.dataset.isBeingDeleted = true;

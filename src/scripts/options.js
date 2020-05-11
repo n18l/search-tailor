@@ -1,4 +1,5 @@
 import browser from "webextension-polyfill";
+import throttle from "lodash.throttle";
 import Tippy from "tippy.js";
 import { defaultUserData } from "./addon/data";
 import {
@@ -94,6 +95,14 @@ class TailoredSearchOptionsPanel {
                         engine => engine.id === input.id
                     ).enabled;
                 });
+
+                // Set the color hint background input values to match the
+                // user's saved setting.
+                this.inputs.colorHintBackgroundSwatch.value =
+                    storageData.colorHintBackground;
+
+                this.inputs.colorHintBackgroundHex.value =
+                    storageData.colorHintBackground;
             })
             .catch(logError);
     }
@@ -141,6 +150,41 @@ class TailoredSearchOptionsPanel {
                     .catch(logError);
             });
         });
+
+        // Update and sync the preferred background colour for each entry's
+        // treatment colour hints in the popup interface when selecting a colour
+        // from the colour picker.
+        this.inputs.colorHintBackgroundSwatch.addEventListener(
+            "input",
+            throttle(e => {
+                browser.storage.sync
+                    .set({ colorHintBackground: e.target.value })
+                    .then(() =>
+                        sendChangeNotification("color-preview-bg-update")
+                    )
+                    .catch(logError);
+            }, 500)
+        );
+
+        // Update and sync the preferred background colour for each entry's
+        // treatment colour hints in the popup interface when typing a hex value
+        // into the colour input field.
+        this.inputs.colorHintBackgroundHex.addEventListener(
+            "change",
+            throttle(e => {
+                // Only proceed for valid hex color values.
+                if (!e.target.value.match(/^#[a-fA-F0-9]{6}$/)) {
+                    return;
+                }
+
+                browser.storage.sync
+                    .set({ colorHintBackground: e.target.value })
+                    .then(() =>
+                        sendChangeNotification("color-preview-bg-update")
+                    )
+                    .catch(logError);
+            }, 500)
+        );
 
         // Automatically adjust the JSON Export textarea's height.
         this.inputs.jsonExport.addEventListener("input", () => {

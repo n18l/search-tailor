@@ -9,6 +9,22 @@ import TailoringEntry from "./classes/TailoringEntry";
  * Namespace for popup-related properties & methods.
  */
 const popup = {
+    element: qs("main#popup-content"),
+
+    /**
+     * Initializes the background colour of the treatment colour hints to the
+     * user's currently saved value. This value is set as a custom property on
+     * the popup since it's shared among all entries.
+     *
+     * @param {Object} userData The user's current data.
+     */
+    initializeColorHintBackground(userData) {
+        this.element.style.setProperty(
+            "--popup-entry-treatment-base",
+            userData.colorHintBackground
+        );
+    },
+
     /**
      * Initializes the tooltips for the popup's title bar actions.
      */
@@ -56,6 +72,8 @@ const popup = {
     /**
      * Initializes a Tailoring Entry UI for each existing entry setting object
      * in the user data, adding it to the popup.
+     *
+     * @param {Object} userData The user's current data.
      */
     initializeTailoringEntries(userData) {
         TailoringEntry.objects = userData.tailoringEntries.map(
@@ -75,6 +93,22 @@ const popup = {
         addEntryButton.addEventListener("click", () => {
             TailoringEntry.objects.push(new TailoringEntry(null, true, true));
         });
+    },
+
+    /**
+     * Whether one of the popup's entries is currently being dragged.
+     */
+    get draggingActive() {
+        return !!this.element.dataset.draggingActive;
+    },
+
+    set draggingActive(newDraggingState) {
+        if (newDraggingState) {
+            this.element.dataset.draggingActive = true;
+            return;
+        }
+
+        delete this.element.dataset.draggingActive;
     },
 
     /**
@@ -98,6 +132,19 @@ const popup = {
 
                 TailoringEntry.save("entry-order");
             },
+            // Indicate dragging state on the body element for styling purposes.
+            onStart: () => {
+                this.draggingActive = true;
+            },
+            onChoose: () => {
+                this.draggingActive = true;
+            },
+            onEnd: () => {
+                this.draggingActive = false;
+            },
+            onUnchoose: () => {
+                this.draggingActive = false;
+            },
         });
     },
 
@@ -105,6 +152,7 @@ const popup = {
      * Initializes the addon's popup UI.
      */
     initialize(userData) {
+        this.initializeColorHintBackground(userData);
         this.initializeTitleBar();
         this.initializeTailoringEntries(userData);
         this.initializeActionBar();
@@ -114,6 +162,9 @@ const popup = {
 
 // Get the current user data, then initialize the popup UI.
 browser.storage.sync
-    .get({ tailoringEntries: defaultUserData.tailoringEntries })
+    .get({
+        tailoringEntries: defaultUserData.tailoringEntries,
+        colorHintBackground: defaultUserData.colorHintBackground,
+    })
     .then(userData => popup.initialize(userData))
     .catch(logError);

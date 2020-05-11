@@ -1,22 +1,26 @@
 @use 'reset';
 @use 'variables';
 @use 'common';
-@use '../../node_modules/tippy.js/dist/tippy';
+@use 'tooltips';
 
 html,
 body {
-    background-color: var(--color-entry);
+    background-color: var(--popup-entry-background);
     border-radius: 2px;
     overflow: hidden;
 }
 
 main {
-    background-color: var(--color-entry-container);
+    background-color: var(--popup-entry-container-background);
     color: var(--color-text);
     display: flex;
     flex-direction: column;
     height: 100vh;
     position: relative;
+
+    &[data-dragging-active] * {
+        cursor: grabbing;
+    }
 }
 
 /**
@@ -24,22 +28,12 @@ main {
  * to extension-related resources.
  */
 .title-bar {
-    --title-bar-height: 40px;
-    --title-bar-action-size: 32px;
-    --title-bar-action-radius: 3px;
-    --title-bar-action-spacing: calc(
-        (var(--title-bar-height) - var(--title-bar-action-size)) / 2
-    );
-    --color-title-bar-background: var(--color-entry);
-    --color-title-bar-action-highlight: var(--color-action-highlight);
-
     align-items: center;
-    background-color: var(--color-title-bar-background);
+    background-color: var(--popup-header-background);
     border-bottom: 2px solid var(--color-accent);
-    box-shadow: var(--shadow-elevation-1);
     display: flex;
-    height: var(--title-bar-height);
-    padding: 0 var(--title-bar-action-spacing);
+    flex: 0 0 var(--popup-header-height);
+    padding: 0 var(--popup-header-action-spacing);
 
     // .title-bar__logo
     &__logo {
@@ -66,16 +60,16 @@ main {
         $title-bar-action: &;
 
         align-items: center;
-        border-radius: var(--title-bar-action-radius);
+        border-radius: var(--popup-header-action-radius);
         display: flex;
-        height: var(--title-bar-action-size);
+        height: var(--popup-header-action-size);
         justify-content: center;
-        width: var(--title-bar-action-size);
+        width: var(--popup-header-action-size);
         overflow: hidden;
         position: relative;
 
         &::before {
-            background-color: var(--color-action-highlight);
+            background-color: var(--popup-header-action-highlight);
             content: "";
             height: 100%;
             left: 50%;
@@ -86,7 +80,6 @@ main {
             transition: opacity 0.35s;
             transform: translate(-50%, -50%);
             width: 100%;
-            z-index: 0;
 
             @at-root {
                 #{$title-bar-action}:hover::before,
@@ -108,7 +101,8 @@ main {
 
         // .title-bar__action__icon
         &__icon {
-            fill: var(--color-icon-fill);
+            fill: var(--popup-icon-fill);
+            position: relative;
             width: 18px;
         }
     }
@@ -118,7 +112,10 @@ main {
  * The container for the list of tailoring entries.
  */
 .entry-container {
+    align-items: center;
+    display: flex;
     flex: 1 1 auto;
+    flex-direction: column;
     overflow: scroll;
     position: relative;
     scrollbar-width: none;
@@ -127,36 +124,27 @@ main {
     &::-webkit-scrollbar {
         display: none;
     }
+
+    &::after {
+        content: "";
+        flex: 0 0
+            calc(
+                var(--popup-action-bar-height) +
+                    (var(--popup-action-bar-padding) * 2)
+            );
+        width: 100%;
+    }
 }
 
 /**
  * Individual tailoring entries.
  */
 .entry {
-    $thisEntry: &;
-    --entry-height: auto;
+    $this-entry: &;
 
-    background-color: var(--color-entry);
-    display: flex;
-    flex-direction: column;
-    height: var(--entry-height);
-    position: relative;
-
-    &::after {
-        bottom: 0;
-        content: "";
-        box-shadow: var(--shadow-elevation-1);
-        height: 1px;
-        position: absolute;
-        width: 100%;
-        z-index: -1;
-    }
-
-    &:last-child {
-        margin-bottom: calc(
-            var(--action-bar-height) + (var(--action-bar-padding) * 2)
-        );
-    }
+    flex: 0 0 auto;
+    height: var(--popup-entry-height);
+    width: var(--popup-entry-width);
 
     &[data-is-being-inserted="true"] {
         animation: insertEntry 350ms forwards;
@@ -186,7 +174,7 @@ main {
         // Begin with unaltered values. Height is set to a static value with
         // JavaScript before triggering the animation via data attribute.
         0% {
-            height: var(--entry-height);
+            height: var(--popup-entry-height);
             opacity: 1;
             overflow: visible;
             transform: translate(0);
@@ -195,10 +183,10 @@ main {
         // Slide the entry out to the right and set its overflow to hidden to
         // prevent any child elements from propping the entry container open.
         50% {
-            height: var(--entry-height);
+            height: var(--popup-entry-height);
             opacity: 1;
             overflow: hidden;
-            transform: translate(100%);
+            transform: translate(calc(100% + var(--popup-entry-padding)));
         }
 
         // Shrink the entry down to nothing. JavaScript will listen for the
@@ -207,56 +195,158 @@ main {
             height: 0;
             opacity: 0;
             overflow: hidden;
-            transform: translate(100%);
+            transform: translate(calc(100% + var(--popup-entry-padding)));
         }
     }
 
-    & + & {
-        border-top: 1px solid var(--color-entry-divider);
+    // Prevent hover effects on inner elements while dragging.
+    [data-dragging-active] & * {
+        pointer-events: none;
+    }
+
+    // .entry__ui-container
+    &__ui-container {
+        background-color: var(--popup-entry-background);
+        border-radius: var(--radius-outer);
+        display: flex;
+        flex-direction: column;
+        margin-top: 10px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    // .entry__header
+    &__header {
+        align-items: center;
+        display: flex;
+        height: 22px;
+        padding: 0 4px;
+    }
+
+    // .entry__sort-handle
+    &__sort-handle {
+        cursor: grab;
+        flex: 1 0 auto;
+
+        // .entry__sort-handle__icon
+        &__icon {
+            display: block;
+            transform: rotate(90deg);
+        }
+    }
+
+    // .entry__setting-hint-container
+    &__setting-hint-container {
+        align-items: center;
+        display: flex;
+        height: 100%;
+    }
+
+    // .entry__setting-hint
+    &__setting-hint {
+        $this-setting-hint: &;
+        --setting-hint-spacing: 4px;
+
+        align-items: center;
+        cursor: help;
+        display: flex;
+        flex: 0 0 auto;
+
+        // .entry__setting-hint--opacity
+        &--opacity {
+            height: 18px;
+        }
+
+        // .entry__setting-hint--treatment-color
+        &--treatment-color {
+            --setting-hint-size: 14px;
+            --setting-hint-padding: 1px;
+            --setting-hint-radius-outer: calc(var(--setting-hint-size) / 2);
+            --setting-hint-radius-inner: calc(
+                var(--setting-hint-radius-outer) - var(--setting-hint-padding)
+            );
+
+            background-color: var(--popup-entry-treatment-base);
+            border-radius: var(--setting-hint-radius-outer);
+            height: var(--setting-hint-size);
+            padding: var(--setting-hint-padding);
+            width: var(--setting-hint-size);
+
+            [data-colorization-enabled="false"] & {
+                display: none;
+            }
+
+            &::before {
+                border-radius: var(--setting-hint-radius-inner);
+                content: "";
+                height: 100%;
+                width: 100%;
+
+                @at-root {
+                    #{$this-setting-hint}--background::before {
+                        background-color: var(
+                            --popup-entry-treatment-background
+                        );
+                    }
+
+                    #{$this-setting-hint}--border::before {
+                        background-color: var(--popup-entry-treatment-border);
+                    }
+                }
+            }
+        }
+
+        & + & {
+            margin-left: var(--setting-hint-spacing);
+        }
+
+        // .entry__setting-hint__icon
+        &__icon {
+            fill: var(--popup-header-hint-icon);
+            height: 100%;
+            width: auto;
+
+            // .entry__setting__icon--opacity-partial
+            &--opacity-partial {
+                display: block;
+
+                [data-opacity="0"] &,
+                [data-opacity="1"] & {
+                    display: none;
+                }
+            }
+
+            // .entry__setting__icon--opacity-none
+            &--opacity-none {
+                display: none;
+
+                [data-opacity="0"] & {
+                    display: block;
+                }
+            }
+        }
     }
 
     // .entry__primary-ui
     &__primary-ui {
         align-items: center;
+        border-top: 1px solid var(--popup-entry-header-border);
         display: flex;
-    }
-
-    //. entry__color-hint
-    &__color-hint {
-        background-image: linear-gradient(
-            var(--color-treatment-background) 50%,
-            var(--color-treatment-border) 50%
-        );
-        border-radius: 0 4px 4px 0;
-        flex: 0 0 4px;
-        height: 40px;
-    }
-
-    // .entry__sort-handle
-    &__sort-handle {
-        cursor: move;
-        flex: 0 0 auto;
-        margin: 0 2px;
-
-        // .entry__sort-handle__icon
-        &__icon {
-            display: block;
-        }
     }
 
     // .entry__input-container
     &__input-container {
         $input-container: &;
 
-        background-color: var(--color-entry-input);
+        background-color: var(--popup-entry-input-background);
         border-radius: var(--input-radius);
         flex: 1 1 100%;
-        margin: 15px 0;
+        margin: 10px 0 10px 8px;
         position: relative;
         overflow: hidden;
 
         &::before {
-            background-color: var(--color-input-highlight);
+            background-color: var(--popup-entry-input-accent);
             bottom: 0;
             content: "";
             height: 2px;
@@ -293,7 +383,7 @@ main {
         overflow: hidden;
 
         &::before {
-            background-color: var(--color-action-highlight);
+            background-color: var(--popup-entry-action-highlight);
             content: "";
             height: 100%;
             left: 50%;
@@ -307,21 +397,24 @@ main {
             z-index: 0;
 
             @at-root {
-                #{$settings-toggle}:hover::before,
-                #{$settings-toggle}:focus::before,
-                #{$settings-toggle}:active::before {
-                    opacity: 1;
+                #{$settings-toggle}:not([data-action-active="true"]) {
+                    &:hover::before,
+                    &:focus::before,
+                    &:active::before {
+                        opacity: 1;
+                    }
                 }
             }
         }
 
         &[data-action-active="true"] {
-            background-color: var(--color-icon-fill);
+            background-color: var(--popup-icon-fill);
         }
 
         // .entry__settings-toggle__icon
         &__icon {
             display: block;
+            position: relative;
             transition: transform 0.35s;
 
             #{$settings-toggle}[data-action-active="true"] & {
@@ -330,10 +423,10 @@ main {
 
             // .entry__settings-toggle__icon__path-1
             &__path-1 {
-                fill: var(--color-icon-fill);
+                fill: var(--popup-icon-fill);
 
                 #{$settings-toggle}[data-action-active="true"] & {
-                    fill: var(--color-entry);
+                    fill: var(--popup-entry-background);
                 }
             }
         }
@@ -342,7 +435,7 @@ main {
     // .entry__settings-drawer
     &__settings-drawer {
         align-items: center;
-        background-color: var(--color-entry-divider);
+        background-color: var(--popup-entry-input-background);
         display: flex;
         height: 0;
         justify-content: flex-end;
@@ -378,7 +471,7 @@ main {
 
         // .entry__setting-group__effects
         &__effects {
-            border: 1px solid var(--color-button-highlight-settings);
+            border: 1px solid var(--popup-entry-action-highlight);
             border-radius: var(--setting-border-radius);
             height: var(--setting-size);
             left: 50%;
@@ -445,7 +538,7 @@ main {
                 }
 
                 &::-moz-range-thumb {
-                    background-color: var(--color-icon-fill);
+                    background-color: var(--popup-icon-fill);
                     border: 0;
                     border-radius: 2px;
                     height: 20px;
@@ -454,7 +547,7 @@ main {
 
                 &::-webkit-slider-thumb {
                     -webkit-appearance: none;
-                    background-color: var(--color-icon-fill);
+                    background-color: var(--popup-icon-fill);
                     border: 0;
                     border-radius: 2px;
                     height: 20px;
@@ -462,7 +555,7 @@ main {
                 }
 
                 &::-moz-range-track {
-                    background-color: var(--color-entry);
+                    background-color: var(--popup-entry-background);
                     border-radius: 2px;
                     height: 4px;
                 }
@@ -471,7 +564,7 @@ main {
                     -webkit-appearance: none;
                     align-items: center;
                     border-radius: 2px;
-                    background-color: var(--color-entry);
+                    background-color: var(--popup-entry-background);
                     display: flex;
                     height: 4px;
                 }
@@ -480,7 +573,7 @@ main {
 
         // .entry__setting__effects
         &__effects {
-            background-color: var(--color-button-highlight-settings);
+            background-color: var(--popup-entry-action-highlight);
             height: var(--setting-size);
             left: 50%;
             opacity: 0;
@@ -493,7 +586,7 @@ main {
             z-index: 0;
 
             #{$entry-setting}--delete & {
-                background-color: var(--color-button-highlight-warning);
+                background-color: var(--popup-entry-action-warning);
             }
 
             #{$entry-setting}:first-child & {
@@ -521,20 +614,30 @@ main {
             margin: auto;
             position: relative;
 
-            // .entry__setting__icon--opacity-on
-            &--opacity-on {
+            // .entry__setting__icon--opacity-full
+            &--opacity-full {
+                display: none;
+
+                [data-opacity="1"] & {
+                    display: block;
+                }
+            }
+
+            // .entry__setting__icon--opacity-partial
+            &--opacity-partial {
                 display: block;
 
-                [data-opacity-on="false"] & {
+                [data-opacity="0"] &,
+                [data-opacity="1"] & {
                     display: none;
                 }
             }
 
-            // .entry__setting__icon--opacity-off
-            &--opacity-off {
+            // .entry__setting__icon--opacity-none
+            &--opacity-none {
                 display: none;
 
-                [data-opacity-on="false"] & {
+                [data-opacity="0"] & {
                     display: block;
                 }
             }
@@ -559,20 +662,20 @@ main {
 
             // .entry__setting__icon__path-1
             &__path-1 {
-                fill: var(--color-icon-fill);
+                fill: var(--popup-icon-fill);
             }
 
             // .entry__setting__icon__path-2
             &__path-2 {
-                fill: var(--color-icon-fill);
+                fill: var(--popup-icon-fill);
 
                 button:not([disabled]) & {
                     #{$entry-setting}--background-color & {
-                        fill: var(--color-treatment-background);
+                        fill: var(--popup-entry-treatment-background);
                     }
 
                     #{$entry-setting}--border-color & {
-                        fill: var(--color-treatment-border);
+                        fill: var(--popup-entry-treatment-border);
                     }
                 }
             }
@@ -636,7 +739,7 @@ main {
 
     // .entry__picker-scrim
     &__picker-scrim {
-        background-color: var(--color-picker-scrim);
+        background-color: var(--popup-modal-scrim);
         height: 100vh;
         left: 0;
         position: absolute;
@@ -659,7 +762,7 @@ main {
         &#{&} {
             border-radius: var(--picker-border-radius);
             box-shadow: var(--shadow-elevation-1);
-            background-color: var(--color-entry);
+            background-color: var(--popup-entry-background);
         }
 
         // .entry__picker__slider
@@ -689,7 +792,7 @@ main {
             // .entry__picker__editor__input
             &__input {
                 &#{&} {
-                    background-color: var(--color-entry-input);
+                    background-color: var(--popup-entry-input-background);
                     border-radius: var(--input-radius);
                     box-shadow: none;
                     color: var(--color-text);
@@ -719,7 +822,7 @@ main {
                 &:hover,
                 &:focus,
                 &:active {
-                    background: var(--color-action-highlight);
+                    background: var(--popup-entry-action-highlight);
                 }
             }
 
@@ -727,7 +830,7 @@ main {
             &__icon {
                 &#{&} {
                     margin: auto;
-                    fill: var(--color-icon-fill);
+                    fill: var(--popup-icon-fill);
                 }
             }
         }
@@ -738,10 +841,10 @@ main {
  * The action bar near the bottom of the popup window.
  */
 .action-bar {
-    background-color: var(--color-action-bar);
-    border-radius: calc(var(--action-bar-height) / 2);
-    bottom: var(--action-bar-padding);
-    box-shadow: var(--shadow-elevation-1);
+    background-color: var(--popup-action-bar-background);
+    border: 2px solid var(--popup-action-bar-border);
+    border-radius: calc(var(--popup-action-bar-height) / 2);
+    bottom: var(--popup-action-bar-padding);
     display: flex;
     height: 40px;
     left: 50%;
@@ -750,38 +853,61 @@ main {
     position: fixed;
     z-index: 1;
 
-    &:hover,
-    &:focus-within {
-        box-shadow: var(--shadow-elevation-2);
-    }
-
     // .action-bar__action
     &__action {
+        $this-action: &;
+
         align-items: center;
         border: 0;
         cursor: pointer;
         display: flex;
         flex: 1 1 auto;
-        padding: 0 20px;
+        justify-content: center;
+        padding: 0 10px;
+        position: relative;
+        width: 110px;
 
-        &:hover,
-        &:focus,
-        &:active {
-            background-color: var(--color-action-bar-highlight);
+        &::before {
+            background-color: var(--popup-action-bar-highlight);
+            content: "";
+            height: 100%;
+            left: 0;
+            opacity: 0;
+            position: absolute;
+            pointer-events: none;
+            top: 0;
+            transition: opacity 0.35s;
+            width: 100%;
+            z-index: 0;
+
+            @at-root #{$this-action} {
+                &:hover::before,
+                &:focus::before,
+                &:active::before {
+                    opacity: 1;
+                }
+            }
+        }
+
+        & + & {
+            border-left: 1px solid var(--popup-action-bar-border);
         }
 
         // .action-bar__action__icon
         &__icon {
-            fill: var(--color-icon-fill);
+            fill: var(--popup-icon-fill);
+            position: relative;
         }
 
         // .action-bar__action__label
         &__label {
-            color: var(--color-button-text);
+            color: var(--popup-action-bar-text);
             font-size: 1.2rem;
             font-weight: 300;
             letter-spacing: 0.05rem;
-            margin: 0 6px;
+            margin: 0 6px 0 3px;
+            position: relative;
+            white-space: nowrap;
         }
     }
 }
@@ -809,9 +935,9 @@ main {
 
             align-items: center;
             border: var(--token-border-width) solid
-                var(--color-domain-token-border);
+                var(--popup-entry-domain-token-border);
             border-radius: var(--token-border-radius);
-            color: var(--color-domain-token-text);
+            color: var(--popup-entry-domain-token-text);
             display: flex;
             float: left;
             font-size: 1.2rem;
@@ -820,7 +946,7 @@ main {
             max-width: calc(100% - var(--token-item-spacing) * 2);
 
             &.focused {
-                background-color: var(--color-domain-token-active);
+                background-color: var(--popup-entry-domain-token-active);
             }
 
             .item-label {
@@ -833,10 +959,10 @@ main {
 
             .item-remove {
                 align-items: center;
-                background-color: var(--color-domain-token-border);
+                background-color: var(--popup-entry-domain-token-border);
                 border-radius: 0 var(--token-border-radius)
                     var(--token-border-radius) 0;
-                color: var(--color-entry-input);
+                color: var(--popup-entry-input-background);
                 display: flex;
                 flex: 0 0 auto;
                 font-size: 1.6rem;
@@ -852,8 +978,8 @@ main {
                 &:hover,
                 &:active,
                 &:focus {
-                    background-color: var(--color-domain-token-remove-active);
-                    color: var(--color-domain-token-remove-text);
+                    background-color: var(--popup-entry-action-warning);
+                    color: var(--popup-entry-domain-token-remove-text);
                 }
             }
         }
@@ -874,41 +1000,4 @@ main {
         font-family: "Open Sans", sans-serif;
         font-size: 1.2rem;
     }
-}
-
-/**
- * Styles for markup provided by the Tippy.js library.
- * @see https://github.com/atomiks/tippyjs
- */
-.tippy-box {
-    font-size: 1.2rem;
-}
-
-/**
- * The HTML contents for a tooltip.
- */
-.tooltip-contents {
-    max-width: 75vw;
-    padding: 4px 0;
-
-    // .tooltip-contents__section
-    &__section {
-        & + & {
-            margin-top: 8px;
-        }
-
-        &[data-label]::before {
-            content: attr(data-label);
-            display: block;
-            font-size: 0.8rem;
-            font-weight: 300;
-            letter-spacing: 0.05rem;
-            margin-bottom: 2px;
-            text-transform: uppercase;
-        }
-    }
-}
-
-[data-tippy-contents] {
-    display: none;
 }

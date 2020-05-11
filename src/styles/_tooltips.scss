@@ -1,0 +1,47 @@
+@use 'variables';
+@use '../../node_modules/tippy.js/dist/tippy';
+
+/**
+ * Styles for markup provided by the Tippy.js library.
+ * @see https://github.com/atomiks/tippyjs
+ */
+.tippy-box {
+    background-color: var(--tooltip-background);
+    color: var(--tooltip-text);
+    font-size: 1.2rem;
+
+    @each $position in (top, bottom, left, right) {
+        &[data-placement^="#{$position}"] > .tippy-arrow::before {
+            border-#{$position}-color: var(--tooltip-background);
+        }
+    }
+}
+
+/**
+ * The HTML contents for a tooltip.
+ */
+.tooltip-contents {
+    max-width: 75vw;
+    padding: 4px 0;
+
+    // .tooltip-contents__section
+    &__section {
+        & + & {
+            margin-top: 8px;
+        }
+
+        &[data-label]::before {
+            content: attr(data-label);
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 300;
+            letter-spacing: 0.05rem;
+            margin-bottom: 2px;
+            text-transform: uppercase;
+        }
+    }
+}
+
+[data-tippy-contents] {
+    display: none;
+}
