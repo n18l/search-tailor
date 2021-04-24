@@ -12,8 +12,8 @@ const searchEngines = [
         matchPattern: ".*://.*.?google.com/search.*",
         selectors: {
             resultContainer: "#search",
-            result: ".rc",
-            resultLink: ".r > a",
+            result: ".hlcw0c .g",
+            resultLink: "a",
         },
         observe: false,
         styleViaAttribute: false,
