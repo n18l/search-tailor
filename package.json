@@ -1,7 +1,7 @@
 {
     "name": "search-tailor",
     "description": "Customizes your search results so you can find what you need with style.",
-    "version": "0.3.1",
+    "version": "0.3.2",
     "author": "Nick Brombal",
     "license": "MIT",
     "homepage": "https://github.com/nbrombal/search-tailor",
