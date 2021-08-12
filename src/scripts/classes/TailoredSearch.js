@@ -1,34 +1,37 @@
-import { searchEngines } from "../addon/data";
-import { qs, qsa } from "../addon/functions";
+import { qs, qsa, getRemoteConfig } from "../addon/functions";
 
 /* Class representing a user's search that is eligible for tailoring. */
 class TailoredSearch {
     constructor(userData) {
         // Store a copy of the current user data.
         this.userData = userData;
-        this.cacheData();
 
-        // Only proceed if this is a supported search engine.
-        if (this.searchEngineStatus === "unsupported") {
-            return;
-        }
+        getRemoteConfig("search-engines").then(searchEngineConfig => {
+            this.cacheData(searchEngineConfig);
 
-        // If this search engine loads results asynchronously, apply tailoring
-        // when its results change. Otherwise, simply tailor on load.
-        if (this.searchEngine.observe) {
-            this.tailorOnMutation();
-        } else {
-            this.tailor();
-        }
+            // Only proceed if this is a supported search engine.
+            if (this.searchEngineStatus === "unsupported") {
+                return;
+            }
+
+            // If this search engine loads results asynchronously, apply
+            // tailoring when its results change. Otherwise, simply tailor on
+            // load.
+            if (this.searchEngine.observe) {
+                this.tailorOnMutation();
+            } else {
+                this.tailor();
+            }
+        });
     }
 
     /**
      * Caches immutable data for this tailored search.
      */
-    cacheData() {
+    cacheData(searchEngineConfig) {
         // Identify which of the predefined search engines was used for this
         // search, if any.
-        this.searchEngine = searchEngines.find(searchEngine =>
+        this.searchEngine = searchEngineConfig.find(searchEngine =>
             RegExp(searchEngine.matchPattern).test(window.location)
         );
 

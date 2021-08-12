@@ -3,55 +3,11 @@
  */
 
 /**
- * Search engine-specific data to guide the application of tailoring
- * templates to search results pages.
+ * The external URL where configuration data for the addon is stored, allowing
+ * for granular updates that don't require a new addon version.
  */
-const searchEngines = [
-    {
-        id: "google",
-        matchPattern: ".*://.*.?google.com/search.*",
-        selectors: {
-            resultContainer: "#search",
-            result: ".hlcw0c .g",
-            resultLink: "a",
-        },
-        observe: false,
-        styleViaAttribute: false,
-    },
-    {
-        id: "duckduckgo",
-        matchPattern: ".*://.*.?duckduckgo.com/.*",
-        selectors: {
-            resultContainer: ".results",
-            result: ".result",
-            resultLink: ".result__a",
-        },
-        observe: true,
-        styleViaAttribute: false,
-    },
-    {
-        id: "bing",
-        matchPattern: ".*://.*.?bing.com/search.*",
-        selectors: {
-            resultContainer: "#b_results",
-            result: ".b_algo",
-            resultLink: ".b_algo h2 a",
-        },
-        observe: false,
-        styleViaAttribute: true,
-    },
-    {
-        id: "yahoo",
-        matchPattern: ".*://search.yahoo.com/search.*",
-        selectors: {
-            resultContainer: "#web > ol",
-            result: ".algo",
-            resultLink: ".algo .ac-algo",
-        },
-        observe: false,
-        styleViaAttribute: false,
-    },
-];
+const remoteConfigUrl =
+    "https://api.github.com/gists/dfd714ab2a99bddb1e2e15999423055e";
 
 /**
  * The treatment settings to apply when creating a new tailoring entry.
@@ -135,7 +91,7 @@ const tidbits = [
 ];
 
 module.exports = {
-    searchEngines,
+    remoteConfigUrl,
     defaultTreatment,
     defaultUserData,
     links,

@@ -1,5 +1,5 @@
 import browser from "webextension-polyfill";
-import { tidbits } from "./data";
+import { remoteConfigUrl, tidbits } from "./data";
 
 /**
  * Queries for the first match of a given selector within a given element. A
@@ -89,6 +89,23 @@ export function getCustomPropertyValue(customProperty, unitToStrip = "") {
     }
 
     return propertyValue;
+}
+
+/**
+ * Retrieves a remote configuration file from the GitHub Gist where remote
+ * configurations are currently stored for the addon.
+ *
+ * @param {string} filename The name of the JSON configuration file to fetch.
+ *
+ * @returns {JSON} The requested JSON configuration.
+ */
+export async function getRemoteConfig(filename) {
+    const configFileData = await fetch(remoteConfigUrl);
+    const JsonConfigFileData = await configFileData.json();
+    const requestedConfig =
+        JsonConfigFileData.files[`${filename}.json`].content;
+
+    return JSON.parse(requestedConfig);
 }
 
 /**
