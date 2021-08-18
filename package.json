@@ -41,8 +41,7 @@
         "*.{js,css,md}": "prettier --write"
     },
     "prettier": {
-        "tabWidth": 4,
-        "trailingComma": "es5"
+        "tabWidth": 4
     },
     "eslintConfig": {
         "env": {
@@ -91,11 +90,11 @@
         "chokidar-cli": "^2.1.0",
         "eslint": "^7.25.0",
         "eslint-config-airbnb-base": "^14.2.1",
-        "eslint-config-prettier": "^8.2.0",
+        "eslint-config-prettier": "^8.3.0",
         "eslint-plugin-import": "^2.22.1",
         "husky": "^7.0.1",
         "lint-staged": "^11.1.2",
-        "prettier": "1.16.4",
+        "prettier": "^2.3.2",
         "sass": "^1.26.2",
         "web-ext": "^6.3.0"
     },

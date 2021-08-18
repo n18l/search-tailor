@@ -47,10 +47,10 @@ const popup = {
 
         // Set up all tooltips with HTML contents.
         Tippy(qsa("[data-tippy-html]"), {
-            content: reference => qs("[data-tippy-contents]", reference),
+            content: (reference) => qs("[data-tippy-contents]", reference),
             offset: [0, 5],
             placement: "bottom",
-            onCreate: instance => {
+            onCreate: (instance) => {
                 qs("[data-tippy-contents]", instance.popper).style.display =
                     "block";
             },
@@ -58,7 +58,7 @@ const popup = {
 
         // Set up all other title bar tooltips.
         Tippy(titleTooltipTargets, {
-            content: element => element.getAttribute("aria-label"),
+            content: (element) => element.getAttribute("aria-label"),
             offset: [0, 5],
             placement: "bottom",
         });
@@ -77,7 +77,7 @@ const popup = {
      */
     initializeTailoringEntries(userData) {
         TailoringEntry.objects = userData.tailoringEntries.map(
-            entrySettings => new TailoringEntry(entrySettings)
+            (entrySettings) => new TailoringEntry(entrySettings)
         );
     },
 
@@ -166,5 +166,5 @@ browser.storage.sync
         tailoringEntries: defaultUserData.tailoringEntries,
         colorHintBackground: defaultUserData.colorHintBackground,
     })
-    .then(userData => popup.initialize(userData))
+    .then((userData) => popup.initialize(userData))
     .catch(logError);
