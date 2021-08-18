@@ -6,7 +6,7 @@ class TailoredSearch {
         // Store a copy of the current user data.
         this.userData = userData;
 
-        getRemoteConfig("search-engines").then(searchEngineConfig => {
+        getRemoteConfig("search-engines").then((searchEngineConfig) => {
             this.cacheData(searchEngineConfig);
 
             // Only proceed if this is a supported search engine.
@@ -31,7 +31,7 @@ class TailoredSearch {
     cacheData(searchEngineConfig) {
         // Identify which of the predefined search engines was used for this
         // search, if any.
-        this.searchEngine = searchEngineConfig.find(searchEngine =>
+        this.searchEngine = searchEngineConfig.find((searchEngine) =>
             RegExp(searchEngine.matchPattern).test(window.location)
         );
 
@@ -75,7 +75,7 @@ class TailoredSearch {
 
         // Check the user's settings for this engine's enabled status.
         const searchEngineIsEnabled = this.userData.searchEngines.find(
-            searchEngine => searchEngine.id === this.searchEngine.id
+            (searchEngine) => searchEngine.id === this.searchEngine.id
         ).enabled;
 
         return searchEngineIsEnabled ? "enabled" : "disabled";
@@ -130,21 +130,21 @@ class TailoredSearch {
 
         // Apply IDs only to a specific entry if an ID is provided.
         if (tailoringEntryIDs) {
-            entriesToApply = entriesToApply.filter(tailoringEntry =>
+            entriesToApply = entriesToApply.filter((tailoringEntry) =>
                 tailoringEntryIDs.includes(tailoringEntry.id)
             );
         }
 
         // Get the search results matching each existing entry, and apply that
         // entry's ID to the result as a data attribute.
-        entriesToApply.forEach(tailoringEntry => {
+        entriesToApply.forEach((tailoringEntry) => {
             // Combine all of this entry's listed domains into a single,
             // RegEx compatible string.
             const entryDomains = tailoringEntry.domains.join("|");
 
             // Create an array of all current search results that match this
             // entry.
-            this.searchResults.forEach(result => {
+            this.searchResults.forEach((result) => {
                 const thisResult = result;
 
                 // Only proceed if this result matches the current tailoring
@@ -180,10 +180,10 @@ class TailoredSearch {
     insertTreatmentPanels() {
         // Identify all search results that are missing treatment panels.
         const resultsWithoutPanels = this.tailoredSearchResults.filter(
-            searchResult => !qs(this.treatmentPanelSelector, searchResult)
+            (searchResult) => !qs(this.treatmentPanelSelector, searchResult)
         );
 
-        resultsWithoutPanels.forEach(searchResult => {
+        resultsWithoutPanels.forEach((searchResult) => {
             const newTreatmentDiv = document.createElement("div");
 
             // Some search engines apparently observe DOM mutations
@@ -212,19 +212,20 @@ class TailoredSearch {
 
         // Limit treatment application when a specific entry ID is provided.
         if (tailoringEntryIDs) {
-            searchResultsToTailor = searchResultsToTailor.filter(searchResult =>
-                tailoringEntryIDs.includes(
-                    searchResult.dataset.tailoringEntryId
-                )
+            searchResultsToTailor = searchResultsToTailor.filter(
+                (searchResult) =>
+                    tailoringEntryIDs.includes(
+                        searchResult.dataset.tailoringEntryId
+                    )
             );
         }
 
-        searchResultsToTailor.forEach(searchResult => {
+        searchResultsToTailor.forEach((searchResult) => {
             const thisResult = searchResult;
 
             // Identify the tailoring entry that applies to this result.
             const tailoringEntry = this.userData.tailoringEntries.find(
-                entry => entry.id === thisResult.dataset.tailoringEntryId
+                (entry) => entry.id === thisResult.dataset.tailoringEntryId
             );
 
             // If this result has no applicable entry, remove any existing
@@ -287,7 +288,7 @@ class TailoredSearch {
      * elements.
      */
     clearTreatments() {
-        this.tailoredSearchResults.forEach(result =>
+        this.tailoredSearchResults.forEach((result) =>
             this.removeTreatment(result)
         );
     }

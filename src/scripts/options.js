@@ -31,7 +31,7 @@ class TailoredSearchOptionsPanel {
         this.inputs = {};
         const allInputs = this.element.querySelectorAll(".js-option-input");
 
-        allInputs.forEach(input => {
+        allInputs.forEach((input) => {
             // Identify this input's name and group (if provided).
             const inputName = input.name;
             const { inputGroup } = input.dataset;
@@ -56,7 +56,7 @@ class TailoredSearchOptionsPanel {
             "[data-click-action]"
         );
 
-        actionButtons.forEach(actionButton => {
+        actionButtons.forEach((actionButton) => {
             this.actionButtons[actionButton.dataset.clickAction] = actionButton;
         });
     }
@@ -67,7 +67,7 @@ class TailoredSearchOptionsPanel {
     populateOptions() {
         browser.storage.sync
             .get(defaultUserData)
-            .then(storageData => {
+            .then((storageData) => {
                 // Create a formatted copy of the current sync storage data.
                 this.currentSyncStorage = JSON.stringify(storageData, null, 4);
 
@@ -85,11 +85,10 @@ class TailoredSearchOptionsPanel {
 
                 // Set each Search Engine checkbox to match its "enabled" setting.
                 this.inputs.enableSearchEngine.forEach((input, index) => {
-                    this.inputs.enableSearchEngine[
-                        index
-                    ].checked = this.currentSearchEngines.find(
-                        engine => engine.id === input.id
-                    ).enabled;
+                    this.inputs.enableSearchEngine[index].checked =
+                        this.currentSearchEngines.find(
+                            (engine) => engine.id === input.id
+                        ).enabled;
                 });
 
                 // Set the color hint background input values to match the
@@ -102,7 +101,7 @@ class TailoredSearchOptionsPanel {
             })
             .catch(logError);
 
-        browser.storage.local.get().then(storageData => {
+        browser.storage.local.get().then((storageData) => {
             // Create a formatted copy of the current local storage data.
             this.currentLocalStorage = JSON.stringify(storageData, null, 4);
 
@@ -136,7 +135,7 @@ class TailoredSearchOptionsPanel {
         this.tooltipTargets = qsa("[data-tippy]", this.element);
 
         Tippy(this.tooltipTargets, {
-            content: reference => reference.getAttribute("aria-label"),
+            content: (reference) => reference.getAttribute("aria-label"),
             offset: [0, 5],
             placement: "bottom",
         });
@@ -148,10 +147,10 @@ class TailoredSearchOptionsPanel {
     bindEvents() {
         // Update and sync the search engine settings when checking/unchecking a
         // search engine.
-        this.inputs.enableSearchEngine.forEach(input => {
-            input.addEventListener("input", e => {
+        this.inputs.enableSearchEngine.forEach((input) => {
+            input.addEventListener("input", (e) => {
                 this.currentSearchEngines.find(
-                    engine => engine.id === e.target.id
+                    (engine) => engine.id === e.target.id
                 ).enabled = e.target.checked;
 
                 browser.storage.sync
@@ -166,7 +165,7 @@ class TailoredSearchOptionsPanel {
         // from the colour picker.
         this.inputs.colorHintBackgroundSwatch.addEventListener(
             "input",
-            throttle(e => {
+            throttle((e) => {
                 browser.storage.sync
                     .set({ colorHintBackground: e.target.value })
                     .then(() =>
@@ -181,7 +180,7 @@ class TailoredSearchOptionsPanel {
         // into the colour input field.
         this.inputs.colorHintBackgroundHex.addEventListener(
             "change",
-            throttle(e => {
+            throttle((e) => {
                 // Only proceed for valid hex color values.
                 if (!e.target.value.match(/^#[a-fA-F0-9]{6}$/)) {
                     return;
