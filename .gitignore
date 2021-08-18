@@ -1,5 +1,9 @@
 *.code-workspace
+
 .DS_Store
-/node_modules
+.env
+
 /.sass-cache
+/artifacts
 /dist
+/node_modules
