@@ -2,6 +2,35 @@ import browser from "webextension-polyfill";
 import { remoteConfigUrl, tidbits } from "./data";
 
 /**
+ * Logs any provided values to the console for debugging purposes. The output is
+ * only visible when the appropriate localStorage value is set.
+ *
+ * @param {...any} logItems Items to log to the console.
+ */
+export function log(...logItems) {
+    if (localStorage.getItem(`search-tailor:debug`) !== `1`) {
+        return;
+    }
+
+    // eslint-disable-next-line no-console
+    console.log(`[Search Tailor]`, ...logItems);
+}
+
+/**
+ * Logs an error, throwing to end execution if necessary.
+ *
+ * @param {any}     error       The error output to log.
+ * @param {boolean} shouldThrow Whether the error should end execution.
+ */
+export function logError(error, shouldThrow = false) {
+    if (shouldThrow) {
+        throw new Error(`[Search Tailor] ${error}`);
+    }
+
+    console.error(`[Search Tailor]`, error);
+}
+
+/**
  * Queries for the first match of a given selector within a given element. A
  * convenience shorthand for the `Element.querySelector()` method.
  *
@@ -191,35 +220,6 @@ export async function getRemoteConfig(filename) {
     const requestedConfigObject = JSON.parse(requestedConfigJson);
 
     return requestedConfigObject;
-}
-
-/**
- * Logs an error, throwing to end execution if necessary.
- *
- * @param {*} error The error output to log.
- * @param {boolean} shouldThrow Whether the error should end execution.
- */
-export function logError(error, shouldThrow = false) {
-    if (shouldThrow) {
-        throw new Error(`[Search Tailor] ${error}`);
-    }
-
-    console.error(`[Search Tailor]`, error);
-}
-
-/**
- * Logs any provided values to the console for debugging purposes. The output is
- * only visible when the appropriate localStorage value is set.
- *
- * @param  {...any} logItems Items to log to the console.
- */
-export function log(...logItems) {
-    if (localStorage.getItem(`search-tailor:debug`) !== `1`) {
-        return;
-    }
-
-    // eslint-disable-next-line no-console
-    console.log(`[Search Tailor]`, ...logItems);
 }
 
 /**
