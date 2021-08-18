@@ -38,7 +38,7 @@ class TailoringEntry {
         this.settings = tailoringEntry || {
             id: generateTailoringEntryID(),
             domains: [],
-            treatment: Object.assign({}, defaultTreatment),
+            treatment: { ...defaultTreatment },
         };
 
         this.cacheData();
