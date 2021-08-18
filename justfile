@@ -13,11 +13,11 @@ watch: clean
     #!/usr/bin/env bash
     set -euxo pipefail
 
-    npx chokidar "src/manifest-*.json" -c "just _build-manifest" --initial &
-    npx chokidar "src/markup/**/*.pug" -c "just _build-markup" --initial &
-    npx chokidar "src/styles/**/*.scss" -c "just _build-styles" --initial &
-    npx chokidar "src/scripts/**/*.js" -c "just _build-scripts; if [[ '{path}' == 'src/scripts/addon/data.js' ]]; then just _build-markup; fi;" --initial &
-    npx chokidar "src/assets" -c "just _build-assets" --initial
+    npx chokidar "src/manifest-*.json" -c "just build-manifest" --initial &
+    npx chokidar "src/markup/**/*.pug" -c "just build-markup" --initial &
+    npx chokidar "src/styles/**/*.scss" -c "just build-styles" --initial &
+    npx chokidar "src/scripts/**/*.js" -c "just build-scripts; if [[ '{path}' == 'src/scripts/addon/data.js' ]]; then just build-markup; fi;" --initial &
+    npx chokidar "src/assets" -c "just build-assets" --initial
 
 # Loops through each target browser and runs the supplied command.
 _for-each-target command:
