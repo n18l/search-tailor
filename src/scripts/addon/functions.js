@@ -92,20 +92,105 @@ export function getCustomPropertyValue(customProperty, unitToStrip = "") {
 }
 
 /**
- * Retrieves a remote configuration file from the GitHub Gist where remote
- * configurations are currently stored for the addon.
+ * Retrieves configuration data for the extension from a remote source, where it
+ * can be more quickly updated independently of the larger release cycle.
  *
- * @param {string} filename The name of the JSON configuration file to fetch.
+ * @returns {object} The current configuration data for the extension.
+ */
+export async function getRemoteConfigData() {
+    // Get any existing stored configuration values.
+    const storedConfigData = await browser.storage.local.get({
+        configETag: "",
+        configFiles: null,
+    });
+
+    const storedConfigETag = storedConfigData.configETag;
+    const storedConfigFiles = storedConfigData.configFiles;
+    let updatedConfigData = null;
+
+    if (!storedConfigFiles) {
+        // We have no existing configuration data; get a fresh set.
+        log(`We have no existing configuration data; get a fresh set.`);
+
+        const configFilesResponse = await fetch(remoteConfigUrl).catch(
+            logError
+        );
+
+        if (!configFilesResponse) {
+            log(`Couldn't get fresh data; we're kind of hosed.`);
+            return storedConfigData;
+        }
+
+        updatedConfigData = {
+            configETag: configFilesResponse.headers.get("ETag"),
+            configFiles: (await configFilesResponse.json()).files,
+        };
+    } else {
+        // We have some existing data; check to see if it's current.
+        log(`We have some existing data; check to see if it's current.`);
+
+        const configFilesResponse = await fetch(remoteConfigUrl, {
+            headers: {
+                "If-None-Match": storedConfigETag,
+            },
+        }).catch(logError);
+
+        if (!configFilesResponse) {
+            log(`Couldn't check our data; use our existing data for now.`);
+            return storedConfigData;
+        }
+
+        log(`GitHub responded:`, configFilesResponse);
+
+        switch (configFilesResponse.status) {
+            case 200:
+                // GitHub responded with some fresh files to use.
+                log(`GitHub responded with some fresh files to use.`);
+
+                updatedConfigData = {
+                    configETag: configFilesResponse.headers.get("ETag"),
+                    configFiles: (await configFilesResponse.json()).files,
+                };
+                break;
+            case 304:
+                // GitHub responded that our data is current.
+                log(`GitHub responded that our data is current.`);
+                break;
+            default:
+                // GitHub responded with... something else.
+                log(`GitHub responded with... something else.`);
+        }
+    }
+
+    if (updatedConfigData) {
+        // Store our fresh config data.
+        log(`Store our fresh config data:`, updatedConfigData);
+
+        browser.storage.local.set(updatedConfigData).catch(logError);
+    }
+
+    return updatedConfigData || storedConfigData;
+}
+
+/**
+ * Retrieves the JSON contents of the specified remotely-stored configuration
+ * file.
  *
- * @returns {JSON} The requested JSON configuration.
+ * @param {string} filename The name of the JSON configuration file.
+ *
+ * @returns {any} The parsed JSON configuration data.
  */
 export async function getRemoteConfig(filename) {
-    const configFileData = await fetch(remoteConfigUrl);
-    const JsonConfigFileData = await configFileData.json();
-    const requestedConfig =
-        JsonConfigFileData.files[`${filename}.json`].content;
+    const { configFiles } = await getRemoteConfigData();
 
-    return JSON.parse(requestedConfig);
+    if (!configFiles) {
+        logError(`Couldn't retrieve configuration files!`, true);
+    }
+
+    const requestedConfigJson = configFiles[`${filename}.json`].content;
+    const requestedConfigObject = JSON.parse(requestedConfigJson);
+
+    return requestedConfigObject;
 }
 
 /**
