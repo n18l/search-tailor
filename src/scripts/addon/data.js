@@ -7,7 +7,7 @@
  * for granular updates that don't require a new addon version.
  */
 const remoteConfigUrl =
-    "https://api.github.com/gists/dfd714ab2a99bddb1e2e15999423055e";
+    "https://api.github.com/gists/c292316015e67cd90a3792c65721f672";
 
 /**
  * The treatment settings to apply when creating a new tailoring entry.
