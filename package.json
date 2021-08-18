@@ -145,7 +145,7 @@
     },
     "devDependencies": {
         "@anduh/pug-cli": "*",
-        "@babel/cli": "^7.8.4",
+        "@babel/cli": "^7.14.8",
         "@babel/core": "^7.8.7",
         "@babel/preset-env": "^7.8.7",
         "babelify": "^10.0.0",
