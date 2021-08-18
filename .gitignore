@@ -1,5 +1,6 @@
 *.code-workspace
 .DS_Store
+.env
 /node_modules
 /.sass-cache
 /dist
