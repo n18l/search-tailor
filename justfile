@@ -98,3 +98,7 @@ sign-fx:
         --api-key=$FIREFOX_ADDON_DEV_API_KEY \
         --api-secret=$FIREFOX_ADDON_DEV_API_SECRET \
         --channel=unlisted
+
+# Removes all dependency files, verifies their cached data, and freshly reinstalls them.
+reinstall:
+    rm -rf node_modules/** && npm cache verify && npm install
