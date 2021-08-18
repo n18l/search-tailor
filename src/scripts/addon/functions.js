@@ -50,7 +50,8 @@ export function parseHSLAString(hslaString) {
     const sanitizedHslaString = hslaString.replace(/\s/g, "");
 
     // Define a regular expression for capturing HSLA values.
-    const hslaStringRegEx = /hsla\((\d*\.?\d+),(\d*\.?\d+%),(\d*\.?\d+%),(\d*\.?\d+)\)/;
+    const hslaStringRegEx =
+        /hsla\((\d*\.?\d+),(\d*\.?\d+%),(\d*\.?\d+%),(\d*\.?\d+)\)/;
 
     // Initialize return values.
     let hue = "0";
@@ -59,9 +60,8 @@ export function parseHSLAString(hslaString) {
     let alpha = "1";
 
     // Parse the HSLA string and update return values with matches.
-    [, hue, saturation, lightness, alpha] = sanitizedHslaString.match(
-        hslaStringRegEx
-    );
+    [, hue, saturation, lightness, alpha] =
+        sanitizedHslaString.match(hslaStringRegEx);
 
     return { hue, saturation, lightness, alpha };
 }
@@ -139,8 +139,8 @@ export function sendChangeNotification(changeType, updatedIDs = null) {
 
     // Send the change message to any active content scripts.
     getContentScriptTabs
-        .then(tabs => tabs.map(tab => browser.tabs.connect(tab.id)))
-        .then(ports => ports.forEach(port => port.postMessage(changeInfo)))
+        .then((tabs) => tabs.map((tab) => browser.tabs.connect(tab.id)))
+        .then((ports) => ports.forEach((port) => port.postMessage(changeInfo)))
         .catch(logError);
 }
 

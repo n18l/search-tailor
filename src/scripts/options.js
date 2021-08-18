@@ -31,7 +31,7 @@ class TailoredSearchOptionsPanel {
         this.inputs = {};
         const allInputs = this.element.querySelectorAll(".js-option-input");
 
-        allInputs.forEach(input => {
+        allInputs.forEach((input) => {
             // Identify this input's name and group (if provided).
             const inputName = input.name;
             const { inputGroup } = input.dataset;
@@ -56,7 +56,7 @@ class TailoredSearchOptionsPanel {
             "[data-click-action]"
         );
 
-        actionButtons.forEach(actionButton => {
+        actionButtons.forEach((actionButton) => {
             this.actionButtons[actionButton.dataset.clickAction] = actionButton;
         });
     }
@@ -67,16 +67,14 @@ class TailoredSearchOptionsPanel {
     populateOptions() {
         browser.storage.sync
             .get(defaultUserData)
-            .then(storageData => {
+            .then((storageData) => {
                 // Create a local, formatted copy of the current tailoring entry
                 // settings.
                 this.currentJSONExport = JSON.stringify(storageData, null, 4);
 
                 // Populate the JSON Export field and resize it so it can be scrolled cleanly.
                 this.inputs.jsonExport.value = this.currentJSONExport;
-                this.inputs.jsonExport.style.height = `${
-                    this.inputs.jsonExport.scrollHeight
-                }px`;
+                this.inputs.jsonExport.style.height = `${this.inputs.jsonExport.scrollHeight}px`;
 
                 // Set the Export JSON link's download target to an encoded string
                 // of the extension data.
@@ -89,11 +87,10 @@ class TailoredSearchOptionsPanel {
 
                 // Set each Search Engine checkbox to match its "enabled" setting.
                 this.inputs.enableSearchEngine.forEach((input, index) => {
-                    this.inputs.enableSearchEngine[
-                        index
-                    ].checked = this.currentSearchEngines.find(
-                        engine => engine.id === input.id
-                    ).enabled;
+                    this.inputs.enableSearchEngine[index].checked =
+                        this.currentSearchEngines.find(
+                            (engine) => engine.id === input.id
+                        ).enabled;
                 });
 
                 // Set the color hint background input values to match the
@@ -126,7 +123,7 @@ class TailoredSearchOptionsPanel {
         this.tooltipTargets = qsa("[data-tippy]", this.element);
 
         Tippy(this.tooltipTargets, {
-            content: reference => reference.getAttribute("aria-label"),
+            content: (reference) => reference.getAttribute("aria-label"),
             offset: [0, 5],
             placement: "bottom",
         });
@@ -138,10 +135,10 @@ class TailoredSearchOptionsPanel {
     bindEvents() {
         // Update and sync the search engine settings when checking/unchecking a
         // search engine.
-        this.inputs.enableSearchEngine.forEach(input => {
-            input.addEventListener("input", e => {
+        this.inputs.enableSearchEngine.forEach((input) => {
+            input.addEventListener("input", (e) => {
                 this.currentSearchEngines.find(
-                    engine => engine.id === e.target.id
+                    (engine) => engine.id === e.target.id
                 ).enabled = e.target.checked;
 
                 browser.storage.sync
@@ -156,7 +153,7 @@ class TailoredSearchOptionsPanel {
         // from the colour picker.
         this.inputs.colorHintBackgroundSwatch.addEventListener(
             "input",
-            throttle(e => {
+            throttle((e) => {
                 browser.storage.sync
                     .set({ colorHintBackground: e.target.value })
                     .then(() =>
@@ -171,7 +168,7 @@ class TailoredSearchOptionsPanel {
         // into the colour input field.
         this.inputs.colorHintBackgroundHex.addEventListener(
             "change",
-            throttle(e => {
+            throttle((e) => {
                 // Only proceed for valid hex color values.
                 if (!e.target.value.match(/^#[a-fA-F0-9]{6}$/)) {
                     return;
@@ -188,9 +185,7 @@ class TailoredSearchOptionsPanel {
 
         // Automatically adjust the JSON Export textarea's height.
         this.inputs.jsonExport.addEventListener("input", () => {
-            this.inputs.jsonExport.style.height = `${
-                this.inputs.jsonExport.scrollHeight
-            }px`;
+            this.inputs.jsonExport.style.height = `${this.inputs.jsonExport.scrollHeight}px`;
         });
 
         // Reset the validity of the JSON Import textarea.

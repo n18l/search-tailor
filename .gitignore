@@ -1,5 +1,10 @@
 *.code-workspace
+
 .DS_Store
-/node_modules
+.env
+
+/.eslintcache
 /.sass-cache
+/artifacts
 /dist
+/node_modules

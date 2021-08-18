@@ -38,7 +38,7 @@ class TailoringEntry {
         this.settings = tailoringEntry || {
             id: generateTailoringEntryID(),
             domains: [],
-            treatment: Object.assign({}, defaultTreatment),
+            treatment: { ...defaultTreatment},
         };
 
         this.cacheData();
@@ -97,7 +97,7 @@ class TailoringEntry {
         // matching actionButton property.
         const actionButtons = qsa("[data-click-action]", this.element);
 
-        actionButtons.forEach(actionButton => {
+        actionButtons.forEach((actionButton) => {
             const { clickAction } = actionButton.dataset;
             this.actionButtons[clickAction] = actionButton;
         });
@@ -112,7 +112,7 @@ class TailoringEntry {
         // @see https://github.com/KaneCohen/tokenfield
         this.tokenField = new TokenField({
             el: this.domainInput,
-            setItems: this.settings.domains.map(d => ({ id: d, name: d })),
+            setItems: this.settings.domains.map((d) => ({ id: d, name: d })),
             addItemOnBlur: true,
         });
 
@@ -122,7 +122,7 @@ class TailoringEntry {
         this.tokenField.on("change", () => {
             // Get the raw TokenField values as an array of strings and apply it
             // to this entry's settings object.
-            const domainArray = this.tokenField.getItems().map(i => i.name);
+            const domainArray = this.tokenField.getItems().map((i) => i.name);
             this.settings.domains = domainArray;
 
             TailoringEntry.save("entry-domains");
@@ -132,7 +132,7 @@ class TailoringEntry {
         this.tokenFieldInput = qs(".tokenfield-input", this.element);
 
         // Respond to keyboard events in the TokenField.
-        this.tokenFieldInput.addEventListener("keydown", e => {
+        this.tokenFieldInput.addEventListener("keydown", (e) => {
             // Disallow spaces within the TokenField's input.
             if (e.key === " ") e.preventDefault();
         });
@@ -183,7 +183,7 @@ class TailoringEntry {
         });
 
         this.backgroundPicker.onChange = throttle(
-            newColor =>
+            (newColor) =>
                 this.setTreatmentProperty(
                     "backgroundColor",
                     newColor.hslaString
@@ -210,7 +210,7 @@ class TailoringEntry {
         });
 
         this.borderPicker.onChange = throttle(
-            newColor =>
+            (newColor) =>
                 this.setTreatmentProperty("borderColor", newColor.hslaString),
             500
         );
@@ -233,7 +233,7 @@ class TailoringEntry {
         this.tooltipTargets = qsa("[data-tippy]", this.element);
 
         Tippy(this.tooltipTargets, {
-            content: reference => reference.getAttribute("aria-label"),
+            content: (reference) => reference.getAttribute("aria-label"),
             offset: [0, 5],
             placement: "bottom",
         });
@@ -249,7 +249,7 @@ class TailoringEntry {
         );
 
         // Scroll this entry's settings drawer into view when it opens.
-        this.settingsDrawer.addEventListener("transitionend", e => {
+        this.settingsDrawer.addEventListener("transitionend", (e) => {
             // Only respond to changes in height.
             if (e.propertyName !== "height") {
                 return;
@@ -263,8 +263,8 @@ class TailoringEntry {
             // Calculate how far from the bottom of the entry container to
             // scroll to ensure that this settings drawer is not obscured by the
             // floating action bar when opened.
-            const drawerBottom = this.settingsDrawer.getBoundingClientRect()
-                .bottom;
+            const drawerBottom =
+                this.settingsDrawer.getBoundingClientRect().bottom;
             const distanceToContainerBottom =
                 this.container.clientHeight - drawerBottom;
             const actionBarHeight = getCustomPropertyValue(
@@ -303,7 +303,7 @@ class TailoringEntry {
         this.opacityRange.addEventListener(
             "input",
             throttle(
-                e => this.setTreatmentProperty("opacity", +e.target.value),
+                (e) => this.setTreatmentProperty("opacity", +e.target.value),
                 500
             )
         );
@@ -334,7 +334,7 @@ class TailoringEntry {
         // the entry container to prevent conflicts with the action bar.
         this.pickerElements.backgroundModal.addEventListener(
             "animationstart",
-            e => {
+            (e) => {
                 if (e.animationName === "fadeModalIn") {
                     this.pickerElements.backgroundInput.focus();
                     this.container.style.zIndex = 2;
@@ -350,7 +350,7 @@ class TailoringEntry {
         // color picker modal is hidden.
         this.pickerElements.backgroundModal.addEventListener(
             "animationend",
-            e => {
+            (e) => {
                 if (e.animationName === "fadeModalOut") {
                     this.container.style.zIndex = 1;
                     delete e.target.dataset.animate;
@@ -379,7 +379,7 @@ class TailoringEntry {
         // the entry container to prevent conflicts with the action bar.
         this.pickerElements.borderModal.addEventListener(
             "animationstart",
-            e => {
+            (e) => {
                 if (e.animationName === "fadeModalIn") {
                     this.pickerElements.borderInput.focus();
                     this.container.style.zIndex = 2;
@@ -393,12 +393,15 @@ class TailoringEntry {
 
         // Readjust the z-index of this entry's container after its border color
         // picker modal is hidden.
-        this.pickerElements.borderModal.addEventListener("animationend", e => {
-            if (e.animationName === "fadeModalOut") {
-                this.container.style.zIndex = 1;
-                delete e.target.dataset.animate;
+        this.pickerElements.borderModal.addEventListener(
+            "animationend",
+            (e) => {
+                if (e.animationName === "fadeModalOut") {
+                    this.container.style.zIndex = 1;
+                    delete e.target.dataset.animate;
+                }
             }
-        });
+        );
 
         // Delete this entry on click.
         this.actionButtons.deleteEntry.addEventListener("click", () =>
@@ -422,7 +425,8 @@ class TailoringEntry {
 
     set settingsDrawerIsOpen(newDrawerState) {
         this.settingsDrawer.dataset.isOpen = newDrawerState;
-        this.actionButtons.toggleSettingsDrawer.dataset.actionActive = newDrawerState;
+        this.actionButtons.toggleSettingsDrawer.dataset.actionActive =
+            newDrawerState;
     }
 
     /**
@@ -450,8 +454,8 @@ class TailoringEntry {
         if (this.backgroundPicker) {
             // Update the alpha value of this entry's background color to the
             // appropriate value.
-            const currentBackgroundColor = this.settings.treatment
-                .backgroundColor;
+            const currentBackgroundColor =
+                this.settings.treatment.backgroundColor;
             const bkg = parseHSLAString(currentBackgroundColor);
             this.backgroundPicker.setColor(
                 `hsla(${bkg.hue},${bkg.saturation},${bkg.lightness},${alpha})`
@@ -576,7 +580,7 @@ class TailoringEntry {
         if (animateIn) {
             // Listen for the end of the insertion animation to remove the
             // animation attribute.
-            this.element.addEventListener("animationend", e => {
+            this.element.addEventListener("animationend", (e) => {
                 // Only proceed if this was the insertion animation.
                 if (e.animationName !== "insertEntry") {
                     return;
@@ -628,7 +632,7 @@ class TailoringEntry {
     delete() {
         // Listen for the end of the deletion animation before actually removing
         // the element from the DOM.
-        this.element.addEventListener("animationend", e => {
+        this.element.addEventListener("animationend", (e) => {
             // Only proceed if this was the deletion animation.
             if (e.animationName !== "deleteEntry") {
                 return;
@@ -657,7 +661,7 @@ class TailoringEntry {
      * Entry objects that make up the popup UI.
      */
     static get rawValues() {
-        return TailoringEntry.objects.map(o => o.settings);
+        return TailoringEntry.objects.map((o) => o.settings);
     }
 
     /**
@@ -678,7 +682,7 @@ class TailoringEntry {
      * Closes all settings drawers.
      */
     static closeAllSettingsDrawers() {
-        TailoringEntry.objects.forEach(entryObject => {
+        TailoringEntry.objects.forEach((entryObject) => {
             const thisEntry = entryObject;
 
             thisEntry.settingsDrawerIsOpen = false;

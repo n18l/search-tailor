@@ -26,57 +26,7 @@
     "engines": {
         "node": ">=13.3.0"
     },
-    "scripts": {
-        "build:manifest:chrome": "cp src/manifest-chrome.json dist/chrome/manifest.json",
-        "build:manifest:firefox": "cp src/manifest-firefox.json dist/firefox/manifest.json",
-        "build:manifest": "run-p build:manifest:*",
-        "watch:manifest": "chokidar \"src/manifest-*.json\" -c \"npm run build:manifest\" --initial",
-        "build:html:chrome": "pug3 -O src/scripts/addon/data.js src/markup/*.pug --out dist/chrome/markup",
-        "build:html:firefox": "pug3 -O src/scripts/addon/data.js src/markup/*.pug --out dist/firefox/markup",
-        "build:html": "run-p build:html:*",
-        "watch:html": "chokidar \"src/markup/**/*.pug\" -c \"npm run build:html\" --initial",
-        "build:css:chrome": "sass --update src/styles:dist/chrome/styles --style expanded",
-        "build:css:firefox": "sass --update src/styles:dist/firefox/styles --style expanded",
-        "build:css": "run-p build:css:*",
-        "watch:css": "chokidar \"src/styles/**/*.scss\" -c \"npm run build:css\" --initial",
-        "lint:js": "eslint src/scripts/*.js; exit 0",
-        "bundle:js:chrome": "for i in src/scripts/*.js; do browserify src/scripts/$(basename $i) > dist/chrome/scripts/$(basename $i); done",
-        "bundle:js:firefox": "for i in src/scripts/*.js; do browserify src/scripts/$(basename $i) > dist/firefox/scripts/$(basename $i); done",
-        "bundle:js": "run-p bundle:js:*",
-        "build:js": "run-s lint:js bundle:js",
-        "watch:js": "chokidar \"src/scripts/**/*.js\" -c \"npm run build:js; if [[ '{path}' == 'src/scripts/addon/data.js' ]]; then npm run build:html; fi;\" --initial",
-        "build:assets:chrome": "cp -r src/assets dist/chrome",
-        "build:assets:firefox": "cp -r src/assets dist/firefox",
-        "build:assets": "run-p build:assets:*",
-        "watch:assets": "chokidar \"src/assets\" -c \"npm run build:assets\" --initial",
-        "clean": "rimraf dist/** && mkdir -p dist/{chrome,firefox}/{assets,markup,scripts,styles}",
-        "build": "npm-run-all clean -p build:*",
-        "watch": "npm-run-all clean -p watch:*",
-        "reinstall": "rimraf node_modules && npm cache verify && npm install"
-    },
-    "script-documentation": {
-        "build:manifest:*": "Directly copies a manifest file to the appropriate `dist/` folder.",
-        "build:manifest": "Runs all manifest build tasks in parallel.",
-        "watch:manifest": "Builds and then watches all manifest files, rebuilding on changes.",
-        "build:html:*": "Compiles .pug files to .html files, passing `src/scripts/addonData.js` for template data.",
-        "build:html": "Runs all HTML build tasks in parallel.",
-        "watch:html": "Builds and then watches .pug files, rebuilding on changes.",
-        "build:css:*": "Compiles .scss files to .css files.",
-        "build:css": "Runs all CSS build tasks in parallel.",
-        "watch:css": "Builds and then watches .scss files, rebuilding on changes.",
-        "lint:js": "Lints all .js files without exiting, so as not to interrupt watching.",
-        "bundle:js:*": "Bundles dependencies and transpiles each .js file directly within `src/scripts/`.",
-        "bundle:js": "Runs all JS bundling tasks in parallel.",
-        "build:js": "Lints and then bundles all .js files.",
-        "watch:js": "Builds and then watches .js files, rebuilding on changes. Conditionally rebuilds .pug files if `src/scripts/addon/data.js` changes.",
-        "build:assets:*": "Directly copies all assets to the appropriate `dist/` folder.",
-        "build:assets": "Runs all asset build tasks in parallel.",
-        "watch:assets": "Builds and then watches assets, rebuilding on changes.",
-        "clean": "Removes and recreates `dist/` and its subdirectories.",
-        "build": "Cleans all project files, and then runs all build tasks in parallel.",
-        "watch": "Cleans all project files, and then runs all watch tasks in parallel.",
-        "reinstall": "Removes and reinstalls all npm dependencies."
-    },
+    "scripts": {},
     "browserify": {
         "transform": [
             "babelify"
@@ -91,8 +41,7 @@
         "*.{js,css,md}": "prettier --write"
     },
     "prettier": {
-        "tabWidth": 4,
-        "trailingComma": "es5"
+        "tabWidth": 4
     },
     "eslintConfig": {
         "env": {
@@ -110,6 +59,9 @@
             "ecmaVersion": 2018,
             "sourceType": "module"
         },
+        "ignorePatterns": [
+            "dist/**"
+        ],
         "rules": {
             "no-console": [
                 "warn",
@@ -137,18 +89,17 @@
         "@babel/core": "^7.8.7",
         "@babel/preset-env": "^7.8.7",
         "babelify": "^10.0.0",
-        "browserify": "^16.5.0",
-        "chokidar-cli": "^2.1.0",
+        "browserify": "^17.0.0",
+        "chokidar-cli": "^3.0.0",
         "eslint": "^7.25.0",
         "eslint-config-airbnb-base": "^14.2.1",
-        "eslint-config-prettier": "^8.2.0",
+        "eslint-config-prettier": "^8.3.0",
         "eslint-plugin-import": "^2.22.1",
         "husky": "^7.0.1",
         "lint-staged": "^11.1.2",
-        "npm-run-all": "^4.1.5",
-        "prettier": "1.16.4",
-        "rimraf": "^2.7.1",
-        "sass": "^1.26.2"
+        "prettier": "^2.3.2",
+        "sass": "^1.26.2",
+        "web-ext": "^6.3.0"
     },
     "dependencies": {
         "lodash.throttle": "^4.1.1",
@@ -156,6 +107,6 @@
         "tippy.js": "^6.1.1",
         "tokenfield": "^1.2.2",
         "vanilla-picker": "^2.10.1",
-        "webextension-polyfill": "^0.6.0"
+        "webextension-polyfill": "^0.8.0"
     }
 }
