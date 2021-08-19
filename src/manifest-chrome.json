@@ -1,25 +1,20 @@
 {
     "manifest_version": 2,
-
     "name": "Search Tailor",
     "version": "0.3.2",
     "author": "Nick Brombal",
     "homepage_url": "https://github.com/nbrombal/search-tailor",
     "description": "Customizes your search results so you can find what you need with style.",
-
     "icons": {
         "48": "assets/icons/icon@48.png",
         "64": "assets/icons/icon@64.png",
         "128": "assets/icons/icon@128.png"
     },
-
     "browser_action": {
         "default_popup": "markup/popup.html",
         "default_icon": "assets/icons/icon@128.png"
     },
-
-    "permissions": ["storage", "tabs"],
-
+    "permissions": ["*://api.github.com/gists/*", "storage", "tabs"],
     "content_scripts": [
         {
             "matches": [
@@ -32,7 +27,6 @@
             "css": ["styles/tab.css"]
         }
     ],
-
     "options_ui": {
         "page": "markup/options.html",
         "open_in_tab": true

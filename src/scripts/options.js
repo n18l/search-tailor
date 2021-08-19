@@ -68,18 +68,16 @@ class TailoredSearchOptionsPanel {
         browser.storage.sync
             .get(defaultUserData)
             .then((storageData) => {
-                // Create a local, formatted copy of the current tailoring entry
-                // settings.
-                this.currentJSONExport = JSON.stringify(storageData, null, 4);
+                // Create a formatted copy of the current sync storage data.
+                this.currentSyncStorage = JSON.stringify(storageData, null, 4);
 
-                // Populate the JSON Export field and resize it so it can be scrolled cleanly.
-                this.inputs.jsonExport.value = this.currentJSONExport;
-                this.inputs.jsonExport.style.height = `${this.inputs.jsonExport.scrollHeight}px`;
+                // Populate the sync storage JSON field.
+                this.inputs.syncStorageData.value = this.currentSyncStorage;
 
-                // Set the Export JSON link's download target to an encoded string
-                // of the extension data.
-                this.actionButtons.exportJSON.href = `data:text/json;charset=utf-8,${encodeURIComponent(
-                    this.currentJSONExport
+                // Set the Export JSON link's download target to an encoded
+                // string of the extension's sync data.
+                this.actionButtons.exportSyncData.href = `data:text/json;charset=utf-8,${encodeURIComponent(
+                    this.currentSyncStorage
                 )}`;
 
                 // Create a local copy of the Search Engine settings.
@@ -102,6 +100,20 @@ class TailoredSearchOptionsPanel {
                     storageData.colorHintBackground;
             })
             .catch(logError);
+
+        browser.storage.local.get().then((storageData) => {
+            // Create a formatted copy of the current local storage data.
+            this.currentLocalStorage = JSON.stringify(storageData, null, 4);
+
+            // Populate the local storage JSON field.
+            this.inputs.localStorageData.value = this.currentLocalStorage;
+
+            // Set the Export JSON link's download target to an encoded string
+            // of the extension's local data.
+            this.actionButtons.exportLocalData.href = `data:text/json;charset=utf-8,${encodeURIComponent(
+                this.currentLocalStorage
+            )}`;
+        });
     }
 
     /**
@@ -183,29 +195,42 @@ class TailoredSearchOptionsPanel {
             }, 500)
         );
 
-        // Automatically adjust the JSON Export textarea's height.
-        this.inputs.jsonExport.addEventListener("input", () => {
-            this.inputs.jsonExport.style.height = `${this.inputs.jsonExport.scrollHeight}px`;
-        });
-
         // Reset the validity of the JSON Import textarea.
         this.inputs.jsonImport.addEventListener("input", () => {
             this.setInputValidation("jsonImport", "");
         });
 
-        // Copy the contents of the JSON Export textarea to the clipboard.
-        this.actionButtons.copyJSON.addEventListener("click", () => {
-            this.inputs.jsonExport.select();
+        // Copy the contents of the Synchronized Storage Data textarea to the
+        // clipboard.
+        this.actionButtons.copySyncData.addEventListener("click", () => {
+            this.inputs.syncStorageData.select();
             document.execCommand("copy");
-            this.actionButtons.copyJSON.focus();
+            this.actionButtons.copySyncData.focus();
         });
 
-        // Reset extension data to the default values.
-        this.actionButtons.resetData.addEventListener("click", () => {
-            const confirmationMessage = `Are you sure you want to reset all data for the Search Tailor extension?`;
+        // Copy the contents of the Local Storage Data textarea to the
+        // clipboard.
+        this.actionButtons.copyLocalData.addEventListener("click", () => {
+            this.inputs.localStorageData.select();
+            document.execCommand("copy");
+            this.actionButtons.copyLocalData.focus();
+        });
+
+        // Reset synchronized extension data to the default values.
+        this.actionButtons.resetSyncData.addEventListener("click", () => {
+            const confirmationMessage = `Are you sure you want to reset all synchronized data for the Search Tailor extension?`;
             // eslint-disable-next-line no-alert
             if (window.confirm(confirmationMessage)) {
                 browser.storage.sync.clear();
+            }
+        });
+
+        // Reset local extension data to the default values.
+        this.actionButtons.resetLocalData.addEventListener("click", () => {
+            const confirmationMessage = `Are you sure you want to reset all local data for the Search Tailor extension?`;
+            // eslint-disable-next-line no-alert
+            if (window.confirm(confirmationMessage)) {
+                browser.storage.local.clear();
             }
         });
 
