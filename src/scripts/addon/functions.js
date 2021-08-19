@@ -139,14 +139,14 @@ export async function getRemoteConfigData() {
 
     if (!storedConfigFiles) {
         // We have no existing configuration data; get a fresh set.
-        log(`We have no existing configuration data; get a fresh set.`);
+        log(`No existing config files were found; fetching a fresh set...`);
 
         const configFilesResponse = await fetch(remoteConfigUrl).catch(
             logError
         );
 
         if (!configFilesResponse) {
-            log(`Couldn't get fresh data; we're kind of hosed.`);
+            log(`Unable to fetch fresh config files; we're kind of hosed.`);
             return storedConfigData;
         }
 
@@ -156,7 +156,7 @@ export async function getRemoteConfigData() {
         };
     } else {
         // We have some existing data; check to see if it's current.
-        log(`We have some existing data; check to see if it's current.`);
+        log(`Existing config files found; checking if they're current...`);
 
         const configFilesResponse = await fetch(remoteConfigUrl, {
             headers: {
@@ -165,16 +165,16 @@ export async function getRemoteConfigData() {
         }).catch(logError);
 
         if (!configFilesResponse) {
-            log(`Couldn't check our data; use our existing data for now.`);
+            log(`Unable to verify existing config files; using as backup.`);
             return storedConfigData;
         }
 
-        log(`GitHub responded:`, configFilesResponse);
+        log(`Remote config host response:`, configFilesResponse);
 
         switch (configFilesResponse.status) {
             case 200:
                 // GitHub responded with some fresh files to use.
-                log(`GitHub responded with some fresh files to use.`);
+                log(`Successfully retrieved fresh config data.`);
 
                 updatedConfigData = {
                     configETag: configFilesResponse.headers.get("ETag"),
@@ -183,17 +183,17 @@ export async function getRemoteConfigData() {
                 break;
             case 304:
                 // GitHub responded that our data is current.
-                log(`GitHub responded that our data is current.`);
+                log(`Succesfully verified existing config data as current.`);
                 break;
             default:
                 // GitHub responded with... something else.
-                log(`GitHub responded with... something else.`);
+                log(`Unexpected response for remote files.`);
         }
     }
 
     if (updatedConfigData) {
         // Store our fresh config data.
-        log(`Store our fresh config data:`, updatedConfigData);
+        log(`Storing fresh config data:`, updatedConfigData);
 
         browser.storage.local.set(updatedConfigData).catch(logError);
     }
