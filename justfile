@@ -92,12 +92,8 @@ package:
 # Gets a signed extension installer for Firefox using the current distribution files.
 sign-fx:
     npx web-ext sign \
-        --source-dir=dist/firefox/ \
-        --artifacts-dir=artifacts/firefox/ \
-        --filename=search_tailor-{version}-fx.xpi \
         --api-key=$FIREFOX_ADDON_DEV_API_KEY \
-        --api-secret=$FIREFOX_ADDON_DEV_API_SECRET \
-        --channel=unlisted
+        --api-secret=$FIREFOX_ADDON_DEV_API_SECRET
 
 # Removes all dependency files, verifies their cached data, and freshly reinstalls them.
 reinstall:
