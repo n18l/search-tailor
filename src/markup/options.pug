@@ -19,7 +19,9 @@ html
 
                 div(class="options-panel__body")
                     fieldset(class="option-group")
-                        legend(class="option-group__title") Enabled Search Engines
+                        legend(class="option-group__legend")
+                            h3(class="option-group__title") Enabled Search Engines
+                            span(class="option-group__instructions") Select the search engine results pages that Search Tailor should affect.
 
                         mixin searchEngineToggle(searchEngine)
                             label(class="option option--search-engine-toggle")
@@ -78,7 +80,10 @@ html
 
                 div(class="options-panel__body")
                     fieldset(class="option-group")
-                        legend(class="option-group__title") Local Storage Data
+                        legend(class="option-group__legend")
+                            h3(class="option-group__title") Local Storage Data
+                            span(class="option-group__instructions") View and export extension data that is stored in this browser.
+
                         div(class="option option--raw-json")
                             textarea(
                                 class="option__input option__input--raw-json js-option-input"
@@ -86,13 +91,17 @@ html
                                 spellcheck="false"
                                 readonly
                             )
+
                         div(class="option-group__action-container")
                             button(class="option-group__action" data-click-action="copyLocalData") Copy
                             a(class="option-group__action" data-click-action="exportLocalData" href="#" download="search_tailor_local.json") Export
                             button(class="option-group__action" data-click-action="resetLocalData") Reset to Default
 
                     fieldset(class="option-group")
-                        legend(class="option-group__title") Synchronized Storage Data
+                        legend(class="option-group__legend")
+                            h3(class="option-group__title") Synchronized Storage Data
+                            span(class="option-group__instructions") View and export extension data that is synchronized between browsers via <a href="https://www.mozilla.org/en-US/firefox/sync/" target="sync-account">Firefox Sync</a> or a <a href="https://support.google.com/chrome/answer/165139" target="sync-account">Google account</a>.
+
                         div(class="option option--raw-json")
                             textarea(
                                 class="option__input option__input--raw-json js-option-input"
@@ -100,19 +109,24 @@ html
                                 spellcheck="false"
                                 readonly
                             )
+
                         div(class="option-group__action-container")
                             button(class="option-group__action" data-click-action="copySyncData") Copy
                             a(class="option-group__action" data-click-action="exportSyncData" href="#" download="search_tailor_sync.json") Export
                             button(class="option-group__action" data-click-action="resetSyncData") Reset to Default
 
                     form(class="option-group")
-                        div(class="option-group__title") JSON Import
+                        legend(class="option-group__legend")
+                            h3(class="option-group__title") Synchronized Storage Data Import
+                            span(class="option-group__instructions") Update extension data that is synchronized between browsers.
+
                         div(class="option option--raw-json" data-validation-message="")
                             textarea(
                                 class="option__input option__input--raw-json js-option-input"
                                 name="jsonImport"
                                 spellcheck="false"
                             )
+
                         div(class="option-group__action-container")
                             button(type="button" class="option-group__action" data-click-action="clearJSON") Clear
                             button(type="button" class="option-group__action" data-click-action="importJSON") Import

@@ -151,11 +151,27 @@ body {
         margin-block-start: 10px;
     }
 
+    // .option-group__legend
+    &__legend {
+        margin: 0 0 10px 0;
+        padding: 0;
+    }
+
     // .option-group__title
     &__title {
         font-size: 1.4rem;
         font-weight: 700;
-        margin: 0 0 10px 0;
+    }
+
+    // .option-group__instructions
+    &__instructions {
+        display: block;
+        font-size: 1.2rem;
+        margin-top: 2px;
+
+        a {
+            color: var(--options-instruction-link-text);
+        }
     }
 
     // .option-group__action-container
