@@ -14,13 +14,12 @@ class TailoredSearch {
                 return;
             }
 
-            // If this search engine loads results asynchronously, apply
-            // tailoring when its results change. Otherwise, simply tailor on
-            // load.
+            this.tailor();
+
+            // If this search engine loads results asynchronously, reapply
+            // tailoring when its results change.
             if (this.searchEngine.observe) {
                 this.tailorOnMutation();
-            } else {
-                this.tailor();
             }
         });
     }
