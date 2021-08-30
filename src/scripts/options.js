@@ -31,7 +31,7 @@ class TailoredSearchOptionsPanel {
         this.inputs = {};
         const allInputs = this.element.querySelectorAll(".js-option-input");
 
-        allInputs.forEach(input => {
+        allInputs.forEach((input) => {
             // Identify this input's name and group (if provided).
             const inputName = input.name;
             const { inputGroup } = input.dataset;
@@ -56,7 +56,7 @@ class TailoredSearchOptionsPanel {
             "[data-click-action]"
         );
 
-        actionButtons.forEach(actionButton => {
+        actionButtons.forEach((actionButton) => {
             this.actionButtons[actionButton.dataset.clickAction] = actionButton;
         });
     }
@@ -67,21 +67,17 @@ class TailoredSearchOptionsPanel {
     populateOptions() {
         browser.storage.sync
             .get(defaultUserData)
-            .then(storageData => {
-                // Create a local, formatted copy of the current tailoring entry
-                // settings.
-                this.currentJSONExport = JSON.stringify(storageData, null, 4);
+            .then((storageData) => {
+                // Create a formatted copy of the current sync storage data.
+                this.currentSyncStorage = JSON.stringify(storageData, null, 4);
 
-                // Populate the JSON Export field and resize it so it can be scrolled cleanly.
-                this.inputs.jsonExport.value = this.currentJSONExport;
-                this.inputs.jsonExport.style.height = `${
-                    this.inputs.jsonExport.scrollHeight
-                }px`;
+                // Populate the sync storage JSON field.
+                this.inputs.syncStorageData.value = this.currentSyncStorage;
 
-                // Set the Export JSON link's download target to an encoded string
-                // of the extension data.
-                this.actionButtons.exportJSON.href = `data:text/json;charset=utf-8,${encodeURIComponent(
-                    this.currentJSONExport
+                // Set the Export JSON link's download target to an encoded
+                // string of the extension's sync data.
+                this.actionButtons.exportSyncData.href = `data:text/json;charset=utf-8,${encodeURIComponent(
+                    this.currentSyncStorage
                 )}`;
 
                 // Create a local copy of the Search Engine settings.
@@ -89,11 +85,10 @@ class TailoredSearchOptionsPanel {
 
                 // Set each Search Engine checkbox to match its "enabled" setting.
                 this.inputs.enableSearchEngine.forEach((input, index) => {
-                    this.inputs.enableSearchEngine[
-                        index
-                    ].checked = this.currentSearchEngines.find(
-                        engine => engine.id === input.id
-                    ).enabled;
+                    this.inputs.enableSearchEngine[index].checked =
+                        this.currentSearchEngines.find(
+                            (engine) => engine.id === input.id
+                        ).enabled;
                 });
 
                 // Set the color hint background input values to match the
@@ -105,6 +100,20 @@ class TailoredSearchOptionsPanel {
                     storageData.colorHintBackground;
             })
             .catch(logError);
+
+        browser.storage.local.get().then((storageData) => {
+            // Create a formatted copy of the current local storage data.
+            this.currentLocalStorage = JSON.stringify(storageData, null, 4);
+
+            // Populate the local storage JSON field.
+            this.inputs.localStorageData.value = this.currentLocalStorage;
+
+            // Set the Export JSON link's download target to an encoded string
+            // of the extension's local data.
+            this.actionButtons.exportLocalData.href = `data:text/json;charset=utf-8,${encodeURIComponent(
+                this.currentLocalStorage
+            )}`;
+        });
     }
 
     /**
@@ -126,7 +135,7 @@ class TailoredSearchOptionsPanel {
         this.tooltipTargets = qsa("[data-tippy]", this.element);
 
         Tippy(this.tooltipTargets, {
-            content: reference => reference.getAttribute("aria-label"),
+            content: (reference) => reference.getAttribute("aria-label"),
             offset: [0, 5],
             placement: "bottom",
         });
@@ -138,10 +147,10 @@ class TailoredSearchOptionsPanel {
     bindEvents() {
         // Update and sync the search engine settings when checking/unchecking a
         // search engine.
-        this.inputs.enableSearchEngine.forEach(input => {
-            input.addEventListener("input", e => {
+        this.inputs.enableSearchEngine.forEach((input) => {
+            input.addEventListener("input", (e) => {
                 this.currentSearchEngines.find(
-                    engine => engine.id === e.target.id
+                    (engine) => engine.id === e.target.id
                 ).enabled = e.target.checked;
 
                 browser.storage.sync
@@ -156,7 +165,7 @@ class TailoredSearchOptionsPanel {
         // from the colour picker.
         this.inputs.colorHintBackgroundSwatch.addEventListener(
             "input",
-            throttle(e => {
+            throttle((e) => {
                 browser.storage.sync
                     .set({ colorHintBackground: e.target.value })
                     .then(() =>
@@ -171,7 +180,7 @@ class TailoredSearchOptionsPanel {
         // into the colour input field.
         this.inputs.colorHintBackgroundHex.addEventListener(
             "change",
-            throttle(e => {
+            throttle((e) => {
                 // Only proceed for valid hex color values.
                 if (!e.target.value.match(/^#[a-fA-F0-9]{6}$/)) {
                     return;
@@ -186,31 +195,42 @@ class TailoredSearchOptionsPanel {
             }, 500)
         );
 
-        // Automatically adjust the JSON Export textarea's height.
-        this.inputs.jsonExport.addEventListener("input", () => {
-            this.inputs.jsonExport.style.height = `${
-                this.inputs.jsonExport.scrollHeight
-            }px`;
-        });
-
         // Reset the validity of the JSON Import textarea.
         this.inputs.jsonImport.addEventListener("input", () => {
             this.setInputValidation("jsonImport", "");
         });
 
-        // Copy the contents of the JSON Export textarea to the clipboard.
-        this.actionButtons.copyJSON.addEventListener("click", () => {
-            this.inputs.jsonExport.select();
+        // Copy the contents of the Synchronized Storage Data textarea to the
+        // clipboard.
+        this.actionButtons.copySyncData.addEventListener("click", () => {
+            this.inputs.syncStorageData.select();
             document.execCommand("copy");
-            this.actionButtons.copyJSON.focus();
+            this.actionButtons.copySyncData.focus();
         });
 
-        // Reset extension data to the default values.
-        this.actionButtons.resetData.addEventListener("click", () => {
-            const confirmationMessage = `Are you sure you want to reset all data for the Search Tailor extension?`;
+        // Copy the contents of the Local Storage Data textarea to the
+        // clipboard.
+        this.actionButtons.copyLocalData.addEventListener("click", () => {
+            this.inputs.localStorageData.select();
+            document.execCommand("copy");
+            this.actionButtons.copyLocalData.focus();
+        });
+
+        // Reset synchronized extension data to the default values.
+        this.actionButtons.resetSyncData.addEventListener("click", () => {
+            const confirmationMessage = `Are you sure you want to reset all synchronized data for the Search Tailor extension?`;
             // eslint-disable-next-line no-alert
             if (window.confirm(confirmationMessage)) {
                 browser.storage.sync.clear();
+            }
+        });
+
+        // Reset local extension data to the default values.
+        this.actionButtons.resetLocalData.addEventListener("click", () => {
+            const confirmationMessage = `Are you sure you want to reset all local data for the Search Tailor extension?`;
+            // eslint-disable-next-line no-alert
+            if (window.confirm(confirmationMessage)) {
+                browser.storage.local.clear();
             }
         });
 

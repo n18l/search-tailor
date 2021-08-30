@@ -78,18 +78,32 @@ html
 
                 div(class="options-panel__body")
                     fieldset(class="option-group")
-                        legend(class="option-group__title") JSON Export
+                        legend(class="option-group__title") Local Storage Data
                         div(class="option option--raw-json")
                             textarea(
                                 class="option__input option__input--raw-json js-option-input"
-                                name="jsonExport"
+                                name="localStorageData"
                                 spellcheck="false"
                                 readonly
                             )
                         div(class="option-group__action-container")
-                            button(class="option-group__action" data-click-action="copyJSON") Copy
-                            a(class="option-group__action" data-click-action="exportJSON" href="#" download="search_tailor.json") Export
-                            button(class="option-group__action" data-click-action="resetData") Reset to Default
+                            button(class="option-group__action" data-click-action="copyLocalData") Copy
+                            a(class="option-group__action" data-click-action="exportLocalData" href="#" download="search_tailor_local.json") Export
+                            button(class="option-group__action" data-click-action="resetLocalData") Reset to Default
+
+                    fieldset(class="option-group")
+                        legend(class="option-group__title") Synchronized Storage Data
+                        div(class="option option--raw-json")
+                            textarea(
+                                class="option__input option__input--raw-json js-option-input"
+                                name="syncStorageData"
+                                spellcheck="false"
+                                readonly
+                            )
+                        div(class="option-group__action-container")
+                            button(class="option-group__action" data-click-action="copySyncData") Copy
+                            a(class="option-group__action" data-click-action="exportSyncData" href="#" download="search_tailor_sync.json") Export
+                            button(class="option-group__action" data-click-action="resetSyncData") Reset to Default
 
                     form(class="option-group")
                         div(class="option-group__title") JSON Import

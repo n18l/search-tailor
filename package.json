@@ -1,7 +1,7 @@
 {
     "name": "search-tailor",
     "description": "Customizes your search results so you can find what you need with style.",
-    "version": "0.3.2",
+    "version": "0.4.0",
     "author": "Nick Brombal",
     "license": "MIT",
     "homepage": "https://github.com/nbrombal/search-tailor",
@@ -41,8 +41,7 @@
         "*.{js,css,md}": "prettier --write"
     },
     "prettier": {
-        "tabWidth": 4,
-        "trailingComma": "es5"
+        "tabWidth": 4
     },
     "eslintConfig": {
         "env": {
@@ -60,6 +59,9 @@
             "ecmaVersion": 2018,
             "sourceType": "module"
         },
+        "ignorePatterns": [
+            "dist/**"
+        ],
         "rules": {
             "no-console": [
                 "warn",
@@ -87,15 +89,15 @@
         "@babel/core": "^7.8.7",
         "@babel/preset-env": "^7.8.7",
         "babelify": "^10.0.0",
-        "browserify": "^16.5.0",
-        "chokidar-cli": "^2.1.0",
+        "browserify": "^17.0.0",
+        "chokidar-cli": "^3.0.0",
         "eslint": "^7.25.0",
         "eslint-config-airbnb-base": "^14.2.1",
-        "eslint-config-prettier": "^8.2.0",
+        "eslint-config-prettier": "^8.3.0",
         "eslint-plugin-import": "^2.22.1",
         "husky": "^7.0.1",
         "lint-staged": "^11.1.2",
-        "prettier": "1.16.4",
+        "prettier": "^2.3.2",
         "sass": "^1.26.2",
         "web-ext": "^6.3.0"
     },
@@ -105,6 +107,6 @@
         "tippy.js": "^6.1.1",
         "tokenfield": "^1.2.2",
         "vanilla-picker": "^2.10.1",
-        "webextension-polyfill": "^0.6.0"
+        "webextension-polyfill": "^0.8.0"
     }
 }

@@ -3,6 +3,7 @@
 .DS_Store
 .env
 
+/.eslintcache
 /.sass-cache
 /artifacts
 /dist
