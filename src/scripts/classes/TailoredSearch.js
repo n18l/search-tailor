@@ -52,6 +52,10 @@ class TailoredSearch {
      * @param {string[]} tailoringEntryIDs The IDs of the tailoring entries to apply tailoring for, defaulting to all.
      */
     tailor(tailoringEntryIDs = null) {
+        // Apply the current search provider's ID to the page's HTML element for
+        // future reference.
+        qs("html").dataset.tailoringTarget = this.searchEngine.id;
+
         // Clear all applied treatments if this engine is disabled.
         if (this.searchEngineStatus === "disabled") {
             this.clearTreatments();
@@ -145,14 +149,26 @@ class TailoredSearch {
             // entry.
             this.searchResults.forEach((result) => {
                 const thisResult = result;
+                const resultLinkElement = qs(
+                    this.searchEngine.selectors.resultLink,
+                    thisResult
+                );
 
-                // Only proceed if this result matches the current tailoring
-                // entry.
-                const isMatchingResult = !entryDomains
-                    ? false
-                    : RegExp(`.*://.*.?${entryDomains}.*`).test(
-                          qs(this.searchEngine.selectors.resultLink, thisResult)
-                      );
+                let isMatchingResult = false;
+
+                if (entryDomains && resultLinkElement) {
+                    // Usually we can check the result link's URL for our target
+                    // domain, but some engines replace them with encoded
+                    // values, forcing us to find a text representation to use
+                    // instead.
+                    const resultLink = this.searchEngine.treatLinkAsText
+                        ? resultLinkElement.textContent
+                        : resultLinkElement.href;
+
+                    isMatchingResult = RegExp(
+                        `.*://.*.?${entryDomains}.*`
+                    ).test(resultLink);
+                }
 
                 if (!isMatchingResult) {
                     // If this result no longer matches a tailoring entry,

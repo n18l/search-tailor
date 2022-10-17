@@ -1,6 +1,6 @@
 /* Google */
-.g {
-    &[data-tailoring-entry-id] {
+[data-tailoring-target="google"] {
+    [data-tailoring-entry-id] {
         position: relative;
 
         .treatment-panel,
@@ -19,8 +19,8 @@
 }
 
 /* DuckDuckGo */
-.result {
-    &[data-tailoring-entry-id] {
+[data-tailoring-target="duckduckgo"] {
+    [data-tailoring-entry-id] {
         position: relative;
 
         .treatment-panel,
@@ -34,19 +34,21 @@
             background-color: transparent;
             position: absolute;
             z-index: 1;
-        }
 
-        .result__body {
-            position: relative;
-            z-index: 2;
+            ~ * {
+                position: relative;
+                z-index: 2;
+            }
         }
     }
 }
 
 /* Bing */
-.b_algo {
-    &[data-tailoring-entry-id] {
+[data-tailoring-target="bing"] {
+    [data-tailoring-entry-id] {
         position: relative;
+        margin-top: 10px !important;
+        margin-bottom: 10px !important;
 
         .treatment-panel,
         [data-treatment-panel] {
@@ -59,34 +61,19 @@
             background-color: transparent;
             position: absolute;
             z-index: 1;
-        }
 
-        h2,
-        [class^="b_"] {
-            position: relative;
-            z-index: 2;
-        }
-
-        & + & {
-            margin-top: 10px !important;
+            ~ * {
+                position: relative;
+                z-index: 2;
+            }
         }
     }
 }
 
 /* Yahoo */
-.algo {
-    &[data-tailoring-entry-id] {
+[data-tailoring-target="yahoo"] {
+    [data-tailoring-entry-id] {
         position: relative;
-
-        @at-root {
-            li.first & {
-                padding-top: 10px !important;
-            }
-
-            li.last & {
-                padding-bottom: 10px !important;
-            }
-        }
 
         .treatment-panel,
         [data-treatment-panel] {
@@ -100,25 +87,10 @@
             position: absolute;
             z-index: 1;
 
-            @at-root {
-                li.first & {
-                    top: 0;
-                    height: calc(100% + 10px);
-                }
-
-                li.last & {
-                    height: calc(100% + 8px);
-                }
+            ~ * {
+                position: relative;
+                z-index: 2;
             }
         }
-
-        & + & {
-            margin-top: 10px !important;
-        }
-    }
-
-    > div {
-        position: relative;
-        z-index: 2;
     }
 }
