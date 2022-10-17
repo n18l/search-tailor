@@ -100,7 +100,7 @@
         "lint-staged": "^11.1.2",
         "prettier": "^2.3.2",
         "sass": "^1.26.2",
-        "web-ext": "^6.3.0"
+        "web-ext": "^7.3.0"
     },
     "dependencies": {
         "lodash.throttle": "^4.1.1",
