@@ -73,16 +73,6 @@
             ]
         }
     },
-    "webExt": {
-        "sourceDir": "dist/firefox",
-        "artifactsDir": "artifacts/firefox",
-        "build": {
-            "overwriteDest": true
-        },
-        "sign": {
-            "channel": "unlisted"
-        }
-    },
     "devDependencies": {
         "@anduh/pug-cli": "*",
         "@babel/cli": "^7.14.8",

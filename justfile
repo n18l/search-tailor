@@ -74,6 +74,7 @@ build-assets:
 # Creates an extension package for Firefox using the current distribution files.
 package-fx:
     npx web-ext build \
+        --overwrite-dest=true \
         --source-dir=dist/firefox/ \
         --artifacts-dir=artifacts/firefox/ \
         --filename=search_tailor-{version}-fx.zip
@@ -81,6 +82,7 @@ package-fx:
 # Creates an extension package for Chrome using the current distribution files.
 package-ch:
     npx web-ext build \
+        --overwrite-dest=true \
         --source-dir=dist/chrome/ \
         --artifacts-dir=artifacts/chrome/ \
         --filename=search_tailor-{version}-ch.zip
@@ -92,6 +94,9 @@ package:
 # Gets a signed extension installer for Firefox using the current distribution files.
 sign-fx:
     npx web-ext sign \
+        --channel=unlisted \
+        --source-dir=dist/firefox/ \
+        --artifacts-dir=artifacts/firefox/ \
         --api-key=$FIREFOX_ADDON_DEV_API_KEY \
         --api-secret=$FIREFOX_ADDON_DEV_API_SECRET
 
